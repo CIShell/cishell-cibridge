@@ -230,7 +230,7 @@ type AlgorithmInstance {
 # Algorithm definition for creating algorithm instances
 type AlgorithmDefinition {
 	# ID that uniquely identifies the algorithm definition
-	id: ID!
+	id: String!
 
 	# Input parameters required by the algorithm
 	parameters: InputParameters
