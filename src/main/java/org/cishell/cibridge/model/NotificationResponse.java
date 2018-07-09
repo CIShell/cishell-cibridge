@@ -1,10 +1,10 @@
 package org.cishell.cibridge.model;
 
 public class NotificationResponse {
-	private final PropertyInput formResponse;
-	private final Boolean questionResponse;
-	private final Boolean confirmationResponse;
-	private final Boolean closeNotification;
+	private PropertyInput formResponse;
+	private Boolean questionResponse;
+	private Boolean confirmationResponse;
+	private Boolean closeNotification;
 
 	public NotificationResponse(PropertyInput formResponse, Boolean questionResponse, Boolean confirmationResponse,
 			Boolean closeNotification) {
@@ -30,5 +30,22 @@ public class NotificationResponse {
 	public Boolean getCloseNotification() {
 		return closeNotification;
 	}
+
+	public void setFormResponse(PropertyInput formResponse) {
+		this.formResponse = formResponse;
+	}
+
+	public void setQuestionResponse(Boolean questionResponse) {
+		this.questionResponse = questionResponse;
+	}
+
+	public void setConfirmationResponse(Boolean confirmationResponse) {
+		this.confirmationResponse = confirmationResponse;
+	}
+
+	public void setCloseNotification(Boolean closeNotification) {
+		this.closeNotification = closeNotification;
+	}
+	
 
 }

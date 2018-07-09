@@ -3,11 +3,11 @@ package org.cishell.cibridge.model;
 import java.time.LocalTime;
 
 public class LogFilter{
-	public final LogLevel logLevel;
-	public final LocalTime logsSince;
-	public final LocalTime logsBefore;
-	public final int limit;
-	public final int offset;
+	public LogLevel logLevel;
+	public LocalTime logsSince;
+	public LocalTime logsBefore;
+	public int limit;
+	public int offset;
     
     public LogFilter(LogLevel logLevel,LocalTime logsSince,LocalTime logsBefore,int limit,int offset) {
 		// TODO Auto-generated constructor stub
@@ -37,5 +37,26 @@ public class LogFilter{
 	public int getOffset() {
 		return offset;
 	}
+
+	public void setLogLevel(LogLevel logLevel) {
+		this.logLevel = logLevel;
+	}
+
+	public void setLogsSince(LocalTime logsSince) {
+		this.logsSince = logsSince;
+	}
+
+	public void setLogsBefore(LocalTime logsBefore) {
+		this.logsBefore = logsBefore;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	
     
 }
