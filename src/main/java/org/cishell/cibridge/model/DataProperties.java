@@ -1,14 +1,14 @@
 package org.cishell.cibridge.model;
 
 public class DataProperties {
-	private final String format;
-	private final String name;
-	private final String label;
-	private final String parent;
-	private final DataType type;
-	private final PropertyInput properties;
-	private final int limit;
-	private final int offset;
+	private String format;
+	private String name;
+	private String label;
+	private String parent;
+	private DataType type;
+	private PropertyInput properties;
+	private int limit;
+	private int offset;
     
     public DataProperties(String format,String name,String label,String parent,DataType type,PropertyInput properties,int limit,int offset) {
 		// TODO Auto-generated constructor stub
@@ -53,5 +53,38 @@ public class DataProperties {
 	public int getOffset() {
 		return offset;
 	}
+
+	public void setFormat(String format) {
+		this.format = format;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
+	public void setType(DataType type) {
+		this.type = type;
+	}
+
+	public void setProperties(PropertyInput properties) {
+		this.properties = properties;
+	}
+
+	public void setLimit(int limit) {
+		this.limit = limit;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	
     
 }

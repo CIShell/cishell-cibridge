@@ -1,8 +1,8 @@
 package org.cishell.cibridge.model;
 
 public class PropertyInput {
-	private final String key;
-	private final Object value;
+	private String key;
+	private Object value;
 
 	public PropertyInput(String key, Object value) {
 		// TODO Auto-generated constructor stub
@@ -17,5 +17,14 @@ public class PropertyInput {
 	public Object getValue() {
 		return value;
 	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public void setValue(Object value) {
+		this.value = value;
+	}
+	
 
 }

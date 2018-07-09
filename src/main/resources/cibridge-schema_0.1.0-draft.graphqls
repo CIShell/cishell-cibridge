@@ -290,7 +290,7 @@ type AlgorithmDefinition {
 # Specifies parameter inputs required for the algorithm
 type InputParameters {
 	# Identifier for the input parameters object
-	id: ID
+	id: ID!
 
 	# Title to be displayed if presented to the user
 	title: String
@@ -522,7 +522,7 @@ enum DataType {
 type Notification {
 
 	# Identifier for the object
-	id: ID
+	id: ID!
 
 	# Type of the notification
 	type: NotificationType
@@ -685,7 +685,7 @@ type Property {
 # Definition of the attributes for the user entered parameters which includes name, type and options for dropdown boxes
 type ParameterDefinition {
 	# Identifier for the attribute
-	id: String!
+	id: ID!
 
 	# Name for the attribute
 	name: String!
