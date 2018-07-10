@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7588161d-9e71-42b2-874e-311784802b7a" name="Default" comment="" />
+    <list default="true" id="7588161d-9e71-42b2-874e-311784802b7a" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -12,23 +14,29 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="CIBridgeInstance.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
+      <file leaf-file-name="Query.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="17" column="46" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
+            <state relative-caret-position="119">
+              <caret line="7" column="69" lean-forward="true" selection-start-line="7" selection-start-column="69" selection-end-line="7" selection-end-column="69" />
               <folding>
-                <element signature="imports" expanded="true" />
+                <element signature="e#159#160#0" expanded="true" />
+                <element signature="e#193#194#0" expanded="true" />
+                <element signature="e#1352#1353#0" expanded="true" />
+                <element signature="e#1376#1377#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AttributeType.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/AttributeType.java">
+      <file leaf-file-name="CIBridgeInstance.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret selection-end-column="35" />
+            <state relative-caret-position="289">
+              <caret line="17" column="46" lean-forward="true" selection-start-line="7" selection-start-column="2" selection-end-line="17" selection-end-column="46" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -49,6 +57,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java" />
       </list>
     </option>
   </component>
@@ -231,9 +240,22 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
-          <caret line="17" column="46" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
+          <caret line="17" column="46" lean-forward="true" selection-start-line="7" selection-start-column="2" selection-end-line="17" selection-end-column="46" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="69" lean-forward="true" selection-start-line="7" selection-start-column="69" selection-end-line="7" selection-end-column="69" />
+          <folding>
+            <element signature="e#159#160#0" expanded="true" />
+            <element signature="e#193#194#0" expanded="true" />
+            <element signature="e#1352#1353#0" expanded="true" />
+            <element signature="e#1376#1377#0" expanded="true" />
           </folding>
         </state>
       </provider>
