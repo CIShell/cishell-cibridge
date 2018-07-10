@@ -5,17 +5,17 @@ import java.util.List;
 public class AlgorithmFilter {
 	private List<String> algortihmDefinitionIds;
 	private List<String> algortihmInstanceIds;
-	private AlgorithmState states;
+	private List<AlgorithmState> states;
 	private List<String> inputDataIds;
-	private String inputFormats;
-	private String outputFormats;
-	private PropertyInput properties;
+	private List<String> inputFormats;
+	private List<String> outputFormats;
+	private List<PropertyInput> properties;
 	private int limit;
 	private int offset;
 
 	public AlgorithmFilter(List<String> algortihmDefinitionIds, List<String> algortihmInstanceIds,
-			AlgorithmState states, List<String> inputDataIds, String inputFormats, String outputFormats,
-			PropertyInput properties, int limit, int offset) {
+			List<AlgorithmState> states, List<String> inputDataIds, List<String> inputFormats, List<String> outputFormats,
+			List<PropertyInput> properties, int limit, int offset) {
 		// TODO Auto-generated constructor stub
 		this.algortihmDefinitionIds = algortihmDefinitionIds;
 		this.algortihmInstanceIds = algortihmInstanceIds;
@@ -44,11 +44,11 @@ public class AlgorithmFilter {
 		this.algortihmInstanceIds = algortihmInstanceIds;
 	}
 
-	public AlgorithmState getStates() {
+	public List<AlgorithmState> getStates() {
 		return states;
 	}
 
-	public void setStates(AlgorithmState states) {
+	public void setStates(List<AlgorithmState> states) {
 		this.states = states;
 	}
 
@@ -60,27 +60,27 @@ public class AlgorithmFilter {
 		this.inputDataIds = inputDataIds;
 	}
 
-	public String getInputFormats() {
+	public List<String> getInputFormats() {
 		return inputFormats;
 	}
 
-	public void setInputFormats(String inputFormats) {
+	public void setInputFormats(List<String> inputFormats) {
 		this.inputFormats = inputFormats;
 	}
 
-	public String getOutputFormats() {
+	public List<String> getOutputFormats() {
 		return outputFormats;
 	}
 
-	public void setOutputFormats(String outputFormats) {
+	public void setOutputFormats(List<String> outputFormats) {
 		this.outputFormats = outputFormats;
 	}
 
-	public PropertyInput getProperties() {
+	public List<PropertyInput> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(PropertyInput properties) {
+	public void setProperties(List<PropertyInput> properties) {
 		this.properties = properties;
 	}
 

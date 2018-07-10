@@ -1,12 +1,14 @@
 package org.cishell.cibridge.model;
 
+import java.util.List;
+
 public class NotificationResponse {
-	private PropertyInput formResponse;
+	protected List<PropertyInput> formResponse;
 	private Boolean questionResponse;
 	private Boolean confirmationResponse;
 	private Boolean closeNotification;
 
-	public NotificationResponse(PropertyInput formResponse, Boolean questionResponse, Boolean confirmationResponse,
+	public NotificationResponse(List<PropertyInput> formResponse, Boolean questionResponse, Boolean confirmationResponse,
 			Boolean closeNotification) {
 		// TODO Auto-generated constructor stub
 		this.formResponse = formResponse;
@@ -15,7 +17,7 @@ public class NotificationResponse {
 		this.closeNotification = closeNotification;
 	}
 
-	public PropertyInput getFormResponse() {
+	public List<PropertyInput> getFormResponse() {
 		return formResponse;
 	}
 
@@ -31,7 +33,7 @@ public class NotificationResponse {
 		return closeNotification;
 	}
 
-	public void setFormResponse(PropertyInput formResponse) {
+	public void setFormResponse(List<PropertyInput> formResponse) {
 		this.formResponse = formResponse;
 	}
 

@@ -1,16 +1,18 @@
 package org.cishell.cibridge.model;
 
+import java.util.List;
+
 public class DataProperties {
 	private String format;
 	private String name;
 	private String label;
 	private String parent;
 	private DataType type;
-	private PropertyInput properties;
+	private List<PropertyInput> properties;
 	private int limit;
 	private int offset;
     
-    public DataProperties(String format,String name,String label,String parent,DataType type,PropertyInput properties,int limit,int offset) {
+    public DataProperties(String format,String name,String label,String parent,DataType type,List<PropertyInput> properties,int limit,int offset) {
 		// TODO Auto-generated constructor stub
     	this.format=format;
     	this.name=name;
@@ -42,7 +44,7 @@ public class DataProperties {
 		return type;
 	}
 
-	public PropertyInput getProperties() {
+	public List<PropertyInput> getProperties() {
 		return properties;
 	}
 
@@ -74,7 +76,7 @@ public class DataProperties {
 		this.type = type;
 	}
 
-	public void setProperties(PropertyInput properties) {
+	public void setProperties(List<PropertyInput> properties) {
 		this.properties = properties;
 	}
 

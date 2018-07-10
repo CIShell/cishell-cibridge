@@ -1,18 +1,18 @@
 package org.cishell.cibridge.model;
-
+import java.util.*;
 public class Data {
-    private final String ID;
+    private final String id;
     private final String format;
     private final String name;
     private final String label;
     private final String parentDataID;
     private final DataType type;
     private final Boolean isModified;
-    private final Property properties;
+    private final List<Property> properties;
     
-    public Data(String ID,String format,String name,String label,String parentDataID,DataType type,Boolean isModified,Property properties) {
+    public Data(String id,String format,String name,String label,String parentDataID,DataType type,Boolean isModified,List<Property> properties) {
 		// TODO Auto-generated constructor stub
-    	this.ID=ID;
+    	this.id=id;
     	this.format=format;
     	this.name=name;
     	this.label=label;
@@ -21,19 +21,9 @@ public class Data {
     	this.isModified=isModified;
     	this.properties=properties;
 	}
-    public Data(String format,String name,String label,String parentDataID,DataType type,Boolean isModified,Property properties) {
-		// TODO Auto-generated constructor stub
-    	this.ID=null;
-    	this.format=format;
-    	this.name=name;
-    	this.label=label;
-    	this.parentDataID=parentDataID;
-    	this.type=type;
-    	this.isModified=isModified;
-    	this.properties=properties;
-	}
+
 	public String getID() {
-		return ID;
+		return id;
 	}
 	public String getFormat() {
 		return format;
@@ -53,7 +43,7 @@ public class Data {
 	public Boolean getIsModified() {
 		return isModified;
 	}
-	public Property getProperties() {
+	public List<Property> getProperties() {
 		return properties;
 	}
     

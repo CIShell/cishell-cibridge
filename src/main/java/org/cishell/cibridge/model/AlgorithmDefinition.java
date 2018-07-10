@@ -1,10 +1,12 @@
 package org.cishell.cibridge.model;
 
+import java.util.List;
+
 public class AlgorithmDefinition {
-	private final String ID;
+	private final String id;
 	private final InputParameters parameters;
-	private final String inData;
-	private final String outData;
+	private final List<String> inData;
+	private final List<String> outData;
 	private final String label;
 	private final String description;
 	private final Boolean parentOutputData;
@@ -18,15 +20,15 @@ public class AlgorithmDefinition {
 	private final String documentationUrl;
 	private final String referenceUrl;
 	private final String writtenIn;
-	private final Property otherProperties;
+	private final List<Property> otherProperties;
 
 	// constructor with ID initialisation
-	public AlgorithmDefinition(String ID, InputParameters parameters, String inData, String outData, String label,
+	public AlgorithmDefinition(String id, InputParameters parameters, List<String> inData, List<String> outData, String label,
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
-			String referenceUrl, String writtenIn, Property otherProperties) {
+			String referenceUrl, String writtenIn, List<Property> otherProperties) {
 		// TODO Auto-generated constructor stub
-		this.ID = ID;
+		this.id = id;
 		this.parameters = parameters;
 		this.inData = inData;
 		this.outData = outData;
@@ -46,43 +48,20 @@ public class AlgorithmDefinition {
 		this.otherProperties = otherProperties;
 	}
 
-	public AlgorithmDefinition(InputParameters parameters, String inData, String outData, String label,
-			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
-			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
-			String referenceUrl, String writtenIn, Property otherProperties) {
-		this.ID=null;
-		this.parameters = parameters;
-		this.inData = inData;
-		this.outData = outData;
-		this.label = label;
-		this.description = description;
-		this.parentOutputData = parentOutputData;
-		this.type = type;
-		this.remoteable = remoteable;
-		this.menuPath = menuPath;
-		this.conversion = conversion;
-		this.authors = authors;
-		this.implementers = implementers;
-		this.integrators = integrators;
-		this.documentationUrl = documentationUrl;
-		this.referenceUrl = referenceUrl;
-		this.writtenIn = writtenIn;
-		this.otherProperties = otherProperties;
-	}
 
 	public String getID() {
-		return ID;
+		return this.id;
 	}
 
 	public InputParameters getParameters() {
 		return parameters;
 	}
 
-	public String getInData() {
+	public List<String> getInData() {
 		return inData;
 	}
 
-	public String getOutData() {
+	public List<String> getOutData() {
 		return outData;
 	}
 
@@ -138,7 +117,7 @@ public class AlgorithmDefinition {
 		return writtenIn;
 	}
 
-	public Property getOtherProperties() {
+	public List<Property> getOtherProperties() {
 		return otherProperties;
 	}
 	
