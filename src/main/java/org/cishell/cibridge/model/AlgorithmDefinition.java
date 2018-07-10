@@ -1,7 +1,7 @@
 package org.cishell.cibridge.model;
 
 public class AlgorithmDefinition {
-	private final String ID;
+	private final String id;
 	private final InputParameters parameters;
 	private final String inData;
 	private final String outData;
@@ -20,13 +20,13 @@ public class AlgorithmDefinition {
 	private final String writtenIn;
 	private final Property otherProperties;
 
-	// constructor with ID initialisation
-	public AlgorithmDefinition(String ID, InputParameters parameters, String inData, String outData, String label,
+	// constructor with id initialisation
+	public AlgorithmDefinition(String id, InputParameters parameters, String inData, String outData, String label,
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
 			String referenceUrl, String writtenIn, Property otherProperties) {
 		// TODO Auto-generated constructor stub
-		this.ID = ID;
+		this.id = id;
 		this.parameters = parameters;
 		this.inData = inData;
 		this.outData = outData;
@@ -50,7 +50,7 @@ public class AlgorithmDefinition {
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
 			String referenceUrl, String writtenIn, Property otherProperties) {
-		this.ID=null;
+		this.id=null;
 		this.parameters = parameters;
 		this.inData = inData;
 		this.outData = outData;
@@ -70,8 +70,8 @@ public class AlgorithmDefinition {
 		this.otherProperties = otherProperties;
 	}
 
-	public String getID() {
-		return ID;
+	public String getId() {
+		return id;
 	}
 
 	public InputParameters getParameters() {
