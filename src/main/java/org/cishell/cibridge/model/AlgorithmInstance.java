@@ -1,19 +1,20 @@
 package org.cishell.cibridge.model;
 import java.time.LocalTime;
+import java.util.List;
 
 public class AlgorithmInstance {
-    private final String ID;
-    private final Data inData;
-    private final Property parameters;
+    private final String id;
+    private final List<Data> inData;
+    private final List<Property> parameters;
     private final AlgorithmDefinition algorithmDefinition;
     private final AlgorithmState state;
     private final LocalTime scheduledRunTime;
     private final int progress;
-    private final Data outData;
+    private final List<Data> outData;
     
-    public AlgorithmInstance(String ID,Data inData,Property parameters,AlgorithmDefinition algorithmDefinition,AlgorithmState state,LocalTime scheduledRunTime,int progress,Data outData) {
+    public AlgorithmInstance(String id,List<Data> inData,List<Property> parameters,AlgorithmDefinition algorithmDefinition,AlgorithmState state,LocalTime scheduledRunTime,int progress,List<Data> outData) {
 		// TODO Auto-generated constructor stub
-    	this.ID=ID;
+    	this.id =id;
     	this.inData=inData;
     	this.parameters=parameters;
     	this.algorithmDefinition=algorithmDefinition;
@@ -22,27 +23,17 @@ public class AlgorithmInstance {
     	this.progress=progress;
     	this.outData=outData;
 	}
-    public AlgorithmInstance(Data inData,Property parameters,AlgorithmDefinition algorithmDefinition,AlgorithmState state,LocalTime scheduledRunTime,int progress,Data outData) {
-		// TODO Auto-generated constructor stub
-    	this.ID=null;
-    	this.inData=inData;
-    	this.parameters=parameters;
-    	this.algorithmDefinition=algorithmDefinition;
-    	this.state=state;
-    	this.scheduledRunTime=scheduledRunTime;
-    	this.progress=progress;
-    	this.outData=outData;
-	}
+
 
 	public String getID() {
-		return ID;
+		return id;
 	}
 
-	public Data getInData() {
+	public List<Data> getInData() {
 		return inData;
 	}
 
-	public Property getParameters() {
+	public List<Property> getParameters() {
 		return parameters;
 	}
 
@@ -62,7 +53,7 @@ public class AlgorithmInstance {
 		return progress;
 	}
 
-	public Data getOutData() {
+	public List<Data> getOutData() {
 		return outData;
 	}
     

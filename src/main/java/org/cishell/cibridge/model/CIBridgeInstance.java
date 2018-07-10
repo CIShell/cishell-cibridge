@@ -1,6 +1,7 @@
 package org.cishell.cibridge.model;
 import org.cishell.cibridge.model.*;
 import java.io.File;
+import java.util.List;
 
 public interface CIBridgeInstance{
 	// algorithm must return
@@ -8,9 +9,9 @@ public interface CIBridgeInstance{
     AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
     AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
     //data must return
-    String validateData(String ID, String dataIds[]);
-    AlgorithmInstance findConverters(String dataId, String outFormat);
-    AlgorithmInstance findConvertersByFormat(String inFormat,String outFormat);
+    String validateData(String ID, List<String> dataIds);
+    List<AlgorithmInstance> findConverters(String dataId, String outFormat);
+    List<AlgorithmInstance> findConvertersByFormat(String inFormat,String outFormat);
     DataQueryResults getData(DataFilter filter);
     File downloadData(String dataId);
     //notification must return

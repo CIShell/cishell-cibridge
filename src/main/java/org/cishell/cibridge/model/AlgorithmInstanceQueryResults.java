@@ -2,17 +2,19 @@ package org.cishell.cibridge.model;
 
 import org.cishell.cibridge.model.AlgorithmInstance;
 
+import java.util.List;
+
 public class AlgorithmInstanceQueryResults {
-	AlgorithmInstance results;
+	List<AlgorithmInstance> results;
 	PageInfo pageInfo;
 
-	public AlgorithmInstanceQueryResults(AlgorithmInstance results, PageInfo pageInfo) {
+	public AlgorithmInstanceQueryResults(List<AlgorithmInstance> results, PageInfo pageInfo) {
 		// TODO Auto-generated constructor stub
 		this.results = results;
 		this.pageInfo = pageInfo;
 	}
 
-	public AlgorithmInstance getResults() {
+	public List<AlgorithmInstance> getResults() {
 		return results;
 	}
 

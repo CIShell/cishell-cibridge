@@ -4,29 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InputParameters {
-   public final String ID;
+   public final String id;
    public final String title;
    public final String description;
    public final List<ParameterDefinition> parameters;
 
     
     
-    public InputParameters(String ID,String title,String description,List<ParameterDefinition> parameters) {
+    public InputParameters(String id,String title,String description,List<ParameterDefinition> parameters) {
 		// TODO Auto-generated constructor stub
-    	this.ID=ID;
+    	this.id=id;
     	this.title=title;
     	this.description=description;
     	this.parameters=parameters;
 	}
-    public InputParameters(String title,String description,List<ParameterDefinition> parameters) {
-		// TODO Auto-generated constructor stub
-    	this.ID=null;
-    	this.title=title;
-    	this.description=description;
-    	this.parameters=parameters;
-	}
+
+
 	public String getID() {
-		return ID;
+		return id;
 	}
 	public String getTitle() {
 		return title;

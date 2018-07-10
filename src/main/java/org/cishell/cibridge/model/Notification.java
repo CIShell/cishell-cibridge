@@ -1,36 +1,23 @@
 package org.cishell.cibridge.model;
 
+import java.util.List;
+
 public class Notification {
-	private final String ID;
+	private final String id;
 	private final NotificationType type;
 	private final String title;
 	private final String message;
 	private final String detail;
-	private final String stackTrace;
-	private final ParameterDefinition formParameters;
+	private final List<String> stackTrace;
+	private final List<ParameterDefinition> formParameters;
 	private final Boolean isClosed;
-	private final Property formResponse;
+	private final List<Property> formResponse;
 	private final Boolean questionResponse;
 	private final Boolean confirmatipnResponse;
     
-    public Notification(String ID,NotificationType type,String title,String message,String detail,String stackTrace,ParameterDefinition formParameters,Boolean isClosed,Property formResponse,Boolean questionResponse,Boolean confirmatipnResponse) {
+    public Notification(String id,NotificationType type,String title,String message,String detail,List<String> stackTrace,List<ParameterDefinition> formParameters,Boolean isClosed,List<Property> formResponse,Boolean questionResponse,Boolean confirmatipnResponse) {
 		// TODO Auto-generated constructor stub
-    	this.ID=ID;
-    	this.type=type;
-    	this.title=title;
-    	this.message=message;
-    	this.detail=detail;
-    	this.stackTrace=stackTrace;
-    	this.formParameters=formParameters;
-    	this.isClosed=isClosed;
-    	this.formResponse=formResponse;
-    	this.questionResponse=questionResponse;
-    	this.confirmatipnResponse=confirmatipnResponse;
-	}
-    
-    public Notification(NotificationType type,String title,String message,String detail,String stackTrace,ParameterDefinition formParameters,Boolean isClosed,Property formResponse,Boolean questionResponse,Boolean confirmatipnResponse) {
-		// TODO Auto-generated constructor stub
-    	this.ID=null;
+    	this.id=id;
     	this.type=type;
     	this.title=title;
     	this.message=message;
@@ -43,8 +30,9 @@ public class Notification {
     	this.confirmatipnResponse=confirmatipnResponse;
 	}
 
+
 	public String getID() {
-		return ID;
+		return id;
 	}
 
 	public NotificationType getType() {
@@ -63,11 +51,11 @@ public class Notification {
 		return detail;
 	}
 
-	public String getStackTrace() {
+	public List<String> getStackTrace() {
 		return stackTrace;
 	}
 
-	public ParameterDefinition getFormParameters() {
+	public List<ParameterDefinition> getFormParameters() {
 		return formParameters;
 	}
 
@@ -75,7 +63,7 @@ public class Notification {
 		return isClosed;
 	}
 
-	public Property getFormResponse() {
+	public List<Property> getFormResponse() {
 		return formResponse;
 	}
 

@@ -5,12 +5,12 @@ import java.util.List;
 
 public class DataFilter {
 	 private List<String> dataIDs;
-	 private String formats;
+	 private List<String> formats;
 	 private Boolean isModified;
-	 private DataType types;
-	 private PropertyInput properties;
+	 private List<DataType> types;
+	 private List<PropertyInput> properties;
 
-	public DataFilter(List<String> dataIDs,String formats,Boolean isModified,DataType types,PropertyInput properties) {
+	public DataFilter(List<String> dataIDs,List<String> formats,Boolean isModified,List<DataType> types,List<PropertyInput> properties) {
 		// TODO Auto-generated constructor stub
     	this.dataIDs=dataIDs;
     	this.formats=formats;
@@ -21,31 +21,31 @@ public class DataFilter {
 	public List<String> getDataIDs() {
 		return dataIDs;
 	}
-	public String getFormats() {
+	public List<String> getFormats() {
 		return formats;
 	}
 	public Boolean getIsModified() {
 		return isModified;
 	}
-	public DataType getTypes() {
+	public List<DataType> getTypes() {
 		return types;
 	}
-	public PropertyInput getProperties() {
+	public List<PropertyInput> getProperties() {
 		return properties;
 	}
 	public void setDataIDs(List<String> dataIDs) {
 		this.dataIDs = dataIDs;
 	}
-	public void setFormats(String formats) {
+	public void setFormats(List<String> formats) {
 		this.formats = formats;
 	}
 	public void setIsModified(Boolean isModified) {
 		this.isModified = isModified;
 	}
-	public void setTypes(DataType types) {
+	public void setTypes(List<DataType> types) {
 		this.types = types;
 	}
-	public void setProperties(PropertyInput properties) {
+	public void setProperties(List<PropertyInput> properties) {
 		this.properties = properties;
 	}
 	

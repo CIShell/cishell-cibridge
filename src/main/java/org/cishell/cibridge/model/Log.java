@@ -1,20 +1,20 @@
 package org.cishell.cibridge.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Log {
 	private final LogLevel loglevel;
 	private final String message;
-	private final String[] stackTrace;
+	private final List<String> stackTrace;
 	private final Date time;
 
-	public Log(LogLevel loglevel, String message, String[] stackTrace, Date time) {
+	public Log(LogLevel loglevel, String message, List<String> stackTrace, Date time) {
 		// TODO Auto-generated constructor stub
 		this.loglevel = loglevel;
 		this.message = message;
 		this.stackTrace = stackTrace;
 		this.time = time;
-
 	}
 
 	public LogLevel getLoglevel() {
@@ -25,7 +25,7 @@ public class Log {
 		return message;
 	}
 
-	public String[] getStackTrace() {
+	public List<String> getStackTrace() {
 		return stackTrace;
 	}
 

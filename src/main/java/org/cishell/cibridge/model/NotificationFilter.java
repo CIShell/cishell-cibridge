@@ -1,30 +1,26 @@
 package org.cishell.cibridge.model;
 
+import java.util.List;
+
 public class NotificationFilter {
-	private String ID;
+	private List<String> ids;
 	private Boolean isClosed;
 	private int limit;
 	private int offset;
 	
-	public NotificationFilter(String ID,Boolean isClosed, int limit,int offset) {
+	public NotificationFilter(List<String> ids,Boolean isClosed, int limit,int offset) {
 		// TODO Auto-generated constructor stub
-		this.ID=ID;
+		this.ids=ids;
 		this.isClosed=isClosed;
 		this.limit=limit;
 		this.offset=offset;
 	}
-	public NotificationFilter(Boolean isClosed, int limit,int offset) {
-		// TODO Auto-generated constructor stub
-		this.ID=null;
-		this.isClosed=isClosed;
-		this.limit=limit;
-		this.offset=offset;
+
+	public List<String> getID() {
+		return ids;
 	}
-	public String getID() {
-		return ID;
-	}
-	public void setID(String iD) {
-		ID = iD;
+	public void setID(List<String> ids) {
+		ids = ids;
 	}
 	public Boolean getIsClosed() {
 		return isClosed;
