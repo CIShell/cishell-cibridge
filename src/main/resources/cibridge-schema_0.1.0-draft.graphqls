@@ -28,58 +28,57 @@ schema {
 	# root query type
 	query: Query
 
-	# root mutation type
-	mutation: Mutation
-
-	# root subscription type
-	subscription: Subscription
+	
 }
 
 # Root query type
 type Query{	
+	# Returns all the algorithm factory templates 
+	getAlgorithmDefinitionsNoFilter: AlgorithmDefinitionQueryResults
+		
 	# Returns all the algorithm factory templates matching the given filter criteria
-	getAlgorithmDefinitions(filter: AlgorithmFilter): AlgorithmDefinitionQueryResults!
+	#getAlgorithmDefinitions(filter: AlgorithmFilter): AlgorithmDefinitionQueryResults!
 
 	# Returns all the algorithm instances matching the given filter criteria
-	getAlgorithmInstances(filter: AlgorithmFilter): AlgorithmInstanceQueryResults!
+	#getAlgorithmInstances(filter: AlgorithmFilter): AlgorithmInstanceQueryResults!
 
 	# Validates the given data that is proposed to be given to the algorithm
-	validateData(algorithmId: ID!, dataIds: [ID]!): String
+	#validateData(algorithmId: ID!, dataIds: [ID]!): String
 
 	
 	# Determines the input format from the referenced data and 	finds the chain of converter algorithms to convert the data to the specified output format
-	findConverters(dataId: ID!, outFormat: String!): [AlgorithmInstance!]!
+	#findConverters(dataId: ID!, outFormat: String!): [AlgorithmInstance!]!
 
 	# Find the chain of converter algorithms to convert data from given input format to given output format
-	findConvertersByFormat(inFormat: String!, outFormat: String!): [AlgorithmInstance!]!
+	#findConvertersByFormat(inFormat: String!, outFormat: String!): [AlgorithmInstance!]!
 
 	
 	# Returns references for all the data objects that matches the given filter
-	getData(filter: DataFilter): DataQueryResults!
+	#getData(filter: DataFilter): DataQueryResults!
 
 	# Downloads the data associated with the given data reference as a file
-	downloadData(dataId: ID!): File!
+	#downloadData(dataId: ID!): File!
 
 	
 	# Returns the notifications matching the specified criteria given in the filter object
-	getNotifications(filter: NotificationFilter!): NotificationQueryResults!
+	#getNotifications(filter: NotificationFilter!): NotificationQueryResults!
 
 	# Returns if the specified notification is closed or not
-	isClosed(notificationId: ID!): Boolean!
+	#isClosed(notificationId: ID!): Boolean!
 
 	
 	# Returns if the scheduler is empty or not
-	isSchedulerEmpty: Boolean
+	#isSchedulerEmpty: Boolean
 
 	# Returns whether the scheduler is running or paused
-	isSchedulerRunning: Boolean
+	#isSchedulerRunning: Boolean
 
 	# Returns the count of the algorithms waiting in the scheduler
-	getSchedulerQueueWaiting: Int
+	#getSchedulerQueueWaiting: Int
 
 	
 	# Returns all the logs that matches the given log filter
-	getLogs(filter: LogFilter): LogQueryResults!
+	#getLogs(filter: LogFilter): LogQueryResults!
 
 	
 	# TODO: Decide on preferences strategy
@@ -88,100 +87,6 @@ type Query{
 	# getUserPreferences(algorithm: AlgorithmDefinition): Preferences
 	# getSystemPreferences(algorithm: AlgorithmDefinition): Preferences
 	# getSystemPreferences: Preferences
-
-}
-
-# Root mutation type
-type Mutation{	
-	# Create instance of the given algorithm template using the data references
-	createAlgorithm(algorithmId: ID!, dataIds: [ID!], parameters: [PropertyInput!]): AlgorithmInstance!
-
-	
-	# Uploads a data file and creates the data reference in the data manager
-	uploadData(file: File!, properties: DataProperties): Data!
-
-	# Removes the referenced data from the data manager
-	removeData(dataId: ID): Boolean!
-
-	# Sets label to the referenced data
-	updateData(dataId: ID, properties: DataProperties): Boolean!
-
-	
-	# Sends the response from the user for the specified notification
-	setNotificationResponse(notificationId: ID!, response: NotificationResponse!): Boolean!
-
-	# Closes the referenced notification
-	closeNotification(notificationId: ID): Boolean
-
-	
-	# Cancel or uncancel the referenced algorithm based on the passed boolean value. 	Returns the algorithm's new cancelled state.
-	setAlgorithmCancelled(algorithmInstanceId: ID!, isCancelled: Boolean): Boolean!
-
-	# Pause or unpause the referenced algorithm based on the passed boolean value. 	Returns the algorithm's new pause state.
-	setAlgorithmPaused(algorithmInstanceId: ID!, isPaused: Boolean): Boolean!
-
-	# Removes the given algorithm instance from the system. 	Returns if the algorithm was successfully removed.
-	removeAlgorithm(algorithmInstanceId: ID!): Boolean!
-
-	# Schedules an Algorithm to be run immediately. If there are simply not enough resources to run it, 	it will still have to wait until there are enough resources to fulfill the request. 	Returns if the algorithm was successfully started.
-	runAlgorithmNow(algorithmInstanceId: ID!): Boolean!
-
-	# Schedule the referenced algorithm at a given time in the scheduler. 	Returns if the algorithm was successfully scheduled.
-	scheduleAlgorithm(algorithmInstanceId: ID!, time: Time!): Boolean!
-
-	# Reschedules an already scheduled Algorithm to be run at a different time. 	If the Algorithm is not scheduled already, then this method will have no effect and will return false.
-	rescheduleAlgorithm(algorithmInstanceId: ID!, time: Time!): Boolean!
-
-	# Unschedules an already scheduled, but not yet running Algorithm from the scheduler. 	Tries to unschedule an Algorithm from the scheduler.  	Returns if the algorithm was successfully started.
-	unscheduleAlgorithm(algorithmInstanceId: ID!): Boolean!
-
-	# Clears all currently scheduled Algorithms to be run. 	If an Algorithm is already running, then it will continue to run until finished. 	Returns the number of algorithms running after clearing the scheduler.
-	clearScheduler: Int!
-
-	# Pauses or unpauses the running of new Algorithms in the scheduler
-	# Parameters: running - true to pause, false to unpause. 	Returns the new schedule state.
-	setSchedulerRunning(running: Boolean): Boolean!
-
-}
-
-# Root subscription type
-type Subscription{	
-	# Receives the algorithm template when it is added
-	algorithmDefinitionAdded: AlgorithmDefinition!
-
-	# Receives the algorithm template when it is removed
-	algorithmDefinitionRemoved: AlgorithmDefinition!
-
-	# Receives the algorithm instance when it is updated and is optionally matched by the filter
-	algorithmInstanceUpdated(filter: AlgorithmFilter): AlgorithmInstance!
-
-	
-	# Receives a new notification when its created
-	notificationAdded: Notification!
-
-	# Received a notification when it has been updated
-	notificationUpdated: Notification!
-
-	
-	# Receives the reference to a data object when it is added to the data manager
-	dataAdded: Data!
-
-	# Receives the reference to a data object when it is removed from the data manager
-	dataRemoved: Data!
-
-	# Receives the reference to a data object when it is updated
-	dataUpdated: Data!
-
-	
-	# Receives update when scheduler is cleared. Return value is always false.
-	schedulerCleared: Boolean!
-
-	# Receives the current scheduler state when it changes
-	schedulerRunningChanged: Boolean!
-
-	
-	# Receives new logs matching the log levels specified (or all logs)
-	logAdded(logLevels: [LogLevel!]): Log!
 
 }
 

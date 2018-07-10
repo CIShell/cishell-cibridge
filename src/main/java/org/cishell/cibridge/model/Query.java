@@ -1,57 +1,86 @@
 package org.cishell.cibridge.model;
+
 import java.io.File;
 
-public class Query implements CIBridgeInstance{
-    String validateData(String ID, String dataIds[]){
-        return new String("Hello");
-    }
-    AlgorithmInstance findConverters(String dataId, String outFormat)
-    {
-        System.out.println("Find Converters");
-        return null;
-    }
-    AlgorithmInstance findConvertersByFormat(String inFormat,String outFormat)
-    {
-        System.out.println("Find Converters By Format");
-        return  null;
-    }
-    DataQueryResults getData(DataFilter filter)
-    {
-        System.out.println("get Data");
-        return null;
-    }
-    File downloadData(String dataId)
-    {
-        System.out.println(dataId + "download Data");
-        return null;
-    }
-    NotificationQueryResults getNotifications(NotificationFilter filter)
-    {
-        System.out.println("getNotifications");
-        return null;
-    }
-    Boolean isClosed(String NotificationId)
-    {
-        System.out.println("isClosed");
-        return Boolean.TRUE;
-    }
-    Boolean isSchedulerEmpty()
-    {
-        System.out.println("isSchedulerEmpty");
-        return Boolean.TRUE;
-    }
-    Boolean isSchedulerRunning()
-    {
-        System.out.println("isSchedulerRunning");
-        return Boolean.TRUE;
-    }
-    int getSchedulerQueueWaiting()
-    {
-        return 20;
-    }
-    LogQueryResults getLogs(LogFilter filter)
-    {
-        System.out.println("getLogs");
-        return null;
-    }
+import org.cishell.cibridge.resolvers.AlgorithmDefination_OSGI_mock;
+
+import com.coxautodev.graphql.tools.GraphQLRootResolver;
+
+public class Query implements CIBridgeInstance,GraphQLRootResolver {
+	private final AlgorithmDefination_OSGI_mock algorithmDefinationOSGIMock;
+	
+	//constructor 
+	public Query(AlgorithmDefination_OSGI_mock algorithmDefinationOSGIMock) {
+		this.algorithmDefinationOSGIMock=algorithmDefinationOSGIMock;
+	}
+	
+	//resolver functions
+	public AlgorithmDefinitionQueryResults getAlgorithmDefinitionsNoFilter() {
+		// TODO Auto-generated method stub
+		return algorithmDefinationOSGIMock.getAlgorithmDefinationQuerResult();
+	}
+	
+	public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
+		return algorithmDefinationOSGIMock.getAlgorithmDefinationQuerResult();
+	}
+
+	public AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter) {
+		return algorithmDefinationOSGIMock.getAlgorithmInstanceQueryResults();
+	}
+
+	public String validateData(String ID, String[] dataIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AlgorithmInstance findConverters(String dataId, String outFormat) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public AlgorithmInstance findConvertersByFormat(String inFormat, String outFormat) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public DataQueryResults getData(DataFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public File downloadData(String dataId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public NotificationQueryResults getNotifications(NotificationFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Boolean isClosed(String NotificationId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Boolean isSchedulerEmpty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Boolean isSchedulerRunning() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getSchedulerQueueWaiting() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public LogQueryResults getLogs(LogFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

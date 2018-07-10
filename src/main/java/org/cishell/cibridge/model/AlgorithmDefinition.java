@@ -1,10 +1,10 @@
 package org.cishell.cibridge.model;
 
-class AlgorithmDefinition {
+public class AlgorithmDefinition {
 	private final String ID;
 	private final InputParameters parameters;
 	private final String inData;
-	private final String ourData;
+	private final String outData;
 	private final String label;
 	private final String description;
 	private final Boolean parentOutputData;
@@ -21,7 +21,7 @@ class AlgorithmDefinition {
 	private final Property otherProperties;
 
 	// constructor with ID initialisation
-	public AlgorithmDefinition(String ID, InputParameters parameters, String inData, String ourData, String label,
+	public AlgorithmDefinition(String ID, InputParameters parameters, String inData, String outData, String label,
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
 			String referenceUrl, String writtenIn, Property otherProperties) {
@@ -29,7 +29,7 @@ class AlgorithmDefinition {
 		this.ID = ID;
 		this.parameters = parameters;
 		this.inData = inData;
-		this.ourData = ourData;
+		this.outData = outData;
 		this.label = label;
 		this.description = description;
 		this.parentOutputData = parentOutputData;
@@ -46,14 +46,14 @@ class AlgorithmDefinition {
 		this.otherProperties = otherProperties;
 	}
 
-	public AlgorithmDefinition(InputParameters parameters, String inData, String ourData, String label,
+	public AlgorithmDefinition(InputParameters parameters, String inData, String outData, String label,
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
 			String referenceUrl, String writtenIn, Property otherProperties) {
 		this.ID=null;
 		this.parameters = parameters;
 		this.inData = inData;
-		this.ourData = ourData;
+		this.outData = outData;
 		this.label = label;
 		this.description = description;
 		this.parentOutputData = parentOutputData;
@@ -82,8 +82,8 @@ class AlgorithmDefinition {
 		return inData;
 	}
 
-	public String getOurData() {
-		return ourData;
+	public String getOutData() {
+		return outData;
 	}
 
 	public String getLabel() {

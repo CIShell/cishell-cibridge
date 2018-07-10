@@ -1,21 +1,24 @@
 package org.cishell.cibridge.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InputParameters {
    public final String ID;
    public final String title;
    public final String description;
-   public final ParameterDefinition parameters;
+   public final List<ParameterDefinition> parameters;
 
     
     
-    public InputParameters(String ID,String title,String description,ParameterDefinition parameters) {
+    public InputParameters(String ID,String title,String description,List<ParameterDefinition> parameters) {
 		// TODO Auto-generated constructor stub
     	this.ID=ID;
     	this.title=title;
     	this.description=description;
     	this.parameters=parameters;
 	}
-    public InputParameters(String title,String description,ParameterDefinition parameters) {
+    public InputParameters(String title,String description,List<ParameterDefinition> parameters) {
 		// TODO Auto-generated constructor stub
     	this.ID=null;
     	this.title=title;
@@ -31,7 +34,7 @@ public class InputParameters {
 	public String getDescription() {
 		return description;
 	}
-	public ParameterDefinition getParameters() {
+	public List<ParameterDefinition> getParameters() {
 		return parameters;
 	}
     
