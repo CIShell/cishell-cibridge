@@ -18,5 +18,6 @@ public class AlgorithmDefinitionQueryResults {
 	public PageInfo getPageInfo() {
 		return pageInfo;
 	}
+	
     
 }

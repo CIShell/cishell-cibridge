@@ -18,6 +18,7 @@ public class AlgorithmDefinition {
 	private final String implementers;
 	private final String integrators;
 	private final String documentationUrl;
+	private final String reference;
 	private final String referenceUrl;
 	private final String writtenIn;
 	private final List<Property> otherProperties;
@@ -26,7 +27,7 @@ public class AlgorithmDefinition {
 	public AlgorithmDefinition(String id, InputParameters parameters, List<String> inData, List<String> outData, String label,
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
-			String referenceUrl, String writtenIn, List<Property> otherProperties) {
+			String reference, String referenceUrl, String writtenIn, List<Property> otherProperties) {
 		// TODO Auto-generated constructor stub
 		this.id = id;
 		this.parameters = parameters;
@@ -43,6 +44,7 @@ public class AlgorithmDefinition {
 		this.implementers = implementers;
 		this.integrators = integrators;
 		this.documentationUrl = documentationUrl;
+		this.reference=reference;
 		this.referenceUrl = referenceUrl;
 		this.writtenIn = writtenIn;
 		this.otherProperties = otherProperties;
@@ -51,7 +53,7 @@ public class AlgorithmDefinition {
 	public AlgorithmDefinition(InputParameters parameters, List<String> inData, List<String> outData, String label,
 			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
 			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
-			String referenceUrl, String writtenIn, List<Property> otherProperties) {
+			String reference, String referenceUrl, String writtenIn, List<Property> otherProperties) {
 		// TODO Auto-generated constructor stub
 		this.id = null;
 		this.parameters = parameters;
@@ -68,6 +70,7 @@ public class AlgorithmDefinition {
 		this.implementers = implementers;
 		this.integrators = integrators;
 		this.documentationUrl = documentationUrl;
+		this.reference=reference;
 		this.referenceUrl = referenceUrl;
 		this.writtenIn = writtenIn;
 		this.otherProperties = otherProperties;
@@ -133,6 +136,10 @@ public class AlgorithmDefinition {
 		return documentationUrl;
 	}
 
+	public String getReference() {
+		return reference;
+	}
+
 	public String getReferenceUrl() {
 		return referenceUrl;
 	}
@@ -144,7 +151,6 @@ public class AlgorithmDefinition {
 	public List<Property> getOtherProperties() {
 		return otherProperties;
 	}
-
-
+	
 
 }

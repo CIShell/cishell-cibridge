@@ -21,5 +21,5 @@ public class DataQueryResults {
 	public PageInfo getPageInfo() {
 		return pageInfo;
 	}
-
+	
 }

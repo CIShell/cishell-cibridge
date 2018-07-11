@@ -18,4 +18,6 @@ public class PageInfo {
 		return hasPreviousPage;
 	}
 
+	
+
 }

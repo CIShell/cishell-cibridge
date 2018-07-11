@@ -13,25 +13,26 @@ public class Notification {
 	private final Boolean isClosed;
 	private final List<Property> formResponse;
 	private final Boolean questionResponse;
-	private final Boolean confirmatipnResponse;
-    
-    public Notification(String id,NotificationType type,String title,String message,String detail,List<String> stackTrace,List<ParameterDefinition> formParameters,Boolean isClosed,List<Property> formResponse,Boolean questionResponse,Boolean confirmatipnResponse) {
+	private final Boolean confirmationResponse;
+
+	public Notification(String id, NotificationType type, String title, String message, String detail,
+			List<String> stackTrace, List<ParameterDefinition> formParameters, Boolean isClosed,
+			List<Property> formResponse, Boolean questionResponse, Boolean confirmationResponse) {
 		// TODO Auto-generated constructor stub
-    	this.id=id;
-    	this.type=type;
-    	this.title=title;
-    	this.message=message;
-    	this.detail=detail;
-    	this.stackTrace=stackTrace;
-    	this.formParameters=formParameters;
-    	this.isClosed=isClosed;
-    	this.formResponse=formResponse;
-    	this.questionResponse=questionResponse;
-    	this.confirmatipnResponse=confirmatipnResponse;
+		this.id = id;
+		this.type = type;
+		this.title = title;
+		this.message = message;
+		this.detail = detail;
+		this.stackTrace = stackTrace;
+		this.formParameters = formParameters;
+		this.isClosed = isClosed;
+		this.formResponse = formResponse;
+		this.questionResponse = questionResponse;
+		this.confirmationResponse = confirmationResponse;
 	}
 
-
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 
@@ -71,8 +72,8 @@ public class Notification {
 		return questionResponse;
 	}
 
-	public Boolean getConfirmatipnResponse() {
-		return confirmatipnResponse;
+	public Boolean getConfirmationResponse() {
+		return confirmationResponse;
 	}
-    
+
 }

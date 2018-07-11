@@ -4,21 +4,21 @@ import java.util.Date;
 import java.util.List;
 
 public class Log {
-	private final LogLevel loglevel;
+	private final LogLevel logLevel;
 	private final String message;
 	private final List<String> stackTrace;
-	private final Date time;
+	private final Date timestamp;
 
-	public Log(LogLevel loglevel, String message, List<String> stackTrace, Date time) {
+	public Log(LogLevel logLevel, String message, List<String> stackTrace, Date timestamp) {
 		// TODO Auto-generated constructor stub
-		this.loglevel = loglevel;
+		this.logLevel = logLevel;
 		this.message = message;
 		this.stackTrace = stackTrace;
-		this.time = time;
+		this.timestamp = timestamp;
 	}
 
-	public LogLevel getLoglevel() {
-		return loglevel;
+	public LogLevel getLogLevel() {
+		return logLevel;
 	}
 
 	public String getMessage() {
@@ -29,7 +29,8 @@ public class Log {
 		return stackTrace;
 	}
 
-	public Date getTime() {
-		return time;
+	public Date getTimestamp() {
+		return timestamp;
 	}
+
 }

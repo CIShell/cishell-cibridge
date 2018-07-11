@@ -2,25 +2,33 @@ package org.cishell.cibridge.model;
 
 import java.util.List;
 
-public class ParameterDefinition{
-	private final String ID;
+public class ParameterDefinition {
+	private final String id;
 	private final String name;
 	private final String description;
 	private final AttributeType type;
 	protected final List<Property> options;
-    
-    public ParameterDefinition(String ID,String name,String description,AttributeType type,List<Property> options) {
+
+	public ParameterDefinition(String id, String name, String description, AttributeType type, List<Property> options) {
 		// TODO Auto-generated constructor stub
-    	this.ID=ID;
-    	this.name=name;
-    	this.description=description;
-    	this.type=type;
-    	this.options=options;
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.type = type;
+		this.options = options;
 	}
 
+	public ParameterDefinition(String name, String description, AttributeType type, List<Property> options) {
+		// TODO Auto-generated constructor stub
+		this.id = null;
+		this.name = name;
+		this.description = description;
+		this.type = type;
+		this.options = options;
+	}
 
-	public String getID() {
-		return ID;
+	public String getId() {
+		return id;
 	}
 
 	public String getName() {
@@ -38,5 +46,5 @@ public class ParameterDefinition{
 	public List<Property> getOptions() {
 		return options;
 	}
-    
+
 }

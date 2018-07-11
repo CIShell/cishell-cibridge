@@ -3,8 +3,8 @@ package org.cishell.cibridge.model;
 import java.util.List;
 
 public class AlgorithmFilter {
-	private List<String> algortihmDefinitionIds;
-	private List<String> algortihmInstanceIds;
+	private List<String> algorithmDefinitionIds;
+	private List<String> algorithmInstanceIds;
 	private List<AlgorithmState> states;
 	private List<String> inputDataIds;
 	private List<String> inputFormats;
@@ -13,12 +13,12 @@ public class AlgorithmFilter {
 	private int limit;
 	private int offset;
 
-	public AlgorithmFilter(List<String> algortihmDefinitionIds, List<String> algortihmInstanceIds,
+	public AlgorithmFilter(List<String> algorithmDefinitionIds, List<String> algorithmInstanceIds,
 			List<AlgorithmState> states, List<String> inputDataIds, List<String> inputFormats, List<String> outputFormats,
 			List<PropertyInput> properties, int limit, int offset) {
 		// TODO Auto-generated constructor stub
-		this.algortihmDefinitionIds = algortihmDefinitionIds;
-		this.algortihmInstanceIds = algortihmInstanceIds;
+		this.algorithmDefinitionIds = algorithmDefinitionIds;
+		this.algorithmInstanceIds = algorithmInstanceIds;
 		this.states = states;
 		this.inputDataIds = inputDataIds;
 		this.inputFormats = inputFormats;
@@ -28,20 +28,20 @@ public class AlgorithmFilter {
 		this.offset = offset;
 	}
 
-	public List<String> getAlgortihmDefinitionIds() {
-		return algortihmDefinitionIds;
+	public List<String> getAlgorithmDefinitionIds() {
+		return algorithmDefinitionIds;
 	}
 
-	public void setAlgortihmDefinitionIds(List<String> algortihmDefinitionIds) {
-		this.algortihmDefinitionIds = algortihmDefinitionIds;
+	public void setAlgorithmDefinitionIds(List<String> algorithmDefinitionIds) {
+		this.algorithmDefinitionIds = algorithmDefinitionIds;
 	}
 
-	public List<String> getAlgortihmInstanceIds() {
-		return algortihmInstanceIds;
+	public List<String> getAlgorithmInstanceIds() {
+		return algorithmInstanceIds;
 	}
 
-	public void setAlgortihmInstanceIds(List<String> algortihmInstanceIds) {
-		this.algortihmInstanceIds = algortihmInstanceIds;
+	public void setAlgorithmInstanceIds(List<String> algorithmInstanceIds) {
+		this.algorithmInstanceIds = algorithmInstanceIds;
 	}
 
 	public List<AlgorithmState> getStates() {
@@ -99,8 +99,5 @@ public class AlgorithmFilter {
 	public void setOffset(int offset) {
 		this.offset = offset;
 	}
-
-	
-	
 	
 }

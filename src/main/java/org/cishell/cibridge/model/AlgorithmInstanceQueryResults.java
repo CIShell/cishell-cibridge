@@ -5,8 +5,8 @@ import org.cishell.cibridge.model.AlgorithmInstance;
 import java.util.List;
 
 public class AlgorithmInstanceQueryResults {
-	List<AlgorithmInstance> results;
-	PageInfo pageInfo;
+	public final List<AlgorithmInstance> results;
+	public final PageInfo pageInfo;
 
 	public AlgorithmInstanceQueryResults(List<AlgorithmInstance> results, PageInfo pageInfo) {
 		// TODO Auto-generated constructor stub
@@ -21,4 +21,5 @@ public class AlgorithmInstanceQueryResults {
 	public PageInfo getPageInfo() {
 		return pageInfo;
 	}
+
 }
