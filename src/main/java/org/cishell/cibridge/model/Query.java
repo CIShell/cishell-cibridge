@@ -1,6 +1,7 @@
 package org.cishell.cibridge.model;
 
 import java.io.File;
+import java.util.List;
 
 import org.cishell.cibridge.resolvers.AlgorithmDefination_OSGI_mock;
 
@@ -28,17 +29,17 @@ public class Query implements CIBridgeInstance,GraphQLRootResolver {
 		return algorithmDefinationOSGIMock.getAlgorithmInstanceQueryResults();
 	}
 
-	public String validateData(String ID, String[] dataIds) {
+	public String validateData(String algorithmDefinitionId, List<String> dataIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public AlgorithmInstance findConverters(String dataId, String outFormat) {
+	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public AlgorithmInstance findConvertersByFormat(String inFormat, String outFormat) {
+	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
 		// TODO Auto-generated method stub
 		return null;
 	}

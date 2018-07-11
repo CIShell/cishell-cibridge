@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7588161d-9e71-42b2-874e-311784802b7a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -46,13 +44,13 @@
       <file leaf-file-name="Query.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="19" column="75" selection-start-line="19" selection-start-column="43" selection-end-line="19" selection-end-column="75" />
+            <state relative-caret-position="68">
+              <caret line="9" column="67" lean-forward="true" selection-start-line="9" selection-start-column="67" selection-end-line="9" selection-end-column="67" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CIBridgeInstance.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="CIBridgeInstance.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="238">
@@ -129,11 +127,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cibridge-schema_0.1.0-draft.graphqls" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cibridge-schema_0.1.0-draft.graphqls" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="187">
-              <caret line="11" column="11" lean-forward="true" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+            <state relative-caret-position="425">
+              <caret line="25" column="17" lean-forward="true" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -162,7 +160,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/AlgorithmInstanceQueryResults.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/DataFilter.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Data.java" />
@@ -181,6 +178,7 @@
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/ParameterDefinition.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java" />
         <option value="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java" />
       </list>
     </option>
   </component>
@@ -637,23 +635,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="19" column="75" selection-start-line="19" selection-start-column="43" selection-end-line="19" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="48" lean-forward="true" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/AlgorithmDefinitionQueryResults.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -708,8 +689,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="11" column="11" lean-forward="true" selection-start-line="11" selection-start-column="11" selection-end-line="11" selection-end-column="11" />
+        <state relative-caret-position="425">
+          <caret line="25" column="17" lean-forward="true" selection-start-line="25" selection-start-column="17" selection-end-line="25" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="9" column="67" lean-forward="true" selection-start-line="9" selection-start-column="67" selection-end-line="9" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="48" lean-forward="true" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
