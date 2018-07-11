@@ -9,7 +9,7 @@ public interface CIBridgeInstance{
     AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
     AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
     //data must return
-    String validateData(String ID, List<String> dataIds);
+    String validateData(String algorithmDefinitionId, List<String> dataIds);
     List<AlgorithmInstance> findConverters(String dataId, String outFormat);
     List<AlgorithmInstance> findConvertersByFormat(String inFormat,String outFormat);
     DataQueryResults getData(DataFilter filter);
