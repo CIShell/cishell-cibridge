@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.cishell.cibridge.model.AlgorithmDefinition;
 import org.cishell.cibridge.model.AlgorithmDefinitionQueryResults;
+import org.cishell.cibridge.model.AlgorithmFilter;
 import org.cishell.cibridge.model.AlgorithmInstance;
 import org.cishell.cibridge.model.AlgorithmInstanceQueryResults;
 import org.cishell.cibridge.model.AlgorithmState;
@@ -23,6 +24,7 @@ import org.cishell.cibridge.model.Property;
 public class AlgorithmDefination_OSGI_mock {
 	private final AlgorithmDefinitionQueryResults algorithmDefinationQuerResult;
 	private final AlgorithmInstanceQueryResults algorithmInstanceQueryResults;
+	private final List<AlgorithmDefinition> algorithmDefinition;
 
 	public AlgorithmDefination_OSGI_mock() {// ID not being initialized now, will be done later with correct
 											// implementation
@@ -91,10 +93,12 @@ public class AlgorithmDefination_OSGI_mock {
 		listAlgorithmInstanceResults = new ArrayList<AlgorithmInstance>();
 		listAlgorithmInstanceResults.add(algorithmInstanceResults);
 		algorithmInstanceQueryResults = new AlgorithmInstanceQueryResults(listAlgorithmInstanceResults, pageInfo2);
-
+		
+//		algorithmDefinition = new ArrayList<AlgorithmDefinition>();
+		algorithmDefinition = algorithmDefinationQuerResult.getResults();
 	}
 
-	public AlgorithmDefinitionQueryResults getAlgorithmDefinationQuerResult() {
+	public AlgorithmDefinitionQueryResults getAlgorithmDefinationQuerResult(AlgorithmFilter filter) {
 		return algorithmDefinationQuerResult;
 	}
 
@@ -102,6 +106,14 @@ public class AlgorithmDefination_OSGI_mock {
 		return algorithmInstanceQueryResults;
 	}
 
+	public AlgorithmDefinitionQueryResults getAlgorithmDefinationQuerResult() {
+		return algorithmDefinationQuerResult;
+	}
+
+	public List<AlgorithmDefinition> getAlgorithmDefinition() {
+		return algorithmDefinition;
+	}
+	
 	// more functions to be defined
 
 }

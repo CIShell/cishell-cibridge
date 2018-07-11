@@ -6,6 +6,7 @@ import java.util.List;
 public interface CIBridgeInstance{
 	// algorithm must return
 //	AlgorithmDefinitionQueryResults getAlgorithmDefinitionsNoFilter();
+	List<AlgorithmDefinition> getAlgorithmresults();
     AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
     AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
     //data must return
@@ -13,7 +14,8 @@ public interface CIBridgeInstance{
     List<AlgorithmInstance> findConverters(String dataId, String outFormat);
     List<AlgorithmInstance> findConvertersByFormat(String inFormat,String outFormat);
     DataQueryResults getData(DataFilter filter);
-    File downloadData(String dataId);
+//    File downloadData(String dataId);
+    String downloadData(String dataId);
     //notification must return
     NotificationQueryResults getNotifications(NotificationFilter filter);
     //scheduler must return

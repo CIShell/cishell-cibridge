@@ -2,9 +2,9 @@ package org.cishell.cibridge.model;
 
 public class Property {
 	public final String key;
-	public final Object value;
+	public final String value;
 
-	public Property(String key,Object value) {
+	public Property(String key,String value) {
 		// TODO Auto-generated constructor stub
 		this.key=key;
 		this.value=value;
@@ -14,7 +14,7 @@ public class Property {
 		return key;
 	}
 
-	public Object getValue() {
+	public String getValue() {
 		return value;
 	}
 	

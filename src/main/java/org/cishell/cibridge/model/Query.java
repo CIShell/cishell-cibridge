@@ -22,7 +22,7 @@ public class Query implements CIBridgeInstance,GraphQLRootResolver {
 //	}
 	
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
-		return algorithmDefinationOSGIMock.getAlgorithmDefinationQuerResult();
+		return algorithmDefinationOSGIMock.getAlgorithmDefinationQuerResult(filter);
 	}
 
 	public AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter) {
@@ -49,7 +49,11 @@ public class Query implements CIBridgeInstance,GraphQLRootResolver {
 		return null;
 	}
 
-	public File downloadData(String dataId) {
+//	public File downloadData(String dataId) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+	public String downloadData(String dataId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -80,6 +84,11 @@ public class Query implements CIBridgeInstance,GraphQLRootResolver {
 	}
 
 	public LogQueryResults getLogs(LogFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<AlgorithmDefinition> getAlgorithmresults() {
 		// TODO Auto-generated method stub
 		return null;
 	}
