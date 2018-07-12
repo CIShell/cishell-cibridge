@@ -5,7 +5,8 @@ scalar ID
 # data type to store values (of any data type specified by the user)
 # scalar Value
 
-# data type to store datedate information
+# data type to store date information
+# java.util.Date implementation
 scalar Date
 
 # data type to store file information
@@ -27,7 +28,7 @@ schema {
 # Root query type
 type Query{
 
-	getAlgorithmresults: [AlgorithmDefinition]
+	algorithmresults: [AlgorithmDefinition]
 
 	# Returns all the algorithm factory templates matching the given filter criteria
 	getAlgorithmDefinitions(filter: AlgorithmFilter): AlgorithmDefinitionQueryResults!

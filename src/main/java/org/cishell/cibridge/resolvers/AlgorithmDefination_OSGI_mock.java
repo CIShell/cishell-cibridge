@@ -1,6 +1,7 @@
 package org.cishell.cibridge.resolvers;
 
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -87,7 +88,7 @@ public class AlgorithmDefination_OSGI_mock {
 		inputList.add(new Property("dummy key 4 in Property Class", "dummy value as well"));
 		outDataData = new Data("Data_4", "String format", "YOu know who", "Why Label?", "Parent ID not found", DataType.MODEL, true, inputList);
 		sendingOutData.add(outDataData);
-		algorithmInstanceResults = new AlgorithmInstance("algorithmInstance_1", sendingInData,inputList,algorithmDefinitionResults.get(0), AlgorithmState.SCHEDULED, new java.util.Date(System.currentTimeMillis()), 50, sendingOutData);
+		algorithmInstanceResults = new AlgorithmInstance("algorithmInstance_1", sendingInData,inputList,algorithmDefinitionResults.get(0), AlgorithmState.SCHEDULED, ZonedDateTime.now(), 50, sendingOutData);
 		pageInfo2 = new PageInfo(true, false);
 		/* initialize algorithmInstanceResults and pageInfo */
 		listAlgorithmInstanceResults = new ArrayList<AlgorithmInstance>();
@@ -95,10 +96,18 @@ public class AlgorithmDefination_OSGI_mock {
 		algorithmInstanceQueryResults = new AlgorithmInstanceQueryResults(listAlgorithmInstanceResults, pageInfo2);
 		
 //		algorithmDefinition = new ArrayList<AlgorithmDefinition>();
+		//System.out.println("****************************Hi reached here****************************");
 		algorithmDefinition = algorithmDefinationQuerResult.getResults();
+		//System.out.println(algorithmDefinition.get(0).getDescription());
+		
 	}
-
-	public AlgorithmDefinitionQueryResults getAlgorithmDefinationQuerResult(AlgorithmFilter filter) {
+	
+	public List<AlgorithmDefinition> getAlgorithmresults(){
+		//System.out.println("********************************************************"+algorithmDefinition.get(0).getDescription()+"********************************************************");
+		return algorithmDefinition;
+	}
+	
+	public AlgorithmDefinitionQueryResults getAlgorithmDefinitionQueryResult(AlgorithmFilter filter) {
 		return algorithmDefinationQuerResult;
 	}
 
@@ -108,12 +117,7 @@ public class AlgorithmDefination_OSGI_mock {
 
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinationQuerResult() {
 		return algorithmDefinationQuerResult;
-	}
-
-	public List<AlgorithmDefinition> getAlgorithmDefinition() {
-		return algorithmDefinition;
-	}
-	
+	}	
 	// more functions to be defined
 
 }

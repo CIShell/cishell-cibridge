@@ -1,17 +1,18 @@
 package org.cishell.cibridge.model;
 
 import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
 public class LogFilter {
 	public List<LogLevel> logLevel;
-	public Date logsSince;
-	public Date logsBefore;
+	public ZonedDateTime logsSince;
+	public ZonedDateTime logsBefore;
 	public int limit;
 	public int offset;
 
-	public LogFilter(List<LogLevel> logLevel, Date logsSince, Date logsBefore, int limit, int offset) {
+	public LogFilter(List<LogLevel> logLevel, ZonedDateTime logsSince, ZonedDateTime logsBefore, int limit, int offset) {
 		// TODO Auto-generated constructor stub
 		this.logLevel = logLevel;
 		this.logsSince = logsSince;
@@ -28,19 +29,19 @@ public class LogFilter {
 		this.logLevel = logLevel;
 	}
 
-	public Date getLogsSince() {
+	public ZonedDateTime getLogsSince() {
 		return logsSince;
 	}
 
-	public void setLogsSince(Date logsSince) {
+	public void setLogsSince(ZonedDateTime logsSince) {
 		this.logsSince = logsSince;
 	}
 
-	public Date getLogsBefore() {
+	public ZonedDateTime getLogsBefore() {
 		return logsBefore;
 	}
 
-	public void setLogsBefore(Date logsBefore) {
+	public void setLogsBefore(ZonedDateTime logsBefore) {
 		this.logsBefore = logsBefore;
 	}
 

@@ -41,8 +41,6 @@
 			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
-
 		<dependency>
 			<groupId>com.zhokhov.graphql</groupId>
 			<artifactId>graphql-datetime-spring-boot-starter</artifactId>

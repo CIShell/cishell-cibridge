@@ -1,6 +1,6 @@
 package org.cishell.cibridge.model;
 
-import java.time.LocalTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -10,12 +10,12 @@ public class AlgorithmInstance {
 	private final List<Property> parameters;
 	private final AlgorithmDefinition algorithmDefinition;
 	private final AlgorithmState state;
-	private final Date scheduledRunTime;
+	private final ZonedDateTime scheduledRunTime;
 	private final int progress;
 	private final List<Data> outData;
 
 	public AlgorithmInstance(String id, List<Data> inData, List<Property> parameters,
-			AlgorithmDefinition algorithmDefinition, AlgorithmState state, Date scheduledRunTime, int progress,
+			AlgorithmDefinition algorithmDefinition, AlgorithmState state, ZonedDateTime scheduledRunTime, int progress,
 			List<Data> outData) {
 		// TODO Auto-generated constructor stub
 		this.id = id;
@@ -29,7 +29,7 @@ public class AlgorithmInstance {
 	}
 
 	public AlgorithmInstance(List<Data> inData, List<Property> parameters, AlgorithmDefinition algorithmDefinition,
-			AlgorithmState state, Date scheduledRunTime, int progress, List<Data> outData) {
+			AlgorithmState state, ZonedDateTime scheduledRunTime, int progress, List<Data> outData) {
 		// TODO Auto-generated constructor stub
 		this.id = null;
 		this.inData = inData;
@@ -61,7 +61,7 @@ public class AlgorithmInstance {
 		return state;
 	}
 
-	public Date getScheduledRunTime() {
+	public ZonedDateTime getScheduledRunTime() {
 		return scheduledRunTime;
 	}
 

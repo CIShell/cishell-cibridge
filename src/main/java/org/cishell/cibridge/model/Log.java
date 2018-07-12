@@ -1,5 +1,6 @@
 package org.cishell.cibridge.model;
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -7,9 +8,9 @@ public class Log {
 	private final LogLevel logLevel;
 	private final String message;
 	private final List<String> stackTrace;
-	private final Date timestamp;
+	private final ZonedDateTime timestamp;
 
-	public Log(LogLevel logLevel, String message, List<String> stackTrace, Date timestamp) {
+	public Log(LogLevel logLevel, String message, List<String> stackTrace, ZonedDateTime timestamp) {
 		// TODO Auto-generated constructor stub
 		this.logLevel = logLevel;
 		this.message = message;
@@ -29,7 +30,7 @@ public class Log {
 		return stackTrace;
 	}
 
-	public Date getTimestamp() {
+	public ZonedDateTime getTimestamp() {
 		return timestamp;
 	}
 

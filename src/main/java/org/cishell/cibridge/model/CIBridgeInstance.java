@@ -6,7 +6,7 @@ import java.util.List;
 public interface CIBridgeInstance{
 	// algorithm must return
 //	AlgorithmDefinitionQueryResults getAlgorithmDefinitionsNoFilter();
-	List<AlgorithmDefinition> getAlgorithmresults();
+	List<AlgorithmDefinition> algorithmresults();
     AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
     AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
     //data must return
