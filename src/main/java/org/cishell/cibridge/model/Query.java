@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.cishell.cibridge.resolvers.AlgorithmDefination_OSGI_mock;
 
-import com.coxautodev.graphql.tools.GraphQLRootResolver;
+import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
-public class Query implements CIBridgeInstance,GraphQLRootResolver {
+public class Query implements CIBridgeInstance,GraphQLQueryResolver {
 	private final AlgorithmDefination_OSGI_mock algorithmDefinationOSGIMock;
 	
 	//constructor 
