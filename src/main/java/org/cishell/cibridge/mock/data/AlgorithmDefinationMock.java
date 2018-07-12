@@ -1,4 +1,4 @@
-package org.cishell.cibridge.resolvers;
+package org.cishell.cibridge.mock.data;
 
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
@@ -22,12 +22,12 @@ import org.cishell.cibridge.model.PageInfo;
 import org.cishell.cibridge.model.ParameterDefinition;
 import org.cishell.cibridge.model.Property;
 
-public class AlgorithmDefination_OSGI_mock {
+public class AlgorithmDefinationMock {
 	private final AlgorithmDefinitionQueryResults algorithmDefinationQuerResult;
 	private final AlgorithmInstanceQueryResults algorithmInstanceQueryResults;
 	private final List<AlgorithmDefinition> algorithmDefinition;
 
-	public AlgorithmDefination_OSGI_mock() {// ID not being initialized now, will be done later with correct
+	public AlgorithmDefinationMock() {// ID not being initialized now, will be done later with correct
 											// implementation
 		// transitive objects beign created for algorithmDefinationQuerResult
 		List<AlgorithmDefinition> algorithmDefinitionResults;

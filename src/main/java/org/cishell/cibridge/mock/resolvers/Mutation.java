@@ -1,4 +1,4 @@
-package org.cishell.cibridge.model;
+package org.cishell.cibridge.mock.resolvers;
 
 import java.io.File;
 import java.util.Date;
@@ -7,6 +7,10 @@ import org.cishell.cibridge.model.*;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
 public class Mutation implements GraphQLQueryResolver{
+
+	public Mutation(){
+		
+	}
 
 	AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
 		return null;

@@ -1,7 +1,5 @@
-package org.cishell.cibridge.resolvers;
+package org.cishell.cibridge.mock.resolvers;
 
-import java.io.File;
-import java.util.Date;
 import java.util.List;
 
 import org.cishell.cibridge.model.AlgorithmDefinition;
@@ -18,12 +16,13 @@ import org.cishell.cibridge.model.NotificationFilter;
 import org.cishell.cibridge.model.NotificationQueryResults;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
+import org.cishell.cibridge.mock.data.AlgorithmDefinationMock;
 
 public class Query implements GraphQLQueryResolver, CIBridgeInstance {
-	private final AlgorithmDefination_OSGI_mock algorithmDefinationOSGIMock;
+	private final AlgorithmDefinationMock algorithmDefinationOSGIMock;
 
 	// constructor
-	public Query(AlgorithmDefination_OSGI_mock algorithmDefinationOSGIMock) {
+	public Query(AlgorithmDefinationMock algorithmDefinationOSGIMock) {
 		//System.out.println("**************************** reached here as well ****************************");
 		this.algorithmDefinationOSGIMock = algorithmDefinationOSGIMock;
 	}

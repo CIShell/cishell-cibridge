@@ -3,6 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="7588161d-9e71-42b2-874e-311784802b7a" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/CIBridgeServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/CIBridgeServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/cishellOSGI/CIShellGraphQLSchema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/cishellOSGI/CIShellGraphQLSchema.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/MockCIBridgeSchema.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/schema/MockGraphQLSchema.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Mutation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Mutation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/resolvers/AlgorithmDefination_OSGI_mock.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/data/AlgorithmDefinationMock.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/resolvers/Query.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Query.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,33 +21,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Property.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Property.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PropertyInput.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/PropertyInput.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="13" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Query.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="9" column="67" selection-start-line="9" selection-start-column="67" selection-end-line="9" selection-end-column="67" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="CIBridgeInstance.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -54,10 +34,10 @@
         </entry>
       </file>
       <file leaf-file-name="Mutation.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Mutation.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Mutation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="918">
-              <caret line="61" column="28" selection-start-line="61" selection-start-column="28" selection-end-line="61" selection-end-column="28" />
+            <state relative-caret-position="187">
+              <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#429#430#0" expanded="true" />
@@ -93,20 +73,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AlgorithmDefination_OSGI_mock.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/resolvers/AlgorithmDefination_OSGI_mock.java">
+      <file leaf-file-name="Query.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Query.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="24" column="49" selection-start-line="24" selection-start-column="49" selection-end-line="24" selection-end-column="49" />
+            <state relative-caret-position="68">
+              <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="CIShellCIBridgeSchemaEndpoint.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/CIShellCIBridgeSchemaEndpoint.java">
+      <file leaf-file-name="MockGraphQLSchema.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/schema/MockGraphQLSchema.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="15" column="13" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+            <state relative-caret-position="68">
+              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="AlgorithmDefinationMock.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/data/AlgorithmDefinationMock.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CIBridgeServlet.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/CIBridgeServlet.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -123,8 +124,17 @@
       <file leaf-file-name="cibridge-schema_0.1.0-draft.graphqls" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="26" column="17" selection-start-line="26" selection-start-column="17" selection-end-line="26" selection-end-column="17" />
+            <state relative-caret-position="1019">
+              <caret line="135" column="7" selection-start-line="135" selection-start-column="7" selection-end-line="135" selection-end-column="7" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="CIShellGraphQLSchema.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/cishellOSGI/CIShellGraphQLSchema.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="15" column="82" selection-start-line="15" selection-start-column="82" selection-end-line="15" selection-end-column="82" />
             </state>
           </provider>
         </entry>
@@ -139,6 +149,14 @@
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>#</find>
+    </findStrings>
+    <replaceStrings>
+      <replace />
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -170,9 +188,16 @@
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/NotificationResponse.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/ParameterDefinition.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/CIBridgeInstance.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java" />
         <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Mutation.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/MockGraphQLSchema.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/schema/MockGraphQLSchema.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/data/AlgorithmDefination_OSGI_mock.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/CIBridgeServlet.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/data/AlgorithmDefinationMock.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/cishellOSGI/CIShellGraphQLSchema.java" />
+        <option value="$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Mutation.java" />
       </list>
     </option>
   </component>
@@ -228,7 +253,7 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="cibridge" type="462c0819:PsiDirectoryNode" />
-              <item name="model" type="462c0819:PsiDirectoryNode" />
+              <item name="cishellOSGI" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="org.cishell.cibridge.resolvers" type="b2602c69:ProjectViewProjectNode" />
@@ -237,7 +262,37 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="mock" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="org.cishell.cibridge.resolvers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cishell-cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="mock" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="org.cishell.cibridge.resolvers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cishell-cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="mock" type="462c0819:PsiDirectoryNode" />
               <item name="resolvers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="org.cishell.cibridge.resolvers" type="b2602c69:ProjectViewProjectNode" />
+              <item name="cishell-cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cibridge" type="462c0819:PsiDirectoryNode" />
+              <item name="mock" type="462c0819:PsiDirectoryNode" />
+              <item name="schema" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="org.cishell.cibridge.resolvers" type="b2602c69:ProjectViewProjectNode" />
@@ -615,13 +670,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/resolvers/AlgorithmDefination_OSGI_mock.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="24" column="49" selection-start-line="24" selection-start-column="49" selection-end-line="24" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/CIShellCIBridgeSchemaEndpoint.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -643,13 +691,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="17" selection-start-line="26" selection-start-column="17" selection-end-line="26" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Query.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
@@ -667,10 +708,55 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/model/Mutation.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/schema/MockGraphQLSchema.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="918">
-          <caret line="61" column="28" selection-start-line="61" selection-start-column="28" selection-end-line="61" selection-end-column="28" />
+        <state relative-caret-position="68">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Query.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="20" column="13" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/CIBridgeServlet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="13" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/data/AlgorithmDefinationMock.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="24" column="13" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/cibridge-schema_0.1.0-draft.graphqls">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1019">
+          <caret line="135" column="7" selection-start-line="135" selection-start-column="7" selection-end-line="135" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/cishellOSGI/CIShellGraphQLSchema.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="15" column="82" selection-start-line="15" selection-start-column="82" selection-end-line="15" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/org/cishell/cibridge/mock/resolvers/Mutation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="8" selection-start-line="11" selection-start-column="8" selection-end-line="11" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#429#430#0" expanded="true" />
