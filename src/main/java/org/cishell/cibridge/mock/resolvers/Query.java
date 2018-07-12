@@ -7,7 +7,6 @@ import org.cishell.cibridge.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.model.AlgorithmFilter;
 import org.cishell.cibridge.model.AlgorithmInstance;
 import org.cishell.cibridge.model.AlgorithmInstanceQueryResults;
-import org.cishell.cibridge.model.CIBridgeInstance;
 import org.cishell.cibridge.model.DataFilter;
 import org.cishell.cibridge.model.DataQueryResults;
 import org.cishell.cibridge.model.LogFilter;
@@ -23,13 +22,11 @@ public class Query implements GraphQLQueryResolver, CIBridgeInstance {
 
 	// constructor
 	public Query(AlgorithmDefinationMock algorithmDefinationOSGIMock) {
-		//System.out.println("**************************** reached here as well ****************************");
 		this.algorithmDefinationOSGIMock = algorithmDefinationOSGIMock;
 	}
 
 	// resolver functions
 	public List<AlgorithmDefinition> algorithmresults() {
-		//System.out.println("**************************** reached here as well as well ****************************");
 		return algorithmDefinationOSGIMock.getAlgorithmresults();
 	}
 

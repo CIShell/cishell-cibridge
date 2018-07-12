@@ -1,4 +1,4 @@
-package org.cishell.cibridge.model;
+package org.cishell.cibridge.mock.resolvers;
 import org.cishell.cibridge.model.*;
 import java.io.File;
 import java.util.List;

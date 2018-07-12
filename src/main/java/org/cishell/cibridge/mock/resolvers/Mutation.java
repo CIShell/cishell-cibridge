@@ -3,13 +3,17 @@ package org.cishell.cibridge.mock.resolvers;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+
+import org.cishell.cibridge.mock.data.AlgorithmDefinationMock;
 import org.cishell.cibridge.model.*;
+
+import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
-public class Mutation implements GraphQLQueryResolver{
-
-	public Mutation(){
-		
+public class Mutation implements GraphQLMutationResolver{
+	AlgorithmDefinationMock algorithmDefinationOSGIMock;
+	public Mutation(AlgorithmDefinationMock algorithmDefinationOSGIMock){
+		this.algorithmDefinationOSGIMock=algorithmDefinationOSGIMock;
 	}
 
 	AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {

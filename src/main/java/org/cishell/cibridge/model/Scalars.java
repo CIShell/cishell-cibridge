@@ -9,7 +9,7 @@ import graphql.schema.GraphQLScalarType;
 
 public class Scalars {
     
-    public static GraphQLScalarType dateTime = new GraphQLScalarType("Date", "Date scalar", new Coercing() {
+    public static GraphQLScalarType date = new GraphQLScalarType("Date", "Date scalar", new Coercing() {
         public String serialize(Object input) {
             //serialize the ZonedDateTime into string on the way out
             return ((ZonedDateTime)input).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
