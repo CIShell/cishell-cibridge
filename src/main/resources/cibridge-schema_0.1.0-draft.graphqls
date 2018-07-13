@@ -21,7 +21,7 @@ schema {
 	mutation: Mutation
 
 	# root subscription type
-	#subscription: Subscription
+	subscription: Subscription
 	
 }
 
@@ -139,45 +139,44 @@ type Query{
  }
  
 ## Root subscription type
-#type Subscription{
-#	# Receives the algorithm template when it is added
-#	algorithmDefinitionAdded: AlgorithmDefinition!
-#
-#	# Receives the algorithm template when it is removed
-#	algorithmDefinitionRemoved: AlgorithmDefinition!
-#
-#	# Receives the algorithm instance when it is updated and is optionally matched by the filter
-#	algorithmInstanceUpdated(filter: AlgorithmFilter): AlgorithmInstance!
-#
-#
-#	# Receives a new notification when its created
-#	notificationAdded: Notification!
-#
-#	# Received a notification when it has been updated
-#	notificationUpdated: Notification!
-#
-#
-#	# Receives the reference to a data object when it is added to the data manager
-#	dataAdded: Data!
-#
-#	# Receives the reference to a data object when it is removed from the data manager
-#	dataRemoved: Data!
-#
-#	# Receives the reference to a data object when it is updated
-#	dataUpdated: Data!
-#
-#
-#	# Receives update when scheduler is cleared. Return value is always false.
-#	schedulerCleared: Boolean!
-#
-#	# Receives the current scheduler state when it changes
-#	schedulerRunningChanged: Boolean!
-#
-#
-#	# Receives new logs matching the log levels specified (or all logs)
-#	logAdded(logLevels: [LogLevel!]): Log!
-#
-#}
+type Subscription{
+	# Receives the algorithm template when it is added
+	algorithmDefinitionAdded: AlgorithmDefinition!
+
+	# Receives the algorithm template when it is removed
+	algorithmDefinitionRemoved: AlgorithmDefinition!
+
+	# Receives the algorithm instance when it is updated and is optionally matched by the filter
+	algorithmInstanceUpdated(filter: AlgorithmFilter): AlgorithmInstance!
+
+
+	# Receives a new notification when its created
+	notificationAdded: Notification!
+
+	# Received a notification when it has been updated
+	notificationUpdated: Notification!
+
+
+	# Receives the reference to a data object when it is added to the data manager
+	dataAdded: Data!
+
+	# Receives the reference to a data object when it is removed from the data manager
+	dataRemoved: Data!
+
+	# Receives the reference to a data object when it is updated
+	dataUpdated: Data!
+
+
+	# Receives update when scheduler is cleared. Return value is always false.
+	schedulerCleared: Boolean!
+
+	# Receives the current scheduler state when it changes
+	schedulerRunningChanged: Boolean!
+
+	# Receives new logs matching the log levels specified (or all logs)
+	logAdded(logLevels: [LogLevel!]): Log!
+
+}
 
 # type to store info related to pagination. TODO: Finalize our pagination strategy
 type PageInfo {
