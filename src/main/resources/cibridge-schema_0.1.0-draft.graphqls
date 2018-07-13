@@ -10,7 +10,7 @@ scalar ID
 scalar Date
 
 # data type to store file information
-#scalar File
+ scalar File
 
 # GraphQL root schema
 schema {
@@ -51,8 +51,8 @@ type Query{
 	getData(filter: DataFilter): DataQueryResults!
 
 	# Downloads the data associated with the given data reference as a file
-	#downloadData(dataId: ID!): File!
-	downloadData(dataId: ID!): String!
+	downloadData(dataId: ID!): File!
+	#downloadData(dataId: ID!): String!
 
 
 	# Returns the notifications matching the specified criteria given in the filter object

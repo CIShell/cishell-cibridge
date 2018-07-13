@@ -1,6 +1,6 @@
 package org.cishell.cibridge.mock.resolvers;
 
-import java.io.File;
+
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class Mutation implements GraphQLMutationResolver{
 		return null;
 	}
 
-	Data uploadData(File file,DataProperties properties){
+	Data uploadData(String file,DataProperties properties){
 		return null;
 	}
 	Boolean removeData(String dataId) {

@@ -14,7 +14,7 @@ public class CIShellGraphQLSchema {
         GraphQLSchema gs = SchemaParser.newParser()
                 .file("cibridge-schema_0.1.0-draft.graphqls") //parse the schema file created earlier
                 .resolvers(new Query(new AlgorithmDefinationMock()))
-                .scalars(Scalars.date)
+                .scalars(Scalars.date,Scalars.File)
                 .build()
                 .makeExecutableSchema();
         return gs;
