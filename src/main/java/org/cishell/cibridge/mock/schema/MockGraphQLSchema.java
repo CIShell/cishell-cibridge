@@ -15,7 +15,7 @@ public class MockGraphQLSchema {
         GraphQLSchema gs = SchemaParser.newParser()
                 .file("cibridge-schema_0.1.0-draft.graphqls") //parse the schema file created earlier
                 .resolvers(new Query(new AlgorithmDefinationMock()),new Mutation(new AlgorithmDefinationMock()))
-                .scalars(Scalars.date,Scalars.File)
+                .scalars(Scalars.date,Scalars.File,Scalars.Value)
                 .build()
                 .makeExecutableSchema();
         return gs;

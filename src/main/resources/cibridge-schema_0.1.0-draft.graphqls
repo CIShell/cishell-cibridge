@@ -3,7 +3,7 @@
 scalar ID
 
 # data type to store values (of any data type specified by the user)
-# scalar Value
+scalar Value
 
 # data type to store date information
 # java.util.Date implementation
