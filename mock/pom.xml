@@ -60,5 +60,10 @@
 			<artifactId>graphql-java</artifactId>
 			<version>8.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.framework</artifactId>
+			<version>1.9.0</version>
+		</dependency>
 	</dependencies>
 </project>
