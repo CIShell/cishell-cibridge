@@ -38,10 +38,10 @@ public class Subscription implements GraphQLSubscriptionResolver{
     }
 
     Boolean schedulerCleared(){
-        return Boolean.TRUE;
+        return Boolean.FALSE;
     }
     Boolean schedulerRunningChanged(){
-        return Boolean.TRUE;
+        return Boolean.FALSE;
     }
     Log logAdded(List<LogLevel> logLevels){
         return null;
