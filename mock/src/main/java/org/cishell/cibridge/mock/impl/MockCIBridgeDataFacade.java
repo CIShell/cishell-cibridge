@@ -1,16 +1,17 @@
-package org.cishell.cibridge.cishell.resolvers;
+package org.cishell.cibridge.mock.impl;
 
 import java.util.List;
 
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.DataFilter;
 import org.cishell.cibridge.core.model.DataQueryResults;
 import org.osgi.framework.BundleContext;
 
-public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
+public class MockCIBridgeDataFacade implements CIBridge.DataFacade {
 	
 	private final BundleContext context;
-	public CIShellCIBridgeDataFacade(BundleContext context) {
+	public MockCIBridgeDataFacade(BundleContext context) {
 		this.context=context;
 	}
 

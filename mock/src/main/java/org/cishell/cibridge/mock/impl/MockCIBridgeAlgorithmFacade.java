@@ -1,18 +1,19 @@
-package org.cishell.cibridge.mock.resolvers;
+package org.cishell.cibridge.mock.impl;
 
 import java.util.List;
 
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.core.model.AlgorithmFilter;
 import org.cishell.cibridge.core.model.AlgorithmInstanceQueryResults;
 import org.osgi.framework.BundleContext;
 
-public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
+public class MockCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
 	
 	private final BundleContext context;
 	
-	public CIShellCIBridgeAlgorithmFacade(BundleContext context) {
+	public MockCIBridgeAlgorithmFacade(BundleContext context) {
 		this.context=context;
 	}
 

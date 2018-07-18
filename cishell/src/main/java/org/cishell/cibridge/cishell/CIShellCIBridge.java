@@ -1,5 +1,11 @@
-package org.cishell.cibridge.mock.resolvers;
+package org.cishell.cibridge.cishell;
 
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeAlgorithmFacade;
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeDataFacade;
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeLoggingFacade;
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeNotificationFacade;
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeSchedulerFacade;
+import org.cishell.cibridge.core.CIBridge;
 import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridge extends CIBridge {

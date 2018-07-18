@@ -1,7 +1,7 @@
-package org.cishell.cibridge.cishell.resolvers;
+package org.cishell.cibridge.cishell.impl;
 
 import java.util.List;
-
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.core.model.AlgorithmFilter;

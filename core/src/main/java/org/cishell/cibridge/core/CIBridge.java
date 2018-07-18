@@ -1,7 +1,12 @@
-package org.cishell.cibridge.cishell.resolvers;
+package org.cishell.cibridge.core;
 
 import java.util.List;
 
+import org.cishell.cibridge.core.CIBridge.AlgorithmFacade;
+import org.cishell.cibridge.core.CIBridge.DataFacade;
+import org.cishell.cibridge.core.CIBridge.LoggingFacade;
+import org.cishell.cibridge.core.CIBridge.NotificationFacade;
+import org.cishell.cibridge.core.CIBridge.SchedulerFacade;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.core.model.AlgorithmFilter;
@@ -29,13 +34,13 @@ public abstract class CIBridge {
 		this.logging=logging;
 	}
 
-	interface AlgorithmFacade {
+	public interface AlgorithmFacade {
 		List<AlgorithmDefinition> algorithmresults();
 		AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
 		AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
 	}
 
-	interface DataFacade {
+	public interface DataFacade {
 		String validateData(String algorithmDefinitionId, List<String> dataIds);
 		List<AlgorithmInstance> findConverters(String dataId, String outFormat);
 		List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat);
@@ -44,18 +49,18 @@ public abstract class CIBridge {
 
 	}
 
-	interface NotificationFacade {
+	public interface NotificationFacade {
 		NotificationQueryResults getNotifications(NotificationFilter filter);
 		Boolean isClosed(String NotificationId);
 	}
 
-	interface SchedulerFacade {
+	public interface SchedulerFacade {
 		Boolean isSchedulerEmpty();
 		Boolean isSchedulerRunning();
 		Integer getSchedulerQueueWaiting();
 	}
 
-	interface LoggingFacade {
+	public interface LoggingFacade {
 		LogQueryResults getLogs(LogFilter filter);
 	}
 }

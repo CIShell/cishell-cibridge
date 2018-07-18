@@ -1,4 +1,4 @@
-package org.cishell.cibridge.graphql;
+package org.cishell.cibridge.graphql.scalars;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;

@@ -1,5 +1,6 @@
-package org.cishell.cibridge.mock.resolvers;
+package org.cishell.cibridge.mock.impl;
 
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.LogFilter;
 import org.cishell.cibridge.core.model.LogQueryResults;
 import org.osgi.framework.BundleContext;
@@ -8,7 +9,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	
 	private final BundleContext context;
 	
-	CIShellCIBridgeLoggingFacade(BundleContext context){
+	public CIShellCIBridgeLoggingFacade(BundleContext context){
 		this.context=context;
 	}
 

@@ -1,7 +1,8 @@
-package org.cishell.cibridge.mock.resolvers;
+package org.cishell.cibridge.graphql.resolvers;
 
 import java.util.List;
 
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.core.model.AlgorithmFilter;
@@ -15,29 +16,31 @@ import org.cishell.cibridge.core.model.NotificationFilter;
 import org.cishell.cibridge.core.model.NotificationQueryResults;
 
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
-import org.cishell.cibridge.mock.data.AlgorithmDefinationMock;
 
-public class Query implements GraphQLQueryResolver, CIBridgeInstance {
-	private final AlgorithmDefinationMock algorithmDefinationOSGIMock;
-
-	// constructor
-	public Query(AlgorithmDefinationMock algorithmDefinationOSGIMock) {
-		this.algorithmDefinationOSGIMock = algorithmDefinationOSGIMock;
+public class Query implements GraphQLQueryResolver {
+	private CIBridge cibridge;
+	
+	public Query(CIBridge cibridge) {
+		this.cibridge = cibridge;
+	}
+	
+	public void setCIBridge(CIBridge cibridge) {
+		this.cibridge = cibridge;
+	}
+	public CIBridge getCIBridge() {
+		return this.cibridge;
 	}
 
 	// resolver functions
-	public List<AlgorithmDefinition> algorithmresults() {
-		return algorithmDefinationOSGIMock.getAlgorithmresults();
-	}
-
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
-		return algorithmDefinationOSGIMock.getAlgorithmDefinitionQueryResult(filter);
+		return cibridge.algorithm.getAlgorithmDefinitions(filter);
 	}
 
 	public AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter) {
-		return algorithmDefinationOSGIMock.getAlgorithmInstanceQueryResults();
+		return cibridge.algorithm.getAlgorithmInstances(filter);
 	}
 
+	// TODO
 	public String validateData(String algorithmDefinitionId, List<String> dataIds) {
 		// TODO Auto-generated method stub
 		return null;

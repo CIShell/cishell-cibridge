@@ -6,11 +6,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.cishell.cibridge</groupId>
-		<artifactId>CIBridge</artifactId>
+		<artifactId>root-module</artifactId>
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>org.cishell.cibridge</groupId>
-	<artifactId>mock</artifactId>
+	<artifactId>org.cishell.cibridge.mock</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>mock</name>
 	<url>http://maven.apache.org</url>
@@ -26,7 +26,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>org.cishell.cibridge.core</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>

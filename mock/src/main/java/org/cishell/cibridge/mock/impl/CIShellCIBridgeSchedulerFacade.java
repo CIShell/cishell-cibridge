@@ -1,5 +1,6 @@
-package org.cishell.cibridge.cishell.resolvers;
+package org.cishell.cibridge.mock.impl;
 
+import org.cishell.cibridge.core.CIBridge;
 import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade {

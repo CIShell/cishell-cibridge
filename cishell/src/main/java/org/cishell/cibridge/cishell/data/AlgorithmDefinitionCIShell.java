@@ -22,12 +22,12 @@ import org.cishell.cibridge.core.model.PageInfo;
 import org.cishell.cibridge.core.model.ParameterDefinition;
 import org.cishell.cibridge.core.model.Property;
 
-public class AlgorithmDefinationCIShell {
+public class AlgorithmDefinitionCIShell {
 	private final AlgorithmDefinitionQueryResults algorithmDefinationQuerResult;
 	private final AlgorithmInstanceQueryResults algorithmInstanceQueryResults;
 	private final List<AlgorithmDefinition> algorithmDefinition;
 
-	public AlgorithmDefinationCIShell() {// ID not being initialized now, will be done later with correct
+	public AlgorithmDefinitionCIShell() {// ID not being initialized now, will be done later with correct
 											// implementation
 		// transitive objects beign created for algorithmDefinationQuerResult
 		List<AlgorithmDefinition> algorithmDefinitionResults;

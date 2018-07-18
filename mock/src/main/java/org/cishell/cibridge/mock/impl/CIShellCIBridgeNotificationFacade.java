@@ -1,5 +1,6 @@
-package org.cishell.cibridge.cishell.resolvers;
+package org.cishell.cibridge.mock.impl;
 
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.NotificationFilter;
 import org.cishell.cibridge.core.model.NotificationQueryResults;
 import org.osgi.framework.BundleContext;

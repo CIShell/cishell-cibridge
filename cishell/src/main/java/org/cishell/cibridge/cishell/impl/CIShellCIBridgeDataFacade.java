@@ -1,6 +1,7 @@
-package org.cishell.cibridge.mock.resolvers;
+package org.cishell.cibridge.cishell.impl;
 
 import java.util.List;
+import org.cishell.cibridge.core.CIBridge;
 
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.DataFilter;

@@ -1,16 +1,25 @@
-package org.cishell.cibridge.mock.resolvers;
+package org.cishell.cibridge.graphql.resolvers;
 
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
-import org.cishell.cibridge.mock.data.AlgorithmDefinationMock;
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 
 import java.util.List;
 
 public class Subscription implements GraphQLSubscriptionResolver{
-    AlgorithmDefinationMock algorithmDefinationOSGIMock;
-    public Subscription(AlgorithmDefinationMock algorithmDefinationOSGIMock) {
-        this.algorithmDefinationOSGIMock = algorithmDefinationOSGIMock;
-    }
+	private CIBridge cibridge;
+	
+	public Subscription(CIBridge cibridge){
+		this.cibridge = cibridge;
+	}
+	
+	public void setCIBridge(CIBridge cibridge) {
+		this.cibridge = cibridge;
+	}
+	public CIBridge getCIBridge() {
+		return this.cibridge;
+	}
+	
     AlgorithmDefinition algorithmDefinitionAdded(){
         return null;
     }
