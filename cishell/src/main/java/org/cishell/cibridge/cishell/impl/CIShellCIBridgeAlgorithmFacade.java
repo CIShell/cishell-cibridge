@@ -5,11 +5,12 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.core.model.AlgorithmFilter;
+import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmInstanceQueryResults;
+import org.cishell.cibridge.core.model.PropertyInput;
 import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
-	
 	private final BundleContext context;
 	
 	public CIShellCIBridgeAlgorithmFacade(BundleContext context) {
@@ -30,6 +31,31 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
 	@Override
 	public AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//mutation
+	@Override
+	public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds,
+			List<PropertyInput> parameters) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//subscription
+	@Override
+	public AlgorithmDefinition algorithmDefinitionAdded() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AlgorithmDefinition algorithmDefinitionRemoved() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AlgorithmInstance algorithmInstanceUpdated(AlgorithmFilter filter) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -4,13 +4,15 @@ import java.util.List;
 import org.cishell.cibridge.core.CIBridge;
 
 import org.cishell.cibridge.core.model.AlgorithmInstance;
+import org.cishell.cibridge.core.model.Data;
 import org.cishell.cibridge.core.model.DataFilter;
+import org.cishell.cibridge.core.model.DataProperties;
 import org.cishell.cibridge.core.model.DataQueryResults;
 import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
-	
 	private final BundleContext context;
+	
 	public CIShellCIBridgeDataFacade(BundleContext context) {
 		this.context=context;
 	}
@@ -41,6 +43,42 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public String downloadData(String dataId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//mutation
+	@Override
+	public Data uploadData(String file, DataProperties properties) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean removeData(String dataId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean updateData(String dataId, DataProperties properties) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	//subscription
+	@Override
+	public Data dataAdded() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Data dataRemoved() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Data dataUpdated() {
 		// TODO Auto-generated method stub
 		return null;
 	}

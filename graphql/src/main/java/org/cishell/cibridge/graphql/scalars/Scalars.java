@@ -2,14 +2,9 @@ package org.cishell.cibridge.graphql.scalars;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-
-
 import graphql.language.StringValue;
 import graphql.schema.Coercing;
 import graphql.schema.GraphQLScalarType;
-
-
-
 
 public class Scalars  {
     
