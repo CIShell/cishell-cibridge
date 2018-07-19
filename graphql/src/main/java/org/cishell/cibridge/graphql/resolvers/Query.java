@@ -19,19 +19,26 @@ import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
 public class Query implements GraphQLQueryResolver {
 	private CIBridge cibridge;
-	
+
 	public Query(CIBridge cibridge) {
 		this.cibridge = cibridge;
+		System.out.println("Query initialized");
 	}
-	
+
 	public void setCIBridge(CIBridge cibridge) {
 		this.cibridge = cibridge;
 	}
+
 	public CIBridge getCIBridge() {
 		return this.cibridge;
 	}
 
 	// resolver functions
+	public List<AlgorithmDefinition> algorithmresults() {
+		System.out.println("in algorithmresults of query");
+		return cibridge.algorithm.algorithmresults();
+	}
+
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
 		return cibridge.algorithm.getAlgorithmDefinitions(filter);
 	}
@@ -82,7 +89,7 @@ public class Query implements GraphQLQueryResolver {
 
 	public Boolean isSchedulerEmpty() {
 		// TODO Auto-generated method stub
-		return null;
+		return true;
 	}
 
 	public Boolean isSchedulerRunning() {

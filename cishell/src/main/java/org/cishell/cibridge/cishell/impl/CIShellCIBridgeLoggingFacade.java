@@ -12,9 +12,9 @@ import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	private final BundleContext context;
-	
-	public CIShellCIBridgeLoggingFacade(BundleContext context){
-		this.context=context;
+
+	public CIShellCIBridgeLoggingFacade(BundleContext context) {
+		this.context = context;
 	}
 
 	@Override
@@ -22,7 +22,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//subscription
+
 	@Override
 	public Log logAdded(List<LogLevel> logLevels) {
 		// TODO Auto-generated method stub

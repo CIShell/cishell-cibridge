@@ -14,6 +14,7 @@ public class Mutation implements GraphQLMutationResolver{
 	
 	public Mutation(CIBridge cibridge){
 		this.cibridge = cibridge;
+		System.out.println("Mutation initialized");
 	}
 	
 	public void setCIBridge(CIBridge cibridge) {

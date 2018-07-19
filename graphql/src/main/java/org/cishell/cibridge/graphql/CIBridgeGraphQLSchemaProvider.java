@@ -45,7 +45,8 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider {
 
 	private GraphQLSchema buildSchema() {
         GraphQLSchema gs = SchemaParser.newParser()
-        		.schemaString(CIBridgeSchema.schemaString)
+//        		.schemaString(CIBridgeSchema.schemaString)
+        		.file("cibridge-schema_0.1.0-draft.graphqls")
                 .resolvers(this.queryResolver, this.mutationResolver, this.subscriptionResolver)
                 .scalars(Scalars.date,Scalars.File,Scalars.Value)
                 .build()

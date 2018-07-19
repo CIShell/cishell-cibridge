@@ -20,6 +20,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 	@Override
 	public List<AlgorithmDefinition> algorithmresults() {
 		// TODO Auto-generated method stub
+		System.out.println("hitting here");
 		return null;
 	}
 
@@ -34,14 +35,14 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//mutation
+
 	@Override
 	public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds,
 			List<PropertyInput> parameters) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//subscription
+
 	@Override
 	public AlgorithmDefinition algorithmDefinitionAdded() {
 		// TODO Auto-generated method stub
@@ -59,5 +60,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 }

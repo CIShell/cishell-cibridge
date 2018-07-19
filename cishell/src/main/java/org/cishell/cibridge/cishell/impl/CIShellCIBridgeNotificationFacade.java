@@ -9,9 +9,9 @@ import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
 	private final BundleContext context;
-	
+
 	public CIShellCIBridgeNotificationFacade(BundleContext context) {
-		this.context=context;
+		this.context = context;
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//mutation
+
 	@Override
 	public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
 		// TODO Auto-generated method stub
@@ -55,7 +55,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//subscription
+
 	@Override
 	public Notification notificationAdded() {
 		// TODO Auto-generated method stub

@@ -12,9 +12,9 @@ import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private final BundleContext context;
-	
+
 	public CIShellCIBridgeDataFacade(BundleContext context) {
-		this.context=context;
+		this.context = context;
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//mutation
+
 	@Override
 	public Data uploadData(String file, DataProperties properties) {
 		// TODO Auto-generated method stub
@@ -64,7 +64,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//subscription
+
 	@Override
 	public Data dataAdded() {
 		// TODO Auto-generated method stub

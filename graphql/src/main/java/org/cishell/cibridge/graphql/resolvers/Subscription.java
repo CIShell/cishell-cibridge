@@ -11,6 +11,7 @@ public class Subscription implements GraphQLSubscriptionResolver{
 	
 	public Subscription(CIBridge cibridge){
 		this.cibridge = cibridge;
+		System.out.println("Subscription initialized");
 	}
 	
 	public void setCIBridge(CIBridge cibridge) {

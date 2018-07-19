@@ -8,9 +8,9 @@ import org.cishell.cibridge.core.CIBridge;
 
 public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade {
 	private final BundleContext context;
-	
-	public CIShellCIBridgeSchedulerFacade(BundleContext context){
-		this.context=context;
+
+	public CIShellCIBridgeSchedulerFacade(BundleContext context) {
+		this.context = context;
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//mutation
+
 	@Override
 	public Boolean runAlgorithmNow(String algorithmInstanceId) {
 		// TODO Auto-generated method stub
@@ -66,7 +66,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 		// TODO Auto-generated method stub
 		return null;
 	}
-	//subscription
+
 	@Override
 	public Boolean schedulerCleared() {
 		// TODO Auto-generated method stub
