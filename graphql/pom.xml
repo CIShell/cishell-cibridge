@@ -18,8 +18,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
-		<!--  FIXME: Remove these dependencies -->
-		<!-- /FIXME -->
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
 			<artifactId>org.cishell.cibridge.core</artifactId>
