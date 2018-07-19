@@ -18,11 +18,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.cishell.cibridge</groupId>
-			<artifactId>org.cishell.cibridge.core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
@@ -30,12 +25,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>org.cishell.cibridge.core</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
-			<artifactId>graphql</artifactId>
+			<artifactId>org.cishell.cibridge.graphql</artifactId>
 			<version>1.0.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>

@@ -1,10 +1,9 @@
-package org.cishell.cibridge.graphql;
+package org.cishell.cibridge.cishell.graphql;
 
 import javax.servlet.annotation.WebServlet;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.mock.MockCIBridge;
 
 import graphql.servlet.SimpleGraphQLServlet;
 

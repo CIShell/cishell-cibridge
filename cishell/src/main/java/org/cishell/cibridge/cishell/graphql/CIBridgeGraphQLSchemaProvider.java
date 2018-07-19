@@ -1,4 +1,4 @@
-package org.cishell.cibridge.graphql;
+package org.cishell.cibridge.cishell.graphql;
 
 import javax.servlet.http.HttpServletRequest;
 
