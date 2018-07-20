@@ -9,15 +9,9 @@ import org.cishell.cibridge.core.model.AlgorithmFilter;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmInstanceQueryResults;
 import org.cishell.cibridge.core.model.PropertyInput;
-import org.osgi.framework.BundleContext;
 
 public class MockCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
-	
-	private final BundleContext context;
-	
-	public MockCIBridgeAlgorithmFacade(BundleContext context) {
-		this.context=context;
-	}
+
 
 	@Override
 	public List<AlgorithmDefinition> algorithmresults() {

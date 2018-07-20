@@ -15,7 +15,7 @@ public class MockCIBridgeServlet extends SimpleGraphQLServlet {
 	
 	public MockCIBridgeServlet() {
 //		this(new CIShellCIBridge(null));// need to give bundle context as an input today
-		this(new MockCIBridge(null)); // FIXME: Just for development, should be new NullCIBridge().
+		this(new MockCIBridge()); // FIXME: Just for development, should be new NullCIBridge().
 		System.out.println("Here is first constructor of CIBridge Servlet");
 	}
 	public MockCIBridgeServlet(CIBridge cibridge) {
