@@ -1,32 +1,38 @@
-package org.cishell.cibridge.cishell.impl;
+package org.cishell.cibridge.cishell.resolvers;
 
-import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
-import org.cishell.cibridge.core.model.LogLevel;
-
-import java.util.List;
-
-import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.LogQueryResults;
 import org.osgi.framework.BundleContext;
+//added
+import org.osgi.service.log.LogService;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceListener;
+
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
+
 	private final BundleContext context;
 
-	public CIShellCIBridgeLoggingFacade(BundleContext context) {
-		this.context = context;
+	CIShellCIBridgeLoggingFacade(BundleContext context){
+		this.context=context;
 	}
 
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
 		// TODO Auto-generated method stub
+		LogService logService = this.getLogService();
+		ServiceListener logServiceListener = new LogServiceListener();
+		context.addServiceListener( logServiceListener, filter);
 		return null;
 	}
 
-	@Override
-	public Log logAdded(List<LogLevel> logLevels) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	private LogService getLogService() {
+		ServiceReference ref = context.getServiceReference(LogService.class.getName());
+		if (ref == null) {
+			throw new RuntimeException("The required OSGi LogService is not installed.");
+		} else {
+			return (LogService) context.getService(ref);
+		}
+	}
 }
