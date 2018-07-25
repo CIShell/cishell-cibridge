@@ -1,9 +1,7 @@
 package org.cishell.cibridge.mock.data;
 
-import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
@@ -28,7 +26,7 @@ public class AlgorithmDefinationMock {
 	private final List<AlgorithmDefinition> algorithmDefinition;
 
 	public AlgorithmDefinationMock() {// ID not being initialized now, will be done later with correct
-											// implementation
+										// implementation
 		// transitive objects beign created for algorithmDefinationQuerResult
 		List<AlgorithmDefinition> algorithmDefinitionResults;
 		PageInfo pageInfo1;
@@ -39,7 +37,7 @@ public class AlgorithmDefinationMock {
 		AlgorithmInstance algorithmInstanceResults;
 		PageInfo pageInfo2;
 		List<String> inData = new ArrayList<String>();
-		List<String> outData= new ArrayList<String>();
+		List<String> outData = new ArrayList<String>();
 		Data inDataData;
 		Data outDataData;
 		List<Data> sendingInData = new ArrayList<Data>();
@@ -48,7 +46,7 @@ public class AlgorithmDefinationMock {
 
 		List<Property> inputList = new ArrayList<Property>();
 		inputList.add(new Property("dummy key 1 in Property Class", "dummy value as well"));
-		
+
 		/* initialize algorithmDefinitionResults and pageInfo */
 		parameterDefinationList = new ArrayList<ParameterDefinition>();
 
@@ -69,44 +67,53 @@ public class AlgorithmDefinationMock {
 		// "documentationUrl:http://atDeadMansChest", "some reference",
 		// "referenceUrl:http://AskCalypso",
 		// "writtenIn:jibbersih", inputList));
-//		inputList.add(new Property("dummy key 3 in Property Class", "dummy value as well"));
+		// inputList.add(new Property("dummy key 3 in Property Class", "dummy value as
+		// well"));
 		inData.add(new String("Data_1"));
-//		inputList.add(new Property("dummy key 4 in Property Class", "dummy value as well"));
+		// inputList.add(new Property("dummy key 4 in Property Class", "dummy value as
+		// well"));
 		outData.add(new String("Data_2"));
-//		outData.add(new String("Data_2", "String format", "YOu know who", "Why Label?", "Parent ID not found", DataType.MODEL, true, inputList));
+		// outData.add(new String("Data_2", "String format", "YOu know who", "Why
+		// Label?", "Parent ID not found", DataType.MODEL, true, inputList));
 		algorithmDefinitionResults.add(new AlgorithmDefinition("algorithmDefination_1", inputParameters, inData,
-				outData, "label:something", "desc:plis work", true, AlgorithmType.STANDARD, true, "menuPath:strange", ConversionType.LOSSLESS, "authors:Jack Sparrow",
-				"implementers:Davy Jones", "integrators:Barbosa","documentationUrl:http://atDeadMansChest",  "some reference", "referenceUrl:http://AskCalypso", "writtenIn:jibbersih", inputList));
+				outData, "label:something", "desc:plis work", true, AlgorithmType.STANDARD, true, "menuPath:strange",
+				ConversionType.LOSSLESS, "authors:Jack Sparrow", "implementers:Davy Jones", "integrators:Barbosa",
+				"documentationUrl:http://atDeadMansChest", "some reference", "referenceUrl:http://AskCalypso",
+				"writtenIn:jibbersih", inputList));
 		pageInfo1 = new PageInfo(true, false);
 		/* initialize algorithmDefinitionResults and pageInfo */
 		algorithmDefinationQuerResult = new AlgorithmDefinitionQueryResults(algorithmDefinitionResults, pageInfo1);
 
 		/* initialize algorithmInstanceResults and pageInfo */
 		inputList.add(new Property("dummy key 3 in Property Class", "dummy value as well"));
-		inDataData = new Data("Data_3", "String format", "YOu know who", "Why Label?", "Parent ID not found", DataType.MODEL, true, inputList);
+		inDataData = new Data("Data_3", "String format", "YOu know who", "Why Label?", "Parent ID not found",
+				DataType.MODEL, true, inputList);
 		sendingInData.add(inDataData);
 		inputList.add(new Property("dummy key 4 in Property Class", "dummy value as well"));
-		outDataData = new Data("Data_4", "String format", "YOu know who", "Why Label?", "Parent ID not found", DataType.MODEL, true, inputList);
+		outDataData = new Data("Data_4", "String format", "YOu know who", "Why Label?", "Parent ID not found",
+				DataType.MODEL, true, inputList);
 		sendingOutData.add(outDataData);
-		algorithmInstanceResults = new AlgorithmInstance("algorithmInstance_1", sendingInData,inputList,algorithmDefinitionResults.get(0), AlgorithmState.SCHEDULED, ZonedDateTime.now(), 50, sendingOutData);
+		algorithmInstanceResults = new AlgorithmInstance("algorithmInstance_1", sendingInData, inputList,
+				algorithmDefinitionResults.get(0), AlgorithmState.SCHEDULED, ZonedDateTime.now(), 50, sendingOutData);
 		pageInfo2 = new PageInfo(true, false);
 		/* initialize algorithmInstanceResults and pageInfo */
 		listAlgorithmInstanceResults = new ArrayList<AlgorithmInstance>();
 		listAlgorithmInstanceResults.add(algorithmInstanceResults);
 		algorithmInstanceQueryResults = new AlgorithmInstanceQueryResults(listAlgorithmInstanceResults, pageInfo2);
-		
-//		algorithmDefinition = new ArrayList<AlgorithmDefinition>();
-		//System.out.println("****************************Hi reached here****************************");
+
+		// algorithmDefinition = new ArrayList<AlgorithmDefinition>();
+		// System.out.println("****************************Hi reached
+		// here****************************");
 		algorithmDefinition = algorithmDefinationQuerResult.getResults();
-		//System.out.println(algorithmDefinition.get(0).getDescription());
-		
+		// System.out.println(algorithmDefinition.get(0).getDescription());
+
 	}
-	
-	public List<AlgorithmDefinition> getAlgorithmresults(){
-		//System.out.println("********************************************************"+algorithmDefinition.get(0).getDescription()+"********************************************************");
+
+	public List<AlgorithmDefinition> getAlgorithmresults() {
+		// System.out.println("********************************************************"+algorithmDefinition.get(0).getDescription()+"********************************************************");
 		return algorithmDefinition;
 	}
-	
+
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinitionQueryResult(AlgorithmFilter filter) {
 		return algorithmDefinationQuerResult;
 	}
@@ -117,7 +124,7 @@ public class AlgorithmDefinationMock {
 
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinationQuerResult() {
 		return algorithmDefinationQuerResult;
-	}	
+	}
 	// more functions to be defined
 
 }

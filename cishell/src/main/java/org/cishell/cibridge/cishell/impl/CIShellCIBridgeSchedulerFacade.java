@@ -1,16 +1,15 @@
 package org.cishell.cibridge.cishell.impl;
 
-import org.osgi.framework.BundleContext;
-
 import java.time.ZonedDateTime;
 
+import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 
 public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade {
-	private final BundleContext context;
+	private CIShellCIBridge cibridge;
 
-	public CIShellCIBridgeSchedulerFacade(BundleContext context) {
-		this.context = context;
+	public void setCIBridge(CIShellCIBridge cibridge) {
+		this.cibridge = cibridge;
 	}
 
 	@Override
