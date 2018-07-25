@@ -80,9 +80,7 @@ public abstract class CIBridge {
 		//mutation
 		Boolean setNotificationResponse(String notificationId, NotificationResponse response);
 		Boolean closeNotification(String notificationId);
-		Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled);
-		Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused);
-		Boolean removeAlgorithm(String algorithmInstanceId);
+		
 		//subscription
 		Notification notificationAdded();
 		Notification notificationUpdated();
@@ -100,6 +98,9 @@ public abstract class CIBridge {
 		Boolean unscheduleAlgorithm(String algorithmInstanceId);
 		Integer clearScheduler();
 		Boolean setSchedulerRunning(Boolean running);
+		Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled);
+		Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused);
+		Boolean removeAlgorithm(String algorithmInstanceId);
 		//subscription
 		Boolean schedulerCleared();
 		Boolean schedulerRunningChanged();
