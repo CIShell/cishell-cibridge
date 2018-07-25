@@ -13,7 +13,7 @@ import graphql.servlet.SimpleGraphQLServlet;
 public class CIBridgeServlet extends SimpleGraphQLServlet {
 	private static final long serialVersionUID = 1L;
 	private final CIBridgeGraphQLSchemaProvider cibridgeSchemaProvider;
-	static BundleContext bundleContext;
+	BundleContext bundleContext;
 
 	@Override
 	public void init() {
@@ -25,9 +25,11 @@ public class CIBridgeServlet extends SimpleGraphQLServlet {
 	}
 
 	public CIBridgeServlet() {
-		this(new CIShellCIBridge(bundleContext));// need to give bundle context as an input today
+		this(null);// need to give bundle context as an input today
 		//this(new MockCIBridge(null)); // FIXME: Just for development, should be new NullCIBridge().
 		System.out.println("Here is first constructor of CIBridge Servlet");
+		this.init();
+		this.setCIBridge(new CIShellCIBridge(bundleContext));
 	}
 	public CIBridgeServlet(CIBridge cibridge) {
 		super(new Builder(new CIBridgeGraphQLSchemaProvider(cibridge)));

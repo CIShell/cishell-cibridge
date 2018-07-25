@@ -1,17 +1,17 @@
 package org.cishell.cibridge.cishell.impl;
 
+import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.Notification;
 import org.cishell.cibridge.core.model.NotificationFilter;
-import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.NotificationQueryResults;
 import org.cishell.cibridge.core.model.NotificationResponse;
-import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
-	private final BundleContext context;
+	private CIShellCIBridge cibridge;
 
-	public CIShellCIBridgeNotificationFacade(BundleContext context) {
-		this.context = context;
+	public void setCIBridge(CIShellCIBridge cibridge) {
+		this.cibridge = cibridge;
 	}
 
 	@Override
