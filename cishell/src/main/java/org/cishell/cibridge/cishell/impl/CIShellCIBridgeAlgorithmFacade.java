@@ -3,7 +3,7 @@ package org.cishell.cibridge.cishell.impl;
 import java.util.List;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.cibridge.cishell.data.AlgorithmDefinitionCIShell;
+
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
@@ -18,8 +18,7 @@ import org.osgi.framework.ServiceReference;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
 	private CIShellCIBridge cibridge;
-	AlgorithmDefinitionCIShell algorithmDefinitionCIShell = new AlgorithmDefinitionCIShell();
-
+	
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
 	}
@@ -71,6 +70,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 	@Override
 	public List<AlgorithmDefinition> algorithmresults() {
 		// TODO Auto-generated method stub
+		System.out.println("In Alog Bundle: "+cibridge.getBundleContext());
 		return null;
 	}
 

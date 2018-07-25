@@ -1,5 +1,7 @@
 package org.cishell.cibridge.cishell.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
@@ -8,11 +10,14 @@ import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
 import org.cishell.cibridge.core.model.LogLevel;
 import org.cishell.cibridge.core.model.LogQueryResults;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.service.log.LogReaderService;
+import org.osgi.service.log.LogService;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	private CIShellCIBridge cibridge;
 
-	LogReaderService logReaderService = (LogReaderService) getLogService();
+	/*LogReaderService logReaderService = (LogReaderService) getLogService();
 	LogToFile fileLogger;
 	List<LogReaderService> logReaders = new ArrayList<LogReaderService>();
 
@@ -30,7 +35,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 			}
 		}
 	};
-
+*/
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
 	}
@@ -38,9 +43,9 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
 		// TODO Auto-generated method stub
-		LogService logService = this.cibridge.getLogService();
+	/*	LogService logService = this.cibridge.getLogService();
 		List<LoqQueryResults> results = new ArrayList<>();
-		HashSet<LogLevel> hset = new HashSet<LogLevel>;
+		HashSet<LogLevel> hset = new HashSet<LogLevel>();
 		for(LogLevel temp:filter.loglevel)
 		{
 			hset.add(temp);
@@ -50,6 +55,12 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 			if(hset.contains(log.getLevel()) && log.getTime() < filter.logsBefore)
 				results.append(log);
 		}
+	*/	return null;
+	}
+
+	@Override
+	public Log logAdded(List<LogLevel> logLevels) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

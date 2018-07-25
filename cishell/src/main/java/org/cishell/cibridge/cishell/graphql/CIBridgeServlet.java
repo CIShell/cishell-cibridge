@@ -22,14 +22,13 @@ public class CIBridgeServlet extends SimpleGraphQLServlet {
 		CIShellContainer ciContainer = new CIShellContainer(null, null);
 		System.out.println("Bundle Context set...."+ ciContainer.getBundleContext());
 		bundleContext = ciContainer.getBundleContext();
+		this.setCIBridge(new CIShellCIBridge(bundleContext));
 	}
 
 	public CIBridgeServlet() {
 		this(null);// need to give bundle context as an input today
 		//this(new MockCIBridge(null)); // FIXME: Just for development, should be new NullCIBridge().
 		System.out.println("Here is first constructor of CIBridge Servlet");
-		this.init();
-		this.setCIBridge(new CIShellCIBridge(bundleContext));
 	}
 	public CIBridgeServlet(CIBridge cibridge) {
 		super(new Builder(new CIBridgeGraphQLSchemaProvider(cibridge)));
