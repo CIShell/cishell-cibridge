@@ -1,8 +1,11 @@
 package org.cishell.cibridge.cishell.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
@@ -15,17 +18,10 @@ import org.cishell.cibridge.core.model.DataProperties;
 import org.cishell.cibridge.core.model.DataQueryResults;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.DataValidator;
-import org.cishell.app.service.datamanager.DataManagerService;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
-	private final BundleContext context;
 	private CIShellCIBridge cibridge;
-
-	public CIShellCIBridgeDataFacade(BundleContext context) {
-		this.context = context;
-	}
 	
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
@@ -57,34 +53,38 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		}
 		
 		if (algorithm instanceof DataValidator) {
-			List<org.cishell.framework.data.Data> realData = this.getRealData(dataIds);
-			return ((DataValidator) algorithm).validate((org.cishell.framework.data.Data[]) realData.toArray());
+			org.cishell.framework.data.Data[] realData = this.getRealData(dataIds);
+			if (realData == null) {
+				return "data is missing";
+			} else {
+				return ((DataValidator) algorithm).validate(realData);
+			}
 		}
-		//datamanger of cishell data
-		//	
-		
+	
 		return "";
 	}
 	
-	private List<org.cishell.framework.data.Data> getRealData(List<String> dataIds) {
-		// TODO Auto-generated method stub
-		DataManagerService dataManager = (DataManagerService) this.getService(DataManagerService.class);
-		List<org.cishell.framework.data.Data> results = new ArrayList();
+	private org.cishell.framework.data.Data[] getRealData(List<String> dataIds) {
+		DataManagerService dataManager = cibridge.getDataManagerService();
+		
+		Map<String, org.cishell.framework.data.Data> dataMapping = new HashMap<String, org.cishell.framework.data.Data>();
 		for (org.cishell.framework.data.Data data : dataManager.getAllData()) {
-			if (dataIds.indexOf(data.getMetadata().get("cibridge.data.id")) != -1) {
-				results.add(data);
-			}
+			dataMapping.put((String) data.getMetadata().get("cibridge.data.id"), data);
 		}
 		
-		return results;
+		List<org.cishell.framework.data.Data> results = new ArrayList<org.cishell.framework.data.Data>();
+		for (String dataId : dataIds) {
+			if (dataMapping.containsKey(dataId)) {
+				results.add(dataMapping.get(dataId));
+			} else {
+				// results.add(null);
+				return null;
+			}
+		}
+		return (org.cishell.framework.data.Data[]) results.toArray();
 	}
 
-	@SuppressWarnings("rawtypes")
-	public Object getService(Class c){
-		ServiceReference ref = context.getServiceReference(c.getName());
-		return ref != null ? context.getService(ref) : null;
-	}
-
+	
 	@Override
 	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
 		// TODO Auto-generated method stub

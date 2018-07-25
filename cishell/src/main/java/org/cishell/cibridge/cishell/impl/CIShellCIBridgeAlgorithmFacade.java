@@ -12,20 +12,13 @@ import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmInstanceQueryResults;
 import org.cishell.cibridge.core.model.PropertyInput;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
-import org.apache.felix.framework.Felix;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
-	private final BundleContext context;
 	private CIShellCIBridge cibridge;
 	AlgorithmDefinitionCIShell algorithmDefinitionCIShell = new AlgorithmDefinitionCIShell();
-
-	public CIShellCIBridgeAlgorithmFacade(BundleContext context) {
-		this.context = context;
-	}
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
