@@ -70,19 +70,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
 	// other implementation for DataFacade
 	public AlgorithmFactory getAlgorithmFactory(String pid) {
-		ServiceReference[] refs;
-
-		try {
-			refs = context.getServiceReferences(AlgorithmFactory.class.getName(),
-					"(&(" + Constants.SERVICE_PID + "=" + pid + "))");
-			if (refs != null && refs.length > 0) {
-				return (AlgorithmFactory) context.getService(refs[0]);
-			} else {
-				return null;
-			}
-		} catch (InvalidSyntaxException e) {
-			e.printStackTrace();
-		}
 		return null;
 	}
 
