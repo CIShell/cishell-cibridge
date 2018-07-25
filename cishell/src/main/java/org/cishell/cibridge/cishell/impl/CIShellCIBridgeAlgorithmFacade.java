@@ -70,7 +70,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 	@Override
 	public List<AlgorithmDefinition> algorithmresults() {
 		// TODO Auto-generated method stub
-		System.out.println("In Alog Bundle: "+cibridge.getBundleContext());
 		return null;
 	}
 
