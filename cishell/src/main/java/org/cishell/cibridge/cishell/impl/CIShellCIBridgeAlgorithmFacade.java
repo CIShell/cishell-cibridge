@@ -11,7 +11,7 @@ import org.cishell.cibridge.core.model.PropertyInput;
 import org.osgi.framework.BundleContext;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
-	private final BundleContext context;
+	private BundleContext context;
 	
 	public CIShellCIBridgeAlgorithmFacade(BundleContext context) {
 		this.context=context;
@@ -20,7 +20,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 	@Override
 	public List<AlgorithmDefinition> algorithmresults() {
 		// TODO Auto-generated method stub
-		System.out.println("hitting here");
+		System.out.println("hitting here"+context);
 		return null;
 	}
 
