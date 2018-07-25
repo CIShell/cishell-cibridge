@@ -1,6 +1,7 @@
 package org.cishell.cibridge.graphql.resolvers;
 
 
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -59,22 +60,21 @@ public class Mutation implements GraphQLMutationResolver{
 	}
 	Boolean runAlgorithmNow(String algorithmInstanceId)
 	{
-		return Boolean.TRUE;
+		return cibridge.scheduler.runAlgorithmNow(algorithmInstanceId);
 	}
-	Boolean scheduleAlgorithm(String algorithmInstanceId,Date date){
-		return Boolean.TRUE;
+	Boolean scheduleAlgorithm(String algorithmInstanceId,ZonedDateTime date){
+		return cibridge.scheduler.scheduleAlgorithm(algorithmInstanceId, date);
 	}
-
-	Boolean rescheduleAlgorithm(String algorithmInstanceId,Date date){
-		return Boolean.TRUE;
+	Boolean rescheduleAlgorithm(String algorithmInstanceId,ZonedDateTime date){
+		return cibridge.scheduler.rescheduleAlgorithm(algorithmInstanceId, date);
 	}
 	Boolean unscheduleAlgorithm(String algorithmInstanceId){
-		return Boolean.TRUE;
+		return cibridge.scheduler.unscheduleAlgorithm(algorithmInstanceId);
 	}
 	int clearScheduler(){
-		return 0;
+		return cibridge.scheduler.clearScheduler();
 	}
 	Boolean setSchedulerRunning(Boolean running){
-		return Boolean.TRUE;
+		return cibridge.scheduler.setSchedulerRunning(running);
 	}
 }

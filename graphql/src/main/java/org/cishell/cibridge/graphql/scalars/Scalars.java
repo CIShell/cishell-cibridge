@@ -30,7 +30,6 @@ public class Scalars  {
     
     public static GraphQLScalarType File = new GraphQLScalarType("File", "File scalar", new Coercing() {
         public String serialize(Object input) {
-            //serialize the ZonedDateTime into string on the way out
             return input.toString();
         }
 
@@ -50,7 +49,6 @@ public class Scalars  {
 
     public static GraphQLScalarType Value = new GraphQLScalarType("Value", "Value scalar", new Coercing() {
         public String serialize(Object input) {
-            //serialize the ZonedDateTime into string on the way out
             return input.toString();
         }
 

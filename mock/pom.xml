@@ -65,5 +65,11 @@
 			<artifactId>org.osgi.framework</artifactId>
 			<version>1.9.0</version>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.cishell.cibridge</groupId>
+            <artifactId>org.cishell.cibridge.graphql</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

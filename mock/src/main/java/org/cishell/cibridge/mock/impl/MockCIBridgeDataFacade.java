@@ -1,21 +1,11 @@
 package org.cishell.cibridge.mock.impl;
 
+import org.cishell.cibridge.core.CIBridge;
+import org.cishell.cibridge.core.model.*;
+
 import java.util.List;
 
-import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.model.AlgorithmInstance;
-import org.cishell.cibridge.core.model.Data;
-import org.cishell.cibridge.core.model.DataFilter;
-import org.cishell.cibridge.core.model.DataProperties;
-import org.cishell.cibridge.core.model.DataQueryResults;
-import org.osgi.framework.BundleContext;
-
 public class MockCIBridgeDataFacade implements CIBridge.DataFacade {
-	
-	private final BundleContext context;
-	public MockCIBridgeDataFacade(BundleContext context) {
-		this.context=context;
-	}
 
 	@Override
 	public String validateData(String algorithmDefinitionId, List<String> dataIds) {

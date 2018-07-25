@@ -88,18 +88,15 @@ public class Query implements GraphQLQueryResolver {
 	}
 
 	public Boolean isSchedulerEmpty() {
-		// TODO Auto-generated method stub
-		return true;
+		return cibridge.scheduler.isSchedulerEmpty();
 	}
 
 	public Boolean isSchedulerRunning() {
-		// TODO Auto-generated method stub
-		return null;
+		return cibridge.scheduler.isSchedulerRunning();
 	}
 
 	public int getSchedulerQueueWaiting() {
-		// TODO Auto-generated method stub
-		return 0;
+		return cibridge.scheduler.getSchedulerQueueWaiting();
 	}
 
 	public LogQueryResults getLogs(LogFilter filter) {
