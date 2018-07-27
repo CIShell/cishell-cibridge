@@ -18,11 +18,12 @@ import org.cishell.cibridge.core.model.DataProperties;
 import org.cishell.cibridge.core.model.DataQueryResults;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.DataValidator;
-
+import org.cishell.service.conversion.Converter;
+import org.cishell.service.conversion.DataConversionService;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private CIShellCIBridge cibridge;
-	
+
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
 	}
@@ -32,26 +33,27 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		// TODO Auto-generated method stub
 		// check the dataIds validates with top level algorithmDef
 		// not compatible, ret false
-		
+
 		// AlgorithmDefinitionQueryResults
 		List<String> defIDs = new ArrayList<String>();
 		defIDs.add(algorithmDefinitionId);
 		AlgorithmFilter algorithmFilter = new AlgorithmFilter(defIDs, null, null, null, null, null, null, 0, 0);
-		AlgorithmDefinitionQueryResults algorithmDefinitionQueryResults = this.cibridge.cishellAlgorithm.getAlgorithmDefinitions(algorithmFilter);
+		AlgorithmDefinitionQueryResults algorithmDefinitionQueryResults = this.cibridge.cishellAlgorithm
+				.getAlgorithmDefinitions(algorithmFilter);
 		AlgorithmDefinition algDefinition = (AlgorithmDefinition) algorithmDefinitionQueryResults.getResults().get(0);
 		AlgorithmFactory algorithm = this.cibridge.cishellAlgorithm.getAlgorithmFactory(algorithmDefinitionId);
-		
+
 		DataFilter dataFilter = new DataFilter(dataIds, null, false, null, null);
 		DataQueryResults dataQueryResults = getData(dataFilter);
 		List<Data> data = dataQueryResults.getResults();
 		int counter = 0;
 		for (String algInData : algDefinition.getInData()) {
-			if (!(algInData.equalsIgnoreCase(data.get(counter).getFormat()))){
+			if (!(algInData.equalsIgnoreCase(data.get(counter).getFormat()))) {
 				return "data formats are not compatible";
 			}
 			counter++;
 		}
-		
+
 		if (algorithm instanceof DataValidator) {
 			org.cishell.framework.data.Data[] realData = this.getRealData(dataIds);
 			if (realData == null) {
@@ -60,18 +62,24 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 				return ((DataValidator) algorithm).validate(realData);
 			}
 		}
-	
+
 		return "";
 	}
-	
-	private org.cishell.framework.data.Data[] getRealData(List<String> dataIds) {
+
+	// get dataMap
+	private Map<String, org.cishell.framework.data.Data> getDataMap() {
 		DataManagerService dataManager = cibridge.getDataManagerService();
-		
+
 		Map<String, org.cishell.framework.data.Data> dataMapping = new HashMap<String, org.cishell.framework.data.Data>();
 		for (org.cishell.framework.data.Data data : dataManager.getAllData()) {
 			dataMapping.put((String) data.getMetadata().get("cibridge.data.id"), data);
 		}
-		
+		return dataMapping;
+	}
+
+	private org.cishell.framework.data.Data[] getRealData(List<String> dataIds) {
+		Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
+
 		List<org.cishell.framework.data.Data> results = new ArrayList<org.cishell.framework.data.Data>();
 		for (String dataId : dataIds) {
 			if (dataMapping.containsKey(dataId)) {
@@ -84,10 +92,45 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return (org.cishell.framework.data.Data[]) results.toArray();
 	}
 
-	
 	@Override
 	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
-		// TODO Auto-generated method stub
+		// Determines the input format from the referenced data and finds the chain of
+		// converter algorithms to convert the data to the specified output format
+		//
+		// Arguments
+		// dataId:
+		// outFormat:
+
+		// need to use getFormat()
+		String algFormat="";
+		Converter[] converters = null;
+		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		try {
+			if (dataId != null && outFormat != null) {
+				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
+				if (dataMapping.containsKey(dataId)) {//dataId Present
+					//algFormat = .getFormat();//check if the input format is correct
+					if(dataConversionService != null) {
+						converters = dataConversionService.findConverters(dataMapping.get(dataId), outFormat);
+						for(Converter converter: converters) {
+							converter.getAlgorithmFactory().createAlgorithm(dataMapping.get(dataId), null,cibridge.getBundleContext() );
+						}
+					}
+					else {
+						// throw error that dataConversionService is null
+					}	
+				}
+				else {
+					// throw error that dataId is not found.
+				}
+				
+			} else {
+				throw new Exception("Data ID or Output Format is null");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+
 		return null;
 	}
 
