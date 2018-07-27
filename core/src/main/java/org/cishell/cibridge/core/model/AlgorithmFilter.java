@@ -12,6 +12,10 @@ public class AlgorithmFilter {
 	private List<PropertyInput> properties;
 	private int limit;
 	private int offset;
+	
+	public AlgorithmFilter() {
+		
+	}
 
 	public AlgorithmFilter(List<String> algorithmDefinitionIds, List<String> algorithmInstanceIds,
 			List<AlgorithmState> states, List<String> inputDataIds, List<String> inputFormats, List<String> outputFormats,

@@ -58,6 +58,30 @@ public class Scalars  {
 
         public String parseLiteral(Object input) {
             //parse the string values coming in
+        	try {
+            if (input instanceof StringValue) {
+                return (String) ((StringValue) input).getValue();
+            } else {
+                return null;
+            }}catch(Exception e) {
+            	e.printStackTrace();
+            }
+        	return null;
+        }
+    });
+ 
+    
+    public static GraphQLScalarType ID = new GraphQLScalarType("ID", "ID scalar", new Coercing() {
+        public String serialize(Object input) {
+            return input.toString();
+        }
+
+        public Object parseValue(Object input) {
+            return serialize(input);
+        }
+
+        public String parseLiteral(Object input) {
+            //parse the string values coming in
             if (input instanceof StringValue) {
                 return (String) ((StringValue) input).getValue();
             } else {

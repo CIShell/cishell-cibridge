@@ -2,6 +2,8 @@ package org.cishell.cibridge.core.model;
 
 import java.util.List;
 
+
+
 public class NotificationResponse {
 	protected List<PropertyInput> formResponse;
 	private Boolean questionResponse;

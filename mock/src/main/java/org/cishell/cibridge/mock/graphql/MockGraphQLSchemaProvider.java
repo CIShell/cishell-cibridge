@@ -13,8 +13,6 @@ import com.coxautodev.graphql.tools.SchemaParser;
 import graphql.schema.GraphQLSchema;
 import graphql.servlet.GraphQLSchemaProvider;
 
-import org.cishell.cibridge.schema.CIBridgeSchema;
-
 public class MockGraphQLSchemaProvider implements GraphQLSchemaProvider {
 	private CIBridge cibridge;
 	private final GraphQLSchema schema;

@@ -10,6 +10,7 @@ import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
 import org.cishell.cibridge.core.model.LogLevel;
 import org.cishell.cibridge.core.model.LogQueryResults;
+import org.cishell.cibridge.core.model.PageInfo;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
@@ -42,6 +43,9 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
+		
+		
+		
 		// TODO Auto-generated method stub
 	/*	LogService logService = this.cibridge.getLogService();
 		List<LoqQueryResults> results = new ArrayList<>();

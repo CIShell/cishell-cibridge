@@ -3,11 +3,6 @@ package org.cishell.cibridge.core;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import org.cishell.cibridge.core.CIBridge.AlgorithmFacade;
-import org.cishell.cibridge.core.CIBridge.DataFacade;
-import org.cishell.cibridge.core.CIBridge.LoggingFacade;
-import org.cishell.cibridge.core.CIBridge.NotificationFacade;
-import org.cishell.cibridge.core.CIBridge.SchedulerFacade;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmDefinitionQueryResults;
 import org.cishell.cibridge.core.model.AlgorithmFilter;

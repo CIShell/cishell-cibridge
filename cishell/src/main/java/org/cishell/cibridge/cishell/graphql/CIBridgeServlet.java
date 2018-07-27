@@ -1,28 +1,42 @@
 package org.cishell.cibridge.cishell.graphql;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.container.CIShellContainer;
 import org.osgi.framework.BundleContext;
 
-import graphql.servlet.SimpleGraphQLServlet;
+import graphql.servlet.SimpleGraphQLHttpServlet;
 
 @WebServlet(urlPatterns = "/graphql")
-public class CIBridgeServlet extends SimpleGraphQLServlet {
+public class CIBridgeServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private final CIBridgeGraphQLSchemaProvider cibridgeSchemaProvider;
 	BundleContext bundleContext;
+	SimpleGraphQLHttpServlet simpleGraphQLHttpServlet;
+	
+	
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		simpleGraphQLHttpServlet.service(req, resp);
+		
+	}
 
 	@Override
-	public void init() {
+	public void init() throws ServletException {
 		System.out.println("Servlet Initialized...");
 		System.out.println("Starting Container...");
 		CIShellContainer ciContainer = new CIShellContainer(null, null);
-		System.out.println("Bundle Context set...."+ ciContainer.getBundleContext());
 		bundleContext = ciContainer.getBundleContext();
 		this.setCIBridge(new CIShellCIBridge(bundleContext));
+		
 	}
 
 	public CIBridgeServlet() {
@@ -31,9 +45,9 @@ public class CIBridgeServlet extends SimpleGraphQLServlet {
 		System.out.println("Here is first constructor of CIBridge Servlet");
 	}
 	public CIBridgeServlet(CIBridge cibridge) {
-		super(new Builder(new CIBridgeGraphQLSchemaProvider(cibridge)));
-		System.out.println("Here is second constructor of CIBridge Servlet");
-		this.cibridgeSchemaProvider = (CIBridgeGraphQLSchemaProvider) this.getSchemaProvider();
+		this.cibridgeSchemaProvider = new CIBridgeGraphQLSchemaProvider(null);
+		simpleGraphQLHttpServlet = SimpleGraphQLHttpServlet.newBuilder(this.cibridgeSchemaProvider).build();
+		
 	}
 
 	public void setCIBridge(CIBridge cibridge) {
@@ -42,4 +56,6 @@ public class CIBridgeServlet extends SimpleGraphQLServlet {
 	public CIBridge getCIBridge() {
 		return this.cibridgeSchemaProvider.getCIBridge();
 	}
-}
+
+	 
+   }

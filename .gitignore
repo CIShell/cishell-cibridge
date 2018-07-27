@@ -14,6 +14,10 @@ buildNumber.properties
 .mvn/timing.properties
 .settings/
 *.project
+*.factorypath
+*.classpath
+*/felix-cache/
+
 
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
