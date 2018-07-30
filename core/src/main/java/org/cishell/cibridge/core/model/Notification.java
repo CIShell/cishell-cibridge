@@ -11,13 +11,13 @@ public class Notification {
 	private final List<String> stackTrace;
 	private final List<ParameterDefinition> formParameters;
 	private  Boolean isClosed;
-	private  List<PropertyInput> formResponse;
+	private  List<Property> formResponse;
 	private  Boolean questionResponse;
 	private  Boolean confirmationResponse;
 
 	public Notification(String id, NotificationType type, String title, String message, String detail,
 			List<String> stackTrace, List<ParameterDefinition> formParameters, Boolean isClosed,
-			List<PropertyInput> formResponse, Boolean questionResponse, Boolean confirmationResponse) {
+			List<Property> formResponse, Boolean questionResponse, Boolean confirmationResponse) {
 		// TODO Auto-generated constructor stub
 		this.id = id;
 		this.type = type;
@@ -64,7 +64,7 @@ public class Notification {
 		return isClosed;
 	}
 
-	public List<PropertyInput> getFormResponse() {
+	public List<Property> getFormResponse() {
 		return formResponse;
 	}
 
@@ -79,7 +79,7 @@ public class Notification {
 	        isClosed = closed;
 	}
 
-	public void setFormResponse(List<PropertyInput> formResponse) {
+	public void setFormResponse(List<Property> formResponse) {
 	        this.formResponse = formResponse;
 	}
 

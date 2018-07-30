@@ -27,14 +27,14 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 		this.cibridge = cibridge;
 	}
 	private void registerGUIBuilderService() {
-		this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(), new CIBridgeGUIBuilderService(cibridge), new Hashtable<String,String>());
+		//this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(), new CIBridgeGUIBuilderService(cibridge), new Hashtable<String,String>());
 
 	}
 
 	@Override
 	public NotificationQueryResults getNotifications(NotificationFilter filter) {
 		// TODO Auto-generated method stub
-	List<Notification> notifications = new ArrayList<>();
+	/*List<Notification> notifications = new ArrayList<>();
 	BundleContext context = cibridge.getBundleContext();
 	PageInfo pageInfo = new PageInfo(false,false); 
 	NotificationQueryResults queryResults = null;
@@ -57,23 +57,23 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 	catch(Exception e) {
 		e.printStackTrace();
 	}
-	return queryResults;
+*/	return null;
 }
 
 @Override
 public Boolean isClosed(String NotificationId) {
 	// TODO Auto-generated method stub
 	
-	if(notificationMap.containsKey(NotificationId))
+	/*if(notificationMap.containsKey(NotificationId))
 		return notificationMap.get(NotificationId).getIsClosed();
-	
+	*/
 	return null;
 }
 
 
 public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
 	// TODO Auto-generated method stub
-	if(notificationMap.containsKey(notificationId)) {
+	/*if(notificationMap.containsKey(notificationId)) {
 		Notification temp = notificationMap.get(notificationId);
 		temp.setClosed( response.getCloseNotification());
 		temp.setConfirmationResponse(response.getConfirmationResponse());
@@ -81,7 +81,7 @@ public Boolean setNotificationResponse(String notificationId, NotificationRespon
 		temp.setQuestionResponse(response.getQuestionResponse());
 		notificationMap.put(notificationId,temp);
 		return true;
-	}
+	}*/
 		return false;
 }
 
@@ -89,7 +89,7 @@ public Boolean setNotificationResponse(String notificationId, NotificationRespon
 
 public Boolean closeNotification(String notificationId) {
 	// TODO Auto-generated method stub
-	if(notificationMap.containsKey(notificationId)) {
+	/*if(notificationMap.containsKey(notificationId)) {
 		Notification temp = notificationMap.get(notificationId);
 		if(temp.getIsClosed() == true) {
 				System.out.println("The notification is already closed");
@@ -99,7 +99,7 @@ public Boolean closeNotification(String notificationId) {
 		notificationMap.put(notificationId,temp);
 		return true;
 		}
-	}	
+	}	*/
 	return false;
 }
 

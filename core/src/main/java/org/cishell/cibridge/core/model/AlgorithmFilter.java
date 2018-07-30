@@ -103,5 +103,13 @@ public class AlgorithmFilter {
 	public void setOffset(int offset) {
 		this.offset = offset;
 	}
+
+	@Override
+	public String toString() {
+		return "AlgorithmFilter [algorithmDefinitionIds=" + algorithmDefinitionIds + ", algorithmInstanceIds="
+				+ algorithmInstanceIds + ", states=" + states + ", inputDataIds=" + inputDataIds + ", inputFormats="
+				+ inputFormats + ", outputFormats=" + outputFormats + ", properties=" + properties + ", limit=" + limit
+				+ ", offset=" + offset + "]";
+	}
 	
 }

@@ -1,5 +1,8 @@
 package org.cishell.cibridge.cishell;
 
+import java.util.HashMap;
+import java.util.HashSet;
+
 import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.app.service.scheduler.SchedulerService;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeAlgorithmFacade;
@@ -8,6 +11,7 @@ import org.cishell.cibridge.cishell.impl.CIShellCIBridgeLoggingFacade;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeNotificationFacade;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeSchedulerFacade;
 import org.cishell.cibridge.core.CIBridge;
+import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -26,6 +30,7 @@ public class CIShellCIBridge extends CIBridge {
 	public final CIShellCIBridgeNotificationFacade cishellNotification;
 	public final CIShellCIBridgeSchedulerFacade cishellScheduler;
 	public final CIShellCIBridgeLoggingFacade cishellLogging;
+	public final HashMap<String,AlgorithmDefinition> algorithmDefinitionCacheMap; 
 
 	public CIShellCIBridge(BundleContext context) {
 		super(new CIShellCIBridgeAlgorithmFacade(), new CIShellCIBridgeDataFacade(),
@@ -44,8 +49,9 @@ public class CIShellCIBridge extends CIBridge {
 		cishellNotification.setCIBridge(this);
 		cishellScheduler.setCIBridge(this);
 		cishellLogging.setCIBridge(this);
+		algorithmDefinitionCacheMap = new HashMap<>();
+		this.cishellAlgorithm.cacheData();
 	}
-	
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public AlgorithmFactory getAlgorithmFactory(String pid) {
