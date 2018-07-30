@@ -91,11 +91,14 @@ public Boolean closeNotification(String notificationId) {
 	// TODO Auto-generated method stub
 	if(notificationMap.containsKey(notificationId)) {
 		Notification temp = notificationMap.get(notificationId);
-		if(temp.getIsClosed() == true)
-			throw new Exception("The notification is already closed");
+		if(temp.getIsClosed() == true) {
+				System.out.println("The notification is already closed");
+		} 
+		else{
 		temp.setClosed(true);
 		notificationMap.put(notificationId,temp);
 		return true;
+		}
 	}	
 	return false;
 }
