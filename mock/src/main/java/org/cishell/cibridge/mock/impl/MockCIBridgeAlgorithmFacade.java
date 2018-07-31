@@ -12,13 +12,6 @@ import org.cishell.cibridge.core.model.PropertyInput;
 
 public class MockCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
 
-
-	@Override
-	public List<AlgorithmDefinition> algorithmresults() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
 		// TODO Auto-generated method stub
