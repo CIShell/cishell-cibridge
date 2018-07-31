@@ -1,10 +1,16 @@
 package org.cishell.cibridge.cishell.impl;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.data.BasicData;
+import org.cishell.framework.LocalCIShellContext;
 import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
@@ -16,6 +22,7 @@ import org.cishell.cibridge.core.model.Data;
 import org.cishell.cibridge.core.model.DataFilter;
 import org.cishell.cibridge.core.model.DataProperties;
 import org.cishell.cibridge.core.model.DataQueryResults;
+import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.DataValidator;
 import org.cishell.service.conversion.Converter;
@@ -23,9 +30,11 @@ import org.cishell.service.conversion.DataConversionService;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private CIShellCIBridge cibridge;
+	private LocalCIShellContext localCIShellContext;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
+		localCIShellContext = new LocalCIShellContext(this.cibridge.getBundleContext());
 	}
 
 	@Override
@@ -108,22 +117,22 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		try {
 			if (dataId != null && outFormat != null) {
 				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
-				if (dataMapping.containsKey(dataId)) {//dataId Present
-					//algFormat = .getFormat();//check if the input format is correct
+				if (dataMapping.containsKey(dataId)) {
 					if(dataConversionService != null) {
 						converters = dataConversionService.findConverters(dataMapping.get(dataId), outFormat);
 						for(Converter converter: converters) {
-							//getAlgorithmFactory asks for CISHELLContext. Shall we create one in the CIBridge 
-							converter.getAlgorithmFactory().createAlgorithm(dataMapping.get(dataId), null,cibridge.getBundleContext() );
+//							BasicData basicData = new BasicData(.getMetadata(), dataMapping.get(dataId).getData(), dataMapping.get(dataId).getFormat());
+							org.cishell.framework.data.Data[] temp = {dataMapping.get(dataId)};
+							converter.getAlgorithmFactory().createAlgorithm(temp,dataMapping.get(dataId).getMetadata(),(CIShellContext)localCIShellContext);
+							//FIXME: algorithm calling execute() innately, how to populate algorithmInstance
+							//
 						}
 					}
 					else {
-						// throw error that dataConversionService is null
 						throw new Exception("error that dataConversionService is null");
 					}	
 				}
 				else {
-					// throw error that dataId is not found.
 					throw new Exception("error that dataId is not found");
 				}
 				
@@ -190,7 +199,19 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 			if(dataId != null) {
 				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
 				if (dataMapping.containsKey(dataId)) {
-					
+					if(dataConversionService != null) {
+						org.cishell.framework.data.Data tempData = dataMapping.get(dataId);
+						if(tempData.getFormat().startsWith("file:")) {
+							File f1 =  (File) tempData.getData();
+							return f1.getAbsolutePath();
+						}
+						else {
+							//FIXME: what to return when the format is not "file:"
+						}
+					}
+					else {
+						throw new Exception("dataConversionService is null");
+					}
 				}
 				else {
 					throw new Exception("dataMapping does not have the given DataID");
@@ -206,25 +227,85 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public Data uploadData(String file, DataProperties properties) {
-		// TODO Auto-generated method stub
+		//FIXME: How to read a file from a string sent
+		try {
+			FileReader fr = new FileReader(file);//as file contains location to the file
+			//FIXME: what is the format of the file to be read for the data to be read?
+			
+		} catch (FileNotFoundException e) {
+			System.out.println(e.getMessage());
+		}
 		return null;
 	}
-
-	@Override
+	
+	@Override //complete
 	public Boolean removeData(String dataId) {
-		// TODO Auto-generated method stub
-		return null;
+		DataManagerService dataManagerService = cibridge.getDataManagerService(); 
+		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		try {
+			if(dataId != null) {
+				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
+				if (dataMapping.containsKey(dataId)) {
+					if(dataConversionService != null) {
+						dataManagerService.removeData(dataMapping.get(dataId));
+						if(!(dataMapping.containsKey(dataId))) {
+							return true;
+						}
+						else {
+							return false;
+						}
+						
+					}
+					else {
+						throw new Exception("dataConversionService is null");
+					}
+				}
+				else {
+					throw new Exception("dataMapping does not have the given DataID");
+				}
+			}
+			else {
+				throw new Exception("DataID is null");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
 	}
 
 	@Override
 	public Boolean updateData(String dataId, DataProperties properties) {
-		// TODO Auto-generated method stub
-		return null;
+		DataManagerService dataManagerService = cibridge.getDataManagerService(); 
+		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		try {
+			if(dataId != null && properties.getLabel() != null) {
+				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
+				if (dataMapping.containsKey(dataId)) {
+					if(dataConversionService != null) {
+						dataManagerService.setLabel(dataMapping.get(dataId), properties.getLabel());
+						//FIXME: check if the label has been set
+						return true;						
+					}
+					else {
+						throw new Exception("dataConversionService is null");
+					}
+				}
+				else {
+					throw new Exception("dataMapping does not have the given DataID");
+				}
+			}
+			else {
+				throw new Exception("Either Data ID or Data Properties are null strings");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return false;
 	}
-
+	//FIXME: below are subscriptions
 	@Override
 	public Data dataAdded() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
