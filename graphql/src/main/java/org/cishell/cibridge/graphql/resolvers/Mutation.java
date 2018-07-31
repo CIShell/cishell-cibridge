@@ -26,7 +26,7 @@ public class Mutation implements GraphQLMutationResolver{
 	}
 
 	AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
-		return null;
+		return cibridge.algorithm.createAlgorithm(algorithmDefinitionId, dataIds, parameters);
 	}
 
 	Data uploadData(String file,DataProperties properties){

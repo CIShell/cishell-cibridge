@@ -11,6 +11,7 @@ import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
 import org.cishell.cibridge.core.model.LogLevel;
 import org.cishell.cibridge.core.model.LogQueryResults;
+import org.cishell.cibridge.core.model.PageInfo;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.service.log.LogEntry;
@@ -22,7 +23,7 @@ import org.osgi.service.log.LogService;
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	private CIShellCIBridge cibridge;
 
-	LogReaderService logReaderService = (LogReaderService) this.cibridge.getLogService();
+/*	LogReaderService logReaderService = (LogReaderService) this.cibridge.getLogService();
 	LogListener fileLogger;
 	List<LogReaderService> logReaders = new ArrayList<LogReaderService>();
 
@@ -40,13 +41,16 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 			}
 		}
 	};
-
+*/
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
 	}
 
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
+		
+		
+		
 		// TODO Auto-generated method stub
 		LogService logService = this.cibridge.getLogService();
 		List<LogQueryResults> results = new ArrayList<>();
@@ -55,12 +59,12 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 		{
 			hset.add(temp);
 		}
-		Enumeration e = logReaderService.getLog();
+	/*	Enumeration e = logReaderService.getLog();
 		while(e.hasMoreElements()){
 			LogEntry log = (LogEntry)e.nextElement();
 //			if(hset.contains(log.getLevel()) && log.getTime() < filter.logsBefore)
 //				results.add(log);	
-		}
+		}*/
 		return null;
 	}
 

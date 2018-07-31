@@ -73,4 +73,12 @@ public class AlgorithmInstance {
 		return outData;
 	}
 
+	@Override
+	public String toString() {
+		return "AlgorithmInstance [id=" + id + ", inData=" + inData + ", parameters=" + parameters
+				+ ", algorithmDefinition=" + algorithmDefinition + ", state=" + state + ", scheduledRunTime="
+				+ scheduledRunTime + ", progress=" + progress + ", outData=" + outData + "]";
+	}
+
+	
 }

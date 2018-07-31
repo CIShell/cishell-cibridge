@@ -47,12 +47,12 @@
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-java-servlet</artifactId>
-			<version>5.0.1</version>
+			<version>6.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>graphql-java-tools</artifactId>
-			<version>5.1.0</version>
+			<version>5.2.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.graphql-java</groupId>
@@ -79,6 +79,7 @@
 			<artifactId>org.apache.felix.framework</artifactId>
 			<version>5.6.10</version>
 		</dependency>
+		
 	</dependencies>
 </project>
 

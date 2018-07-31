@@ -3,6 +3,7 @@ package org.cishell.cibridge.core.model;
 import java.util.List;
 
 public class AlgorithmDefinition {
+
 	private final String id;
 	private final InputParameters parameters;
 	private final List<String> inData;
@@ -50,32 +51,7 @@ public class AlgorithmDefinition {
 		this.otherProperties = otherProperties;
 	}
 
-	public AlgorithmDefinition(InputParameters parameters, List<String> inData, List<String> outData, String label,
-			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
-			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
-			String reference, String referenceUrl, String writtenIn, List<Property> otherProperties) {
-		// TODO Auto-generated constructor stub
-		this.id = null;
-		this.parameters = parameters;
-		this.inData = inData;
-		this.outData = outData;
-		this.label = label;
-		this.description = description;
-		this.parentOutputData = parentOutputData;
-		this.type = type;
-		this.remoteable = remoteable;
-		this.menuPath = menuPath;
-		this.conversion = conversion;
-		this.authors = authors;
-		this.implementers = implementers;
-		this.integrators = integrators;
-		this.documentationUrl = documentationUrl;
-		this.reference=reference;
-		this.referenceUrl = referenceUrl;
-		this.writtenIn = writtenIn;
-		this.otherProperties = otherProperties;
-	}
-
+	
 	public String getId() {
 		return id;
 	}
@@ -151,6 +127,16 @@ public class AlgorithmDefinition {
 	public List<Property> getOtherProperties() {
 		return otherProperties;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "AlgorithmDefinition [id=" + id + ", parameters=" + parameters + ", inData=" + inData + ", outData="
+				+ outData + ", label=" + label + ", description=" + description + ", parentOutputData="
+				+ parentOutputData + ", type=" + type + ", remoteable=" + remoteable + ", menuPath=" + menuPath
+				+ ", conversion=" + conversion + ", authors=" + authors + ", implementers=" + implementers
+				+ ", integrators=" + integrators + ", documentationUrl=" + documentationUrl + ", reference=" + reference
+				+ ", referenceUrl=" + referenceUrl + ", writtenIn=" + writtenIn + ", otherProperties=" + otherProperties
+				+ "]";
+	}
 
 }

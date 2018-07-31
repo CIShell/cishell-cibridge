@@ -12,6 +12,10 @@ public class AlgorithmFilter {
 	private List<PropertyInput> properties;
 	private int limit;
 	private int offset;
+	
+	public AlgorithmFilter() {
+		
+	}
 
 	public AlgorithmFilter(List<String> algorithmDefinitionIds, List<String> algorithmInstanceIds,
 			List<AlgorithmState> states, List<String> inputDataIds, List<String> inputFormats, List<String> outputFormats,
@@ -98,6 +102,14 @@ public class AlgorithmFilter {
 
 	public void setOffset(int offset) {
 		this.offset = offset;
+	}
+
+	@Override
+	public String toString() {
+		return "AlgorithmFilter [algorithmDefinitionIds=" + algorithmDefinitionIds + ", algorithmInstanceIds="
+				+ algorithmInstanceIds + ", states=" + states + ", inputDataIds=" + inputDataIds + ", inputFormats="
+				+ inputFormats + ", outputFormats=" + outputFormats + ", properties=" + properties + ", limit=" + limit
+				+ ", offset=" + offset + "]";
 	}
 	
 }

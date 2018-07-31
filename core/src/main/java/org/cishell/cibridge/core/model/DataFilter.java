@@ -1,6 +1,5 @@
 package org.cishell.cibridge.core.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DataFilter {
