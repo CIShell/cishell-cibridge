@@ -54,6 +54,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 		return scheduler.setRunning(running);
 	}
 
+
 	@Override
 	public Boolean schedulerCleared() {
 		// TODO Auto-generated method stub

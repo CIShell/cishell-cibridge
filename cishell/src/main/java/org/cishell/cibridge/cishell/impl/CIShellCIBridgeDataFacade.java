@@ -113,15 +113,18 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 					if(dataConversionService != null) {
 						converters = dataConversionService.findConverters(dataMapping.get(dataId), outFormat);
 						for(Converter converter: converters) {
+							//getAlgorithmFactory asks for CISHELLContext. Shall we create one in the CIBridge 
 							converter.getAlgorithmFactory().createAlgorithm(dataMapping.get(dataId), null,cibridge.getBundleContext() );
 						}
 					}
 					else {
 						// throw error that dataConversionService is null
+						throw new Exception("error that dataConversionService is null");
 					}	
 				}
 				else {
 					// throw error that dataId is not found.
+					throw new Exception("error that dataId is not found");
 				}
 				
 			} else {
@@ -136,19 +139,68 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
-		// TODO Auto-generated method stub
+		// Find the chain of converter algorithms to convert data from given input format
+		// to given output format
+		// 
+		// Arguments
+		// inFormat:
+		// outFormat:
+		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		Converter[] converters = null;
+		try {
+			if(inFormat != null && outFormat != null) {
+				if(dataConversionService != null) {
+					converters = dataConversionService.findConverters(inFormat, outFormat);
+					//FIXME: returned is converters
+					//We need to return algorithm instances
+				}
+				else {
+					throw new Exception("dataConversionService is null");
+				}
+			}
+			else {
+				throw new Exception("inFormat or outFormat is null");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 		return null;
 	}
 
 	@Override
 	public DataQueryResults getData(DataFilter filter) {
-		// TODO Auto-generated method stub
+		//  Returns references for all the data objects that matches the given filter
+		// 
+		//  Arguments
+		//  filter:
+		
+		//FIXME:
+		//Take inputs from Varun about the filter object
 		return null;
 	}
 
 	@Override
 	public String downloadData(String dataId) {
-		// TODO Auto-generated method stub
+		// Returns references for all the data objects that matches the given filter
+		//
+		// Arguments
+		// filter:
+		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		try {
+			if(dataId != null) {
+				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
+				if (dataMapping.containsKey(dataId)) {
+					
+				}
+				else {
+					throw new Exception("dataMapping does not have the given DataID");
+				}
+			}else {
+				throw new Exception("dataID is null");
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 		return null;
 	}
 

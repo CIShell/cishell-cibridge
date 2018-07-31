@@ -32,21 +32,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 		return null;
 	}
 
-	public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Boolean removeAlgorithm(String algorithmInstanceId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	@Override
 	public Notification notificationAdded() {
 		// TODO Auto-generated method stub
@@ -58,5 +43,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 }
