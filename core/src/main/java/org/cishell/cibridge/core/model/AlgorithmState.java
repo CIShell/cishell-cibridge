@@ -8,4 +8,5 @@ public enum AlgorithmState{
     RUNNING,
     SCHEDULED,
     WAITING,
+    FINISHED,
 }

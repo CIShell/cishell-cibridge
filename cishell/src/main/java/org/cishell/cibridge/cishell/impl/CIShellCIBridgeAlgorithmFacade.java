@@ -115,7 +115,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 		return queryResults;
 	}
 
-	private <T> QueryResults<T> getQueryResults(QueryResults<T> queryResults, int limit, int offset) {
+	public <T> QueryResults<T> getQueryResults(QueryResults<T> queryResults, int limit, int offset) {
 
 		int listSize = queryResults.getResults().size();
 		Boolean hasNext = false;

@@ -101,7 +101,7 @@ public class Query implements GraphQLQueryResolver {
 
 	public LogQueryResults getLogs(LogFilter filter) {
 		// TODO Auto-generated method stub
-		return null;
+		return cibridge.logging.getLogs(filter);
 	}
 
 }

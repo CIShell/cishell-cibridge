@@ -26,7 +26,7 @@ import org.osgi.service.metatype.MetaTypeService;
 
 public class CIShellCIBridge extends CIBridge {
     private BundleContext context;
-    private LocalCIShellContext cishellContext;
+    // private LocalCIShellContext cishellContext;
 
     public final CIShellCIBridgeAlgorithmFacade cishellAlgorithm;
     public final CIShellCIBridgeDataFacade cishellData;
@@ -40,7 +40,7 @@ public class CIShellCIBridge extends CIBridge {
                 new CIShellCIBridgeNotificationFacade(), new CIShellCIBridgeSchedulerFacade(),
                 new CIShellCIBridgeLoggingFacade());
         this.context = context;
-        this.cishellContext = new LocalCIShellContext(context);
+        // this.cishellContext = new LocalCIShellContext(this.context);
 
         this.cishellAlgorithm = (CIShellCIBridgeAlgorithmFacade) this.algorithm;
         this.cishellData = (CIShellCIBridgeDataFacade) this.data;
@@ -107,7 +107,7 @@ public class CIShellCIBridge extends CIBridge {
         return context;
     }
 
-    public LocalCIShellContext getCishellContext() {
-        return cishellContext;
-    }
+    // public LocalCIShellContext getCishellContext() {
+    //     return cishellContext;
+    // }
 }

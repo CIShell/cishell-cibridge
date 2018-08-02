@@ -5,11 +5,13 @@ import java.util.Date;
 import java.util.List;
 
 public class Log {
-	private final LogLevel logLevel;
-	private final String message;
-	private final List<String> stackTrace;
-	private final ZonedDateTime timestamp;
+	private  LogLevel logLevel;
+	private  String message;
+	private  List<String> stackTrace;
+	private  ZonedDateTime timestamp;
 
+	public Log(){}
+	
 	public Log(LogLevel logLevel, String message, List<String> stackTrace, ZonedDateTime timestamp) {
 		// TODO Auto-generated constructor stub
 		this.logLevel = logLevel;
@@ -32,6 +34,22 @@ public class Log {
 
 	public ZonedDateTime getTimestamp() {
 		return timestamp;
+	}
+
+	public void setLogLevel(LogLevel logLevel) {
+		this.logLevel = logLevel;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public void setStackTrace(List<String> stackTrace) {
+		this.stackTrace = stackTrace;
+	}
+
+	public void setTimestamp(ZonedDateTime timestamp) {
+		this.timestamp = timestamp;
 	}
 
 }
