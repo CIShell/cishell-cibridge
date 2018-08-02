@@ -1,19 +1,11 @@
 package org.cishell.cibridge.cishell;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.app.service.scheduler.SchedulerService;
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeAlgorithmFacade;
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeDataFacade;
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeLoggingFacade;
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeNotificationFacade;
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeSchedulerFacade;
+import org.cishell.cibridge.cishell.impl.*;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.model.AlgorithmDefinition;
-import org.cishell.cibridge.core.model.AlgorithmInstance;
-import org.cishell.framework.LocalCIShellContext;
+import org.cishell.cibridge.core.model.AlgorithmDataObject;
+import org.cishell.cibridge.core.model.AlgorithmFactoryDataObject;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -24,23 +16,24 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 
+import java.util.HashMap;
+
 public class CIShellCIBridge extends CIBridge {
     private BundleContext context;
-    // private LocalCIShellContext cishellContext;
 
     public final CIShellCIBridgeAlgorithmFacade cishellAlgorithm;
     public final CIShellCIBridgeDataFacade cishellData;
     public final CIShellCIBridgeNotificationFacade cishellNotification;
     public final CIShellCIBridgeSchedulerFacade cishellScheduler;
     public final CIShellCIBridgeLoggingFacade cishellLogging;
-    public final HashMap<String, AlgorithmDefinition> algorithmDefinitionCacheMap;
+    public final HashMap<String, AlgorithmDataObject> algorithmDataMap = new HashMap<>();
+    public final HashMap<String, AlgorithmFactoryDataObject> algorithmFactoryDataMap = new HashMap<>();
 
     public CIShellCIBridge(BundleContext context) {
         super(new CIShellCIBridgeAlgorithmFacade(), new CIShellCIBridgeDataFacade(),
                 new CIShellCIBridgeNotificationFacade(), new CIShellCIBridgeSchedulerFacade(),
                 new CIShellCIBridgeLoggingFacade());
         this.context = context;
-        // this.cishellContext = new LocalCIShellContext(this.context);
 
         this.cishellAlgorithm = (CIShellCIBridgeAlgorithmFacade) this.algorithm;
         this.cishellData = (CIShellCIBridgeDataFacade) this.data;
@@ -53,7 +46,7 @@ public class CIShellCIBridge extends CIBridge {
         cishellNotification.setCIBridge(this);
         cishellScheduler.setCIBridge(this);
         cishellLogging.setCIBridge(this);
-        algorithmDefinitionCacheMap = new HashMap<>();
+
         this.cishellAlgorithm.cacheData();
     }
 
@@ -106,8 +99,5 @@ public class CIShellCIBridge extends CIBridge {
     public BundleContext getBundleContext() {
         return context;
     }
-
-    // public LocalCIShellContext getCishellContext() {
-    //     return cishellContext;
-    // }
+    
 }

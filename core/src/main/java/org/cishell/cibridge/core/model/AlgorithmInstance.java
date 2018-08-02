@@ -10,7 +10,7 @@ public class AlgorithmInstance {
 	private final List<Property> parameters;
 	private final AlgorithmDefinition algorithmDefinition;
 	private final AlgorithmState state;
-	private final ZonedDateTime scheduledRunTime;
+	private ZonedDateTime scheduledRunTime;
 	private final int progress;
 	private final List<Data> outData;
 
@@ -71,6 +71,10 @@ public class AlgorithmInstance {
 
 	public List<Data> getOutData() {
 		return outData;
+	}
+
+	public void setScheduledRunTime(ZonedDateTime scheduledRunTime){
+		this.scheduledRunTime = scheduledRunTime;
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		AlgorithmFilter algorithmFilter = new AlgorithmFilter(defIDs, null, null, null, null, null, null, 0, 0);
 		AlgorithmDefinitionQueryResults algorithmDefinitionQueryResults = this.cibridge.cishellAlgorithm.getAlgorithmDefinitions(algorithmFilter);
 		AlgorithmDefinition algDefinition = (AlgorithmDefinition) algorithmDefinitionQueryResults.getResults().get(0);
-		AlgorithmFactory algorithm = this.cibridge.cishellAlgorithm.getAlgorithmFactory(algorithmDefinitionId);
+		AlgorithmFactory algorithm = this.cibridge.getAlgorithmFactory(algorithmDefinitionId);
 		
 		DataFilter dataFilter = new DataFilter(dataIds, null, false, null, null);
 		DataQueryResults dataQueryResults = getData(dataFilter);

@@ -113,7 +113,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				}
 				
 				tempLog.setMessage(log.getMessage());
-				tempLog.setTimestamp(log.getTime());
+				// tempLog.setTimestamp(log.getTime());
 				logs.add(tempLog);	
 			}
 		}
