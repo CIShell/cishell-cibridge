@@ -12,6 +12,7 @@ buildNumber.properties
 *.factorypath
 *.classpath
 */felix-cache/
+cishell/plugins/
 
 
 
