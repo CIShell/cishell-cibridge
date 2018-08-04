@@ -7,8 +7,6 @@ import org.cishell.cibridge.core.model.interfaces.QueryResults;
 import org.cishell.cibridge.core.wrapper.ProgressTrackableAlgorithm;
 
 
-import org.cishell.framework.CIShellContext;
-import org.cishell.framework.LocalCIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.algorithm.ProgressMonitor;
@@ -202,9 +200,9 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             }
         }
 
-        CIShellContext ci = new LocalCIShellContext(null);
+        // CIShellContext ci = new LocalCIShellContext(null);
 
-        ProgressTrackableAlgorithm algorithm = (ProgressTrackableAlgorithm) algorithmFactory.createAlgorithm(dataArray, paramTable, ci);
+        ProgressTrackableAlgorithm algorithm = (ProgressTrackableAlgorithm) algorithmFactory.createAlgorithm(dataArray, paramTable, null);
         algorithm.setProgressMonitor(ProgressMonitor.NULL_MONITOR);
 
         String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinitionId);
