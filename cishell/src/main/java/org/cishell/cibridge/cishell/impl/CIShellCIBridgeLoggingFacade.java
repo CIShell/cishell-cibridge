@@ -21,6 +21,11 @@ import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeAlgorithmFacade; 
+// import java.util.Date;
+// import java.util.DateFormat;
+import java.time.ZonedDateTime;
+import java.time.ZoneId;
+import java.time.Instant;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	private CIShellCIBridge cibridge;
@@ -72,18 +77,26 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 			for(LogLevel temp:filter.logLevel){
 				loglevelSet.add(temp);	
 			}
-			System.out.println(loglevelSet);
 			while(latestLogs.hasMoreElements()){
 			LogEntry log = (LogEntry)latestLogs.nextElement();
 			Log tempLog = new Log();
 			if(logLevelMap.get(log.getLevel())!= null){
-				if(loglevelSet.contains(logLevelMap.get(log.getLevel()))) // && log.getTime() < filter.logsBefore)
-					{
+				if(loglevelSet.contains(logLevelMap.get(log.getLevel()))){
 					tempLog.setLogLevel(logLevelMap.get(log.getLevel()));	
-					tempLog.setMessage(log.getMessage());	
-					logs.add(tempLog);
+					tempLog.setMessage(log.getMessage());
+					if(filter.logsBefore!=null){
+					ZonedDateTime dateTime = Instant.ofEpochMilli(log.getTime())
+        	    	.atZone(ZoneId.of("-05:00"));
+					tempLog.setTimestamp(dateTime);
+					if((dateTime.compareTo(filter.logsBefore))<=0)
+						logs.add(tempLog);	
 					}
-				}	
+					else{
+						logs.add(tempLog);
+					}	
+					}
+			}	
+
 			}
 				limit = filter.getLimit();
 				offset = filter.getOffset();
@@ -113,7 +126,9 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				}
 				
 				tempLog.setMessage(log.getMessage());
-				// tempLog.setTimestamp(log.getTime());
+				ZonedDateTime dateTime = Instant.ofEpochMilli(log.getTime())
+        	    .atZone(ZoneId.of("-05:00"));
+				tempLog.setTimestamp(dateTime);
 				logs.add(tempLog);	
 			}
 		}
