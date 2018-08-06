@@ -12,6 +12,8 @@ public class LogFilter {
 	public int limit;
 	public int offset;
 
+	public LogFilter(){}
+	
 	public LogFilter(List<LogLevel> logLevel, ZonedDateTime logsSince, ZonedDateTime logsBefore, int limit, int offset) {
 		// TODO Auto-generated constructor stub
 		this.logLevel = logLevel;

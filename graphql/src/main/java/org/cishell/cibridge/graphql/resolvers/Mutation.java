@@ -48,15 +48,15 @@ public class Mutation implements GraphQLMutationResolver{
 	}
 	Boolean setAlgorithmCancelled(String algorithmInstanceId,Boolean isCancelled)
 	{
-		return Boolean.TRUE;
+		return cibridge.scheduler.setAlgorithmCancelled(algorithmInstanceId, isCancelled);
 	}
 	Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused)
 	{
-		return Boolean.TRUE;
+		return cibridge.scheduler.setAlgorithmPaused(algorithmInstanceId, isPaused);
 	}
 	Boolean removeAlgorithm(String algorithmInstanceId)
 	{
-		return Boolean.TRUE;
+		return cibridge.scheduler.removeAlgorithm(algorithmInstanceId);
 	}
 	Boolean runAlgorithmNow(String algorithmInstanceId)
 	{

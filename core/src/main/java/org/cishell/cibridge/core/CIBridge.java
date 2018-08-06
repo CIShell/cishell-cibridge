@@ -39,7 +39,6 @@ public abstract class CIBridge {
 
 	public interface AlgorithmFacade {
 		//query
-		List<AlgorithmDefinition> algorithmresults();
 		AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
 		AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
 		//mutation

@@ -34,11 +34,6 @@ public class Query implements GraphQLQueryResolver {
 	}
 
 	// resolver functions
-	public List<AlgorithmDefinition> algorithmresults() {
-		System.out.println("in algorithmresults of query");
-		return cibridge.algorithm.algorithmresults();
-	}
-
 	public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
 		return cibridge.algorithm.getAlgorithmDefinitions(filter);
 	}
@@ -96,7 +91,7 @@ public class Query implements GraphQLQueryResolver {
 
 	public LogQueryResults getLogs(LogFilter filter) {
 		// TODO Auto-generated method stub
-		return null;
+		return cibridge.logging.getLogs(filter);
 	}
 
 }

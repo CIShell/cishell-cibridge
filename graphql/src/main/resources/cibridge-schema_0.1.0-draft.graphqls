@@ -28,8 +28,6 @@ schema {
 # Root query type
 type Query{
 
-	algorithmresults: [AlgorithmDefinition]
-
 	# Returns all the algorithm factory templates matching the given filter criteria
 	getAlgorithmDefinitions(filter: AlgorithmFilter): AlgorithmDefinitionQueryResults!
 

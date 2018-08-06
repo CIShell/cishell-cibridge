@@ -1,8 +1,8 @@
 package org.cishell.cibridge.core.model;
 
 import java.util.List;
-
-public class LogQueryResults {
+import org.cishell.cibridge.core.model.interfaces.QueryResults;
+public class LogQueryResults implements QueryResults<Log> {
 	private final List<Log> results;
 	private final PageInfo pageInfo;
 
@@ -21,4 +21,8 @@ public class LogQueryResults {
 		return pageInfo;
 	}
 
+	@Override
+	public QueryResults<Log> getQueryResults(List<Log> objList, PageInfo pageInfo) {
+		return new LogQueryResults(objList, pageInfo);
+	}
 }
