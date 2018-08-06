@@ -1,0 +1,7 @@
+Bundle-SymbolicName:${project.artifactId}
+Bundle-Name: ${project.artifactId}
+Bundle-ClassPath: .
+Bundle-Version:${project.version}
+Bundle-Localization: plugin
+Export-Package: *
+Bundle-Activator: org.cishell.cibridge.cishell.graphql.CIBridgeServletActivator
