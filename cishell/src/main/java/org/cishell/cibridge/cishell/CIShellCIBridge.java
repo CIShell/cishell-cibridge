@@ -25,8 +25,8 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 
 public class CIShellCIBridge extends CIBridge {
-    private BundleContext context;
-    private LocalCIShellContext cishellContext;
+    private final BundleContext context;
+    private final LocalCIShellContext cishellContext;
 
     public final CIShellCIBridgeAlgorithmFacade cishellAlgorithm;
     public final CIShellCIBridgeDataFacade cishellData;

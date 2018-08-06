@@ -30,11 +30,11 @@ import org.cishell.service.conversion.DataConversionService;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private CIShellCIBridge cibridge;
-	private LocalCIShellContext localCIShellContext;
+	//private LocalCIShellContext localCIShellContext;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
-		localCIShellContext = new LocalCIShellContext(this.cibridge.getBundleContext());
+		//localCIShellContext = new LocalCIShellContext(this.cibridge.getBundleContext());
 	}
 
 	@Override
@@ -123,9 +123,9 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 						for(Converter converter: converters) {
 //							BasicData basicData = new BasicData(.getMetadata(), dataMapping.get(dataId).getData(), dataMapping.get(dataId).getFormat());
 							org.cishell.framework.data.Data[] temp = {dataMapping.get(dataId)};
-							converter.getAlgorithmFactory().createAlgorithm(temp,dataMapping.get(dataId).getMetadata(),(CIShellContext)localCIShellContext);
+							Algorithm outputAlgo = converter.getAlgorithmFactory().createAlgorithm(temp,dataMapping.get(dataId).getMetadata(),(CIShellContext)cibridge.getCishellContext());
 							//FIXME: algorithm calling execute() innately, how to populate algorithmInstance
-							//
+							// ask varun for algorithmfacade usage here
 						}
 					}
 					else {
@@ -162,6 +162,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 					converters = dataConversionService.findConverters(inFormat, outFormat);
 					//FIXME: returned is converters
 					//We need to return algorithm instances
+					// ask varun for algorithmfacade usage here
 				}
 				else {
 					throw new Exception("dataConversionService is null");
@@ -188,12 +189,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return null;
 	}
 
-	@Override
+	@Override //complete
 	public String downloadData(String dataId) {
-		// Returns references for all the data objects that matches the given filter
-		//
-		// Arguments
-		// filter:
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
 		try {
 			if(dataId != null) {
@@ -202,11 +199,15 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 					if(dataConversionService != null) {
 						org.cishell.framework.data.Data tempData = dataMapping.get(dataId);
 						if(tempData.getFormat().startsWith("file:")) {
-							File f1 =  (File) tempData.getData();
-							return f1.getAbsolutePath();
+							if(tempData.getData() instanceof File) {
+								File f1 =  (File) tempData.getData();
+								return f1.getAbsolutePath();
+							}else {
+								throw new Exception("Data not an instance of a file");
+							}
 						}
 						else {
-							//FIXME: what to return when the format is not "file:"
+							throw new Exception("format of data not a file");
 						}
 					}
 					else {
@@ -227,12 +228,18 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public Data uploadData(String file, DataProperties properties) {
-		//FIXME: How to read a file from a string sent
+		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		try {
-			FileReader fr = new FileReader(file);//as file contains location to the file
-			//FIXME: what is the format of the file to be read for the data to be read?
-			
-		} catch (FileNotFoundException e) {
+			if(file != null && properties != null) {
+				File fr = new File(file.trim());
+				BasicData tempBasicData = new BasicData(fr, properties.getFormat());
+				dataManagerService.addData(tempBasicData);
+				
+			}
+			else {
+				throw new Exception("file name null or properties null");
+			}
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;
@@ -273,7 +280,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return false;
 	}
 
-	@Override
+	@Override //complete
 	public Boolean updateData(String dataId, DataProperties properties) {
 		DataManagerService dataManagerService = cibridge.getDataManagerService(); 
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
@@ -283,7 +290,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 				if (dataMapping.containsKey(dataId)) {
 					if(dataConversionService != null) {
 						dataManagerService.setLabel(dataMapping.get(dataId), properties.getLabel());
-						//FIXME: check if the label has been set
 						return true;						
 					}
 					else {
