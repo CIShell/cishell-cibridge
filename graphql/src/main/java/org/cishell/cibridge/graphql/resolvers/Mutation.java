@@ -30,13 +30,13 @@ public class Mutation implements GraphQLMutationResolver{
 	}
 
 	Data uploadData(String file,DataProperties properties){
-		return null;
+		return cibridge.data.uploadData(file, properties);
 	}
 	Boolean removeData(String dataId) {
-		return Boolean.TRUE;
+		return cibridge.data.removeData(dataId);
 	}
 	Boolean updateData(String dataId,DataProperties properties){
-		return Boolean.TRUE;
+		return cibridge.data.updateData(dataId, properties);
 	}
 	Boolean setNotificationResponse(String notificationId,NotificationResponse response)
 	{

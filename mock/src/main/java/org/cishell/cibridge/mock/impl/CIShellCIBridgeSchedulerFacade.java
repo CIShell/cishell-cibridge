@@ -54,20 +54,6 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 		return scheduler.setRunning(running);
 	}
 
-	@Override
-	public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
-		return null;
-	}
-
-	@Override
-	public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused) {
-		return null;
-	}
-
-	@Override
-	public Boolean removeAlgorithm(String algorithmInstanceId) {
-		return null;
-	}
 
 	@Override
 	public Boolean schedulerCleared() {
@@ -77,6 +63,24 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
 	@Override
 	public Boolean schedulerRunningChanged() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean removeAlgorithm(String algorithmInstanceId) {
 		// TODO Auto-generated method stub
 		return null;
 	}

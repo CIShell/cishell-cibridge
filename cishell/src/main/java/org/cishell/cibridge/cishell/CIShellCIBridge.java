@@ -99,5 +99,5 @@ public class CIShellCIBridge extends CIBridge {
     public BundleContext getBundleContext() {
         return context;
     }
-    
+
 }

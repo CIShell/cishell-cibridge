@@ -44,23 +44,19 @@ public class Query implements GraphQLQueryResolver {
 
 	// TODO
 	public String validateData(String algorithmDefinitionId, List<String> dataIds) {
-		// TODO Auto-generated method stub
-		return null;
+		return cibridge.data.validateData(algorithmDefinitionId, dataIds);
 	}
 
 	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
-		// TODO Auto-generated method stub
-		return null;
+		return cibridge.data.findConverters(dataId, outFormat);
 	}
 
 	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
-		// TODO Auto-generated method stub
-		return null;
+		return cibridge.data.findConvertersByFormat(inFormat, outFormat);
 	}
 
 	public DataQueryResults getData(DataFilter filter) {
-		// TODO Auto-generated method stub
-		return null;
+		return cibridge.data.getData(filter);
 	}
 
 	// public File downloadData(String dataId) {
@@ -68,8 +64,7 @@ public class Query implements GraphQLQueryResolver {
 	// return null;
 	// }
 	public String downloadData(String dataId) {
-		// TODO Auto-generated method stub
-		return null;
+		return cibridge.data.downloadData(dataId);
 	}
 
 	public NotificationQueryResults getNotifications(NotificationFilter filter) {
