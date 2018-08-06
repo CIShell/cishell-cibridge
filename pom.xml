@@ -24,6 +24,8 @@
 		<module>mock</module>
 		<module>cishell</module>
 		<module>core</module>
+		<module>libs</module>
+		<module>container</module>
 	</modules>
 
 	<repositories>
