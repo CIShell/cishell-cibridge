@@ -8,6 +8,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.service.http.HttpService;
 
 import org.cishell.cibridge.cishell.graphql.CIBridgeServlet;
+import org.cishell.cibridge.cishell.graphql.GraphiqlServlet;
 
 
 public class CIBridgeServletActivator implements BundleActivator {
@@ -19,6 +20,7 @@ public class CIBridgeServletActivator implements BundleActivator {
           // HTTP service is no longer available, unregister our servlet...
           try {
              ((HttpService) service).unregister("/graphql");
+             ((HttpService) service).unregister("/");
           } catch (IllegalArgumentException exception) {
              // Ignore; servlet registration probably failed earlier on...
           }
@@ -29,6 +31,7 @@ public class CIBridgeServletActivator implements BundleActivator {
           HttpService httpService = (HttpService) this.context.getService(reference);
           try {
             httpService.registerServlet("/graphql", new CIBridgeServlet(), null, null);
+            httpService.registerServlet("/", new GraphiqlServlet(), null, null);
           } catch (Exception exception) {
             exception.printStackTrace();
           }
