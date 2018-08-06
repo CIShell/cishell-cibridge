@@ -79,6 +79,32 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>com.graphql-java:graphql-java</include>
+									<include>com.graphql-java:graphql-java-tools</include>
+									<include>com.graphql-java:graphql-java-servlet</include>
+									<include>com.graphql-java:graphql-java-annotations</include>
+									<include>com.fasterxml.jackson.core:jackson-core</include>
+									<include>com.fasterxml.jackson.core:jackson-annotations</include>
+									<include>com.fasterxml.jackson.core:jackson-databind</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>biz.aQute.bnd</groupId>
 				<artifactId>bnd-maven-plugin</artifactId>
 				<version>4.0.0</version>
