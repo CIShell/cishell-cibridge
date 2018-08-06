@@ -1,6 +1,5 @@
 package org.cishell.cibridge.cishell.impl;
 
-import org.cishell.app.service.scheduler.SchedulerService;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDataObject;
@@ -37,16 +36,16 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         int count = 0;
         for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
 
-            AlgorithmInstance algoInstace = entry.getValue().getAlgorithmInstance();
-            if (algoInstace.getState() == IDLE ||
-                    algoInstace.getState() == PAUSED ||
-                    algoInstace.getState() == RUNNING ||
-                    algoInstace.getState() == WAITING) {
+            AlgorithmInstance algorithmInstace = entry.getValue().getAlgorithmInstance();
+            if (algorithmInstace.getState() == IDLE ||
+                    algorithmInstace.getState() == PAUSED ||
+                    algorithmInstace.getState() == RUNNING ||
+                    algorithmInstace.getState() == WAITING) {
                 count++;
             }
         }
         return count;
-        //todo another crude of doing this. read the documentation here: http://cishell.org/dev/docs/spec/api-1.0/org/cishell/app/service/scheduler/SchedulerService.html#getScheduledAlgorithms()
+        //another crude of doing this below. read the documentation here: http://cishell.org/dev/docs/spec/api-1.0/org/cishell/app/service/scheduler/SchedulerService.html#getScheduledAlgorithms()
         //return scheduler.getScheduledAlgorithms().length;
     }
 
@@ -73,47 +72,58 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             return false;
         }
 
-        //todo what more?
+        //todo no way of removing algorithms from cishell??
         return true;
     }
 
     @Override
     public Boolean runAlgorithmNow(String algorithmInstanceId) {
-        //todo should we schedule now? or run now?
         cibridge.getSchedulerService().runNow(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId));
+        //todo what should be the algorithm state after its run. It may or may not run instantly
         return true;
     }
 
     @Override
     public Boolean scheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        //todo should we
         cibridge.getSchedulerService().schedule(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
-        getAlgorithmInstance(algorithmInstanceId).setScheduledRunTime(date);
+        AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        algorithmInstance.setScheduledRunTime(date);
+        algorithmInstance.setState(SCHEDULED);
         return true;
     }
 
     @Override
     public Boolean rescheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
         boolean isAlreadyScheduled = cibridge.getSchedulerService().reschedule(getAlgorithm(algorithmInstanceId), GregorianCalendar.from(date));
-        if(!isAlreadyScheduled){
+        if (!isAlreadyScheduled) {
             System.out.println("algorithm not scheduled before");
             return false;
         }
 
-        getAlgorithmInstance(algorithmInstanceId).setScheduledRunTime(date);
+        AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        algorithmInstance.setScheduledRunTime(date);
+        algorithmInstance.setState(SCHEDULED);
         return true;
     }
 
     @Override
     public Boolean unscheduleAlgorithm(String algorithmInstanceId) {
+        getAlgorithmInstance(algorithmInstanceId).setState(IDLE);
         return cibridge.getSchedulerService().unschedule(getAlgorithm(algorithmInstanceId));
-        //todo what the algorithm state to be set?
     }
 
     @Override
     public Integer clearScheduler() {
         cibridge.getSchedulerService().clearSchedule();
-        //todo need a better way to do this
+        //todo how to know what algorithms were removed from cishell??
+/*        Set<Algorithm> scheduledAlgorithms = new HashSet<>(Arrays.asList(cibridge.getSchedulerService().getScheduledAlgorithms()));
+
+        for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
+            String algorithmInstanceId = entry.getKey();
+
+
+        }*/
+
         return cibridge.getSchedulerService().getScheduledAlgorithms().length;
     }
 
