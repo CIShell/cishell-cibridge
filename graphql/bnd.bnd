@@ -3,5 +3,3 @@ Bundle-Name: ${project.artifactId}
 Bundle-ClassPath: .
 Bundle-Version:${project.version}
 Bundle-Localization: plugin
-Export-Package: *
-Import-Package: !*
