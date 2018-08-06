@@ -8,13 +8,12 @@ release.properties
 buildNumber.properties
 .mvn/timing.properties
 .settings/
-*.project
-*.factorypath
-*.classpath
-*/felix-cache/
+felix-cache
 cishell/plugins/
-
-
+.factorypath
+.classpath
+.idea
+.project/
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
