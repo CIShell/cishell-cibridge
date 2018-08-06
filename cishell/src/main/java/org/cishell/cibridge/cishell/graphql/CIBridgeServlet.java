@@ -32,11 +32,12 @@ public class CIBridgeServlet extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		System.out.println("Servlet Initialized...");
-		System.out.println("Starting Container...");
-		CIShellContainer ciContainer = new CIShellContainer(null, null);
-		bundleContext = ciContainer.getBundleContext();
+		if (this.bundleContext == null) {
+			System.out.println("Starting Container...");
+			CIShellContainer ciContainer = new CIShellContainer(null, null);
+			this.setBundleContext(ciContainer.getBundleContext());
+		}
 		this.setCIBridge(new CIShellCIBridge(bundleContext));
-		
 	}
 
 	public CIBridgeServlet() {
@@ -50,12 +51,17 @@ public class CIBridgeServlet extends HttpServlet {
 		
 	}
 
+	public void setBundleContext(BundleContext context) { 
+		this.bundleContext = context;
+	}
+	public BundleContext getBundleContext() {
+		return this.bundleContext;
+	}
+
 	public void setCIBridge(CIBridge cibridge) {
 		this.cibridgeSchemaProvider.setCIBridge(cibridge);
 	}
 	public CIBridge getCIBridge() {
 		return this.cibridgeSchemaProvider.getCIBridge();
 	}
-
-	 
    }

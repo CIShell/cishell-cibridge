@@ -9,7 +9,7 @@ import org.osgi.service.http.HttpService;
 
 import org.cishell.cibridge.cishell.graphql.CIBridgeServlet;
 import org.cishell.cibridge.cishell.graphql.GraphiqlServlet;
-
+import org.cishell.cibridge.cishell.CIShellCIBridge;
 
 public class CIBridgeServletActivator implements BundleActivator {
     private ServiceTracker httpTracker;
@@ -30,7 +30,10 @@ public class CIBridgeServletActivator implements BundleActivator {
           // HTTP service is available, register our servlet...
           HttpService httpService = (HttpService) this.context.getService(reference);
           try {
-            httpService.registerServlet("/graphql", new CIBridgeServlet(), null, null);
+            CIBridgeServlet servlet = new CIBridgeServlet();
+            servlet.setBundleContext(context);
+
+            httpService.registerServlet("/graphql", servlet, null, null);
             httpService.registerServlet("/", new GraphiqlServlet(), null, null);
           } catch (Exception exception) {
             exception.printStackTrace();
