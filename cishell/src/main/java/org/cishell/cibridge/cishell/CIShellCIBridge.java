@@ -6,6 +6,8 @@ import org.cishell.cibridge.cishell.impl.*;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDataObject;
 import org.cishell.cibridge.core.model.AlgorithmFactoryDataObject;
+import org.cishell.cibridge.core.model.PageInfo;
+import org.cishell.cibridge.core.model.interfaces.QueryResults;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -17,6 +19,7 @@ import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class CIShellCIBridge extends CIBridge {
     private BundleContext context;
@@ -98,6 +101,40 @@ public class CIShellCIBridge extends CIBridge {
 
     public BundleContext getBundleContext() {
         return context;
+    }
+
+    public <T> QueryResults<T> getPaginatedQueryResults(QueryResults<T> queryResults, int limit, int offset) {
+
+        int listSize = queryResults.getResults().size();
+        boolean hasNext = false;
+        boolean hasPrevious = false;
+
+        List<T> queryList;
+        if (offset > 0) {
+            if (offset >= listSize) {
+                queryList = queryResults.getResults().subList(0, 0);
+            } else if (limit > 0) {
+                queryList = queryResults.getResults().subList(offset, Math.min(offset + limit, listSize));
+                hasPrevious = true;
+                if ((offset + limit) < listSize) {
+                    hasNext = true;
+                }
+            } else {
+                queryList = queryResults.getResults().subList(offset, listSize);
+                hasPrevious = true;
+            }
+        } else if (limit > 0) {
+            queryList = queryResults.getResults().subList(0, Math.min(limit, listSize));
+            if (limit < listSize) {
+                hasNext = true;
+            }
+        } else {
+            queryList = queryResults.getResults().subList(0, listSize);
+        }
+
+        PageInfo pageInfo = new PageInfo(hasNext, hasPrevious);
+
+        return queryResults.getQueryResults(queryList, pageInfo);
     }
 
 }

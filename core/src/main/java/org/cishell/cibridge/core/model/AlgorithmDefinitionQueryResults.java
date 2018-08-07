@@ -1,4 +1,5 @@
 package org.cishell.cibridge.core.model;
+
 import java.util.List;
 
 import org.cishell.cibridge.core.model.interfaces.QueryResults;
@@ -6,25 +7,24 @@ import org.cishell.cibridge.core.model.interfaces.QueryResults;
 public class AlgorithmDefinitionQueryResults implements QueryResults<AlgorithmDefinition> {
     private final List<AlgorithmDefinition> results;
     private final PageInfo pageInfo;
-    public AlgorithmDefinitionQueryResults(List<AlgorithmDefinition> results,PageInfo pageInfo) {
-		// TODO Auto-generated constructor stub
-    	this.results=results;
-    	this.pageInfo=pageInfo;
-	}
-    
-    
-	public List<AlgorithmDefinition> getResults() {
-		return results;
-	}
-	public PageInfo getPageInfo() {
-		return pageInfo;
-	}
+
+    public AlgorithmDefinitionQueryResults(List<AlgorithmDefinition> results, PageInfo pageInfo) {
+        this.results = results;
+        this.pageInfo = pageInfo;
+    }
 
 
-	@Override
-	public QueryResults<AlgorithmDefinition> getQueryResults(List<AlgorithmDefinition> objList, PageInfo pageInfo) {
-		return new AlgorithmDefinitionQueryResults(objList, pageInfo);
-	}
-	
-    
+    public List<AlgorithmDefinition> getResults() {
+        return results;
+    }
+
+    public PageInfo getPageInfo() {
+        return pageInfo;
+    }
+
+    @Override
+    public QueryResults<AlgorithmDefinition> getQueryResults(List<AlgorithmDefinition> objList, PageInfo pageInfo) {
+        return new AlgorithmDefinitionQueryResults(objList, pageInfo);
+    }
+
 }
