@@ -147,6 +147,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	
 	@Override //complete
 	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
+		//TODO: Since the dataId Was not being created in mutations, we are unable create a dataId and test the output of this converter function
+		System.out.println("here......");
 		List<AlgorithmInstance> algorithmInstanceList = new ArrayList<AlgorithmInstance>();
 		String algFormat="";
 		Converter[] converters = null;
@@ -202,6 +204,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
+		System.out.println("in findConvertersByFormat");
 		List<Data> inDataList = new ArrayList<>();
 		List<AlgorithmInstance> algorithmInstanceList = new ArrayList<AlgorithmInstance>();
 		List<AlgorithmDefinition> algorithmDefinitions = new ArrayList<>();
@@ -209,28 +212,36 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		Converter[] converters = null;
 		try {
 			if(inFormat != null && outFormat != null) {
+				//FIXME: dataConversionService being retrieved as null. Need to check why it is null.
+				//System.out.println(inFormat+":::"+outFormat+" dataConversionService ::"+dataConversionService.getClass().getName());
 				if(dataConversionService != null) {
 					converters = dataConversionService.findConverters(inFormat, outFormat);
-					for(Converter converter: converters) {
-						ServiceReference[] converterServiceReferences = converter.getConverterChain();
-						if(converterServiceReferences != null && converterServiceReferences.length > 0) {
-							for(ServiceReference ref : converterServiceReferences) {
-								algorithmDefinitions.add(setAlgorithmDefinition(ref));
+					if(!(converters.length == 0)) {
+						for(Converter converter: converters) {
+							ServiceReference[] converterServiceReferences = converter.getConverterChain();
+							if(converterServiceReferences != null && converterServiceReferences.length > 0) {
+								for(ServiceReference ref : converterServiceReferences) {
+									algorithmDefinitions.add(setAlgorithmDefinition(ref));
+								}
+								for(AlgorithmDefinition algorithmDefinition: algorithmDefinitions) {
+									String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinition.getId());
+									AlgorithmInstance algorithmInstance = new AlgorithmInstance(algorithmInstanceId, inDataList, algorithmDefinition.getOtherProperties(), algorithmDefinition, AlgorithmState.IDLE, null, 1, null);
+									algorithmInstanceList.add(algorithmInstance);
+									inDataList.clear();
+									inDataList.add((Data) algorithmInstance.getOutData());
+								}
+								
 							}
-							for(AlgorithmDefinition algorithmDefinition: algorithmDefinitions) {
-								String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinition.getId());
-								AlgorithmInstance algorithmInstance = new AlgorithmInstance(algorithmInstanceId, inDataList, algorithmDefinition.getOtherProperties(), algorithmDefinition, AlgorithmState.IDLE, null, 1, null);
-								algorithmInstanceList.add(algorithmInstance);
-								inDataList.clear();
-								inDataList.add((Data) algorithmInstance.getOutData());
+							else {
+								throw new Exception("converterServiceReference List is empty");
 							}
-							
+							break;
 						}
-						else {
-							throw new Exception("converterServiceReference List is empty");
-						}
-						break;
 					}
+					else {
+						throw new Exception("converters array empty");
+					}
+					
 				}
 				else {
 					throw new Exception("dataConversionService is null");
@@ -251,6 +262,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		List<Data> results;
 		try {
 			if(filter != null) {
+				//TODO: need to test the output of "dataQueryResults". DataIds not populated yet.
 				if(!(filter.getDataIds().isEmpty())){
 					Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
 					results = new ArrayList<Data>();
@@ -274,6 +286,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public String downloadData(String dataId) {
+		//TODO: Testing remaning. Need to create dataId using mutation to download data.
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
 		try {
 			if(dataId != null) {
@@ -311,6 +324,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public Data uploadData(String file, DataProperties properties) {
+		//TODO: need to test functionality of download Data by sending file's absolute path.
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		BasicData tempBasicData = null;
 		try {
@@ -330,6 +344,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public Boolean removeData(String dataId) {
+		//TODO: need to complete testing as the dataId is not updated through mutation.
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
 		try {
@@ -364,6 +379,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public Boolean updateData(String dataId, DataProperties properties) {
+		//TODO: Testing remaining
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
 		try {
