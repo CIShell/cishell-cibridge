@@ -26,7 +26,6 @@ public class Mutation implements GraphQLMutationResolver{
 	}
 
 	public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
-		System.out.println("mooo");
 		return cibridge.algorithm.createAlgorithm(algorithmDefinitionId, dataIds, parameters);
 	}
 
