@@ -24,6 +24,10 @@ install:
 script: 
   - mvn deploy &&
     cd $TRAVIS_BUILD_DIR/container/target/ &&
-    zip -r org.cishell.cibridge.container.zip org.cishell.container-*.jar plugins &&
+    zip -r cishell-cibridge-container.zip org.cishell.container-*.jar plugins &&
     jfrog rt delete "cibridge/latest/*" --quiet &&
-    jfrog rt upload "./*.zip" "cibridge/latest/" --flat=false
+    jfrog rt upload "./*.zip" "cibridge/latest/" --flat=false &&
+    cd $TRAVIS_BUILD_DIR/sci2-container/target/ &&
+    zip -r sci2-cibridge-container.zip org.cishell.container-*.jar plugins &&
+    jfrog rt delete "cibridge/sci2/latest/*" --quiet &&
+    jfrog rt upload "./*.zip" "cibridge/sci2/latest/" --flat=false
