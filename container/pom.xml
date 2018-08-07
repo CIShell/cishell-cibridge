@@ -38,7 +38,7 @@
 			<version>9.2</version>
 		</dependency>
 		<dependency>
-			<groupId>com.graphql-java</groupId>
+			<groupId>org.cishell.cibridge</groupId>
 			<artifactId>graphql-java-servlet</artifactId>
 			<version>6.1.2</version>
 		</dependency>
