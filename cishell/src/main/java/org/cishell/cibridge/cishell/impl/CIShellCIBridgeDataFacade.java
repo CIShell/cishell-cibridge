@@ -213,6 +213,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		try {
 			if(inFormat != null && outFormat != null) {
 				//FIXME: dataConversionService being retrieved as null. Need to check why it is null.
+				
 				//System.out.println(inFormat+":::"+outFormat+" dataConversionService ::"+dataConversionService.getClass().getName());
 				if(dataConversionService != null) {
 					converters = dataConversionService.findConverters(inFormat, outFormat);
