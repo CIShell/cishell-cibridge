@@ -16,6 +16,7 @@
 
   <modules>
     <module>graphql-java-tools</module>
+    <module>graphql-java-servlet</module>
   </modules>
 
   <build>

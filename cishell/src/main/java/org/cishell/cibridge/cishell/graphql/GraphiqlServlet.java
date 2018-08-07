@@ -15,14 +15,9 @@ import javax.servlet.ServletException;
 public class GraphiqlServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-            System.out.println("/graphiql");
-            
             response.setContentType("text/html");
-
             PrintWriter out = response.getWriter();
-
             out.println(GraphiqlServlet.graphiqlHTML);
-
             out.close();
     }
 
