@@ -14,6 +14,16 @@ branches:
     - master
     - develop
 
-install: cp .travis.settings.xml $HOME/.m2/settings.xml
+install: 
+  - PATH=$TRAVIS_BUILD_DIR:$PATH
+  - cp .travis.settings.xml $HOME/.m2/settings.xml
+  - curl -fL https://getcli.jfrog.io | sh
+  - chmod +x jfrog
+  - jfrog rt config "cishell-artifactory" --url "https://cishell.jfrog.io/cishell/" --user $CI_DEPLOY_USERNAME --apikey $CI_DEPLOY_PASSWORD --interactive=false
 
-script: mvn deploy
+script: 
+  - mvn deploy &&
+    cd $TRAVIS_BUILD_DIR/container/target/ &&
+    zip -r org.cishell.cibridge.container.zip org.cishell.container-*.jar plugins &&
+    jfrog rt delete "cibridge/latest/*" --quiet &&
+    jfrog rt upload "./*.zip" "cibridge/latest/" --flat=false
