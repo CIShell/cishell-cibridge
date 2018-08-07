@@ -45,7 +45,8 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             }
         }
         return count;
-        //another crude of doing this below. read the documentation here: http://cishell.org/dev/docs/spec/api-1.0/org/cishell/app/service/scheduler/SchedulerService.html#getScheduledAlgorithms()
+        //TODO another crude of doing this is below. But I think the above code is more reliable if cibridge always stays in sink with cishell
+        //TODO read the documentation here: http://cishell.org/dev/docs/spec/api-1.0/org/cishell/app/service/scheduler/SchedulerService.html#getScheduledAlgorithms()
         //return scheduler.getScheduledAlgorithms().length;
     }
 
@@ -72,14 +73,15 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             return false;
         }
 
-        //todo no way of removing algorithms from cishell??
+        //TODO no way of removing algorithms from cishell??
         return true;
     }
 
     @Override
     public Boolean runAlgorithmNow(String algorithmInstanceId) {
         cibridge.getSchedulerService().runNow(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId));
-        //todo what should be the algorithm state after its run. It may or may not run instantly
+        //TODO what should be the algorithm state after its run. It may or may not run instantly. I think it should be
+        //TODO set to waiting. Once there are enough resources the algorithm will run and the state would change to RUNNING
         return true;
     }
 
@@ -115,7 +117,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     @Override
     public Integer clearScheduler() {
         cibridge.getSchedulerService().clearSchedule();
-        //todo how to know what algorithms were removed from cishell??
+        //TODO how to know what algorithms were removed from cishell?? We also need to update the algorithm instances in cibridge
 /*        Set<Algorithm> scheduledAlgorithms = new HashSet<>(Arrays.asList(cibridge.getSchedulerService().getScheduledAlgorithms()));
 
         for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
@@ -133,7 +135,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         return cibridge.getSchedulerService().isRunning();
     }
 
-    /* Subscriptions */
+    //TODO implement subscriptions methods below
     @Override
     public Boolean schedulerCleared() {
         return null;
