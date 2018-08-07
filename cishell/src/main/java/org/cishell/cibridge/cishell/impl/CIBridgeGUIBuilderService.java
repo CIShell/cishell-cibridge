@@ -16,45 +16,38 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService{
 		this.cibridge = cibridge;
 		
 	}
+
 	//TODO all methods implementation
 	@Override
-	public GUI createGUI(String id, MetaTypeProvider parameters) {
-		// TODO Auto-generated method stub
+	public GUI createGUI(String id, MetaTypeProvider params) {
 		return null;
 	}
 	@Override
-	public Dictionary createGUIandWait(String id, MetaTypeProvider parameters) {
-		// TODO Auto-generated method stub
+	public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
 		return null;
 	}
 	@Override
 	public boolean showConfirm(String title, String message, String detail) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public void showError(String title, String message, String detail) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void showError(String title, String message, Throwable error) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public void showInformation(String title, String message, String detail) {
-		// TODO Auto-generated method stub
 		
 	}
 	@Override
 	public boolean showQuestion(String title, String message, String detail) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
 	public void showWarning(String title, String message, String detail) {
-		// TODO Auto-generated method stub
 		
 	}
 
