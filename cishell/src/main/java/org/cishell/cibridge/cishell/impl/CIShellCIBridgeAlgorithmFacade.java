@@ -2,9 +2,9 @@ package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.LocalCIShellContext;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.cibridge.core.wrapper.ProgressTrackableAlgorithm;
+import org.cishell.framework.LocalCIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.cishell.framework.algorithm.ProgressMonitor;

@@ -39,7 +39,8 @@ public class CIBridgeServletActivator implements BundleActivator {
       registration1 = context.registerService(new String[]{HttpServlet.class.getName(),Servlet.class.getName()}, graphiql, props);
 
       props = new Hashtable();
-      props.put("osgi.http.whiteboard.servlet.pattern", "/cibridge/graphql");
+      props.put("osgi.http.whiteboard.servlet.pattern", "/graphql");
+      props.put("alias", "/graphql");
       props.put("osgi.http.whiteboard.servlet.name", "cibridge");
       CIBridgeServlet servlet = new CIBridgeServlet();
       servlet.setBundleContext(context);
