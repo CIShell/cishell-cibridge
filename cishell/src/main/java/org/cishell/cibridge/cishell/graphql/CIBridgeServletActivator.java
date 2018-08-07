@@ -16,11 +16,14 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
 
-import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
+import graphql.servlet.SimpleGraphQLHttpServlet;
 
+import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
 import org.cishell.cibridge.cishell.graphql.CIBridgeServlet;
 import org.cishell.cibridge.cishell.graphql.GraphiqlServlet;
+import org.cishell.cibridge.cishell.graphql.CIBridgeGraphQLSchemaProvider;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+
 
 public class CIBridgeServletActivator implements BundleActivator {
     public static BundleContext bundleContext;
@@ -30,20 +33,18 @@ public class CIBridgeServletActivator implements BundleActivator {
     public void start(BundleContext context) throws Exception {
       CIBridgeSchema.schemaString = CIBridgeServletActivator.entryToString("/cibridge-schema.graphqls");
 
-      CIBridgeServletActivator.bundleContext = context;
       Hashtable props = new Hashtable();
       props.put("osgi.http.whiteboard.servlet.pattern", "/graphiql");
-      props.put("alias", "/graphiql");
       props.put("osgi.http.whiteboard.servlet.name", "graphiql");
       GraphiqlServlet graphiql = new GraphiqlServlet();
       registration1 = context.registerService(new String[]{HttpServlet.class.getName(),Servlet.class.getName()}, graphiql, props);
 
       props = new Hashtable();
       props.put("osgi.http.whiteboard.servlet.pattern", "/graphql");
-      props.put("alias", "/graphql");
       props.put("osgi.http.whiteboard.servlet.name", "cibridge");
-      CIBridgeServlet servlet = new CIBridgeServlet();
-      servlet.setBundleContext(context);
+      CIShellCIBridge cibridge = new CIShellCIBridge(context);
+      CIBridgeGraphQLSchemaProvider cibridgeSchemaProvider = new CIBridgeGraphQLSchemaProvider(cibridge);
+      SimpleGraphQLHttpServlet servlet = SimpleGraphQLHttpServlet.newBuilder(cibridgeSchemaProvider).build();
       registration2 = context.registerService(new String[]{HttpServlet.class.getName(),Servlet.class.getName()}, servlet, props);
     }
   
