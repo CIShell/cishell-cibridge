@@ -26,6 +26,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
 	}
+	//FIXME (Check all the implementation of methods and test it).
 	private void registerGUIBuilderService() {
 		//this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(), new CIBridgeGUIBuilderService(cibridge), new Hashtable<String,String>());
 
@@ -88,7 +89,6 @@ public Boolean setNotificationResponse(String notificationId, NotificationRespon
 
 
 public Boolean closeNotification(String notificationId) {
-	// TODO Auto-generated method stub
 	/*if(notificationMap.containsKey(notificationId)) {
 		Notification temp = notificationMap.get(notificationId);
 		if(temp.getIsClosed() == true) {
@@ -103,15 +103,15 @@ public Boolean closeNotification(String notificationId) {
 	return false;
 }
 
-// Subscription methods below
+//TODO Subscription methods below
 public Notification notificationAdded() {
-	// TODO Auto-generated method stub
+	//TODO Auto-generated method stub
 	return null;
 }
 
 
 public Notification notificationUpdated() {
-	// TODO Auto-generated method stub
+	//TODO Auto-generated method stub
 		return null;
 	}
 

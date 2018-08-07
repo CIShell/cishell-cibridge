@@ -16,43 +16,44 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService{
 		this.cibridge = cibridge;
 		
 	}
+	//TODO all methods implementation
 	@Override
-	public GUI createGUI(String arg0, MetaTypeProvider arg1) {
+	public GUI createGUI(String id, MetaTypeProvider parameters) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public Dictionary createGUIandWait(String arg0, MetaTypeProvider arg1) {
+	public Dictionary createGUIandWait(String id, MetaTypeProvider parameters) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public boolean showConfirm(String arg0, String arg1, String arg2) {
+	public boolean showConfirm(String title, String message, String detail) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
-	public void showError(String arg0, String arg1, String arg2) {
+	public void showError(String title, String message, String detail) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void showError(String arg0, String arg1, Throwable arg2) {
+	public void showError(String title, String message, Throwable error) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void showInformation(String arg0, String arg1, String arg2) {
+	public void showInformation(String title, String message, String detail) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public boolean showQuestion(String arg0, String arg1, String arg2) {
+	public boolean showQuestion(String title, String message, String detail) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 	@Override
-	public void showWarning(String arg0, String arg1, String arg2) {
+	public void showWarning(String title, String message, String detail) {
 		// TODO Auto-generated method stub
 		
 	}

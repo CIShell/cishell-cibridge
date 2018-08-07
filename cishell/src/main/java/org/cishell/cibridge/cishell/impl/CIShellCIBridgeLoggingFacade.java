@@ -84,19 +84,18 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				if(loglevelSet.contains(logLevelMap.get(log.getLevel()))){
 					tempLog.setLogLevel(logLevelMap.get(log.getLevel()));	
 					tempLog.setMessage(log.getMessage());
-					if(filter.logsBefore!=null){
-					ZonedDateTime dateTime = Instant.ofEpochMilli(log.getTime())
-        	    	.atZone(ZoneId.of("-05:00"));
-					tempLog.setTimestamp(dateTime);
-					if((dateTime.compareTo(filter.logsBefore))<=0)
-						logs.add(tempLog);	
+					logs.add(tempLog);	
 					}
-					else{
-						logs.add(tempLog);
-					}	
-					}
-			}	
-
+			}
+			//TODO Timestamp
+			// if(filter.logsBefore!=null){
+					// ZonedDateTime dateTime = Instant.ofEpochMilli(log.getTime())
+        	    	//.atZone(ZoneId.of("-5:00"));
+					// tempLog.setTimestamp(dateTime);
+					// if((dateTime.compareTo(filter.logsBefore))<=0)
+					// 	logs.add(tempLog);	
+					// }
+						
 			}
 				limit = filter.getLimit();
 				offset = filter.getOffset();
@@ -126,9 +125,10 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				}
 				
 				tempLog.setMessage(log.getMessage());
-				ZonedDateTime dateTime = Instant.ofEpochMilli(log.getTime())
-        	    .atZone(ZoneId.of("-05:00"));
-				tempLog.setTimestamp(dateTime);
+				//TODO Timestamp
+				// ZonedDateTime dateTime = Instant.ofEpochMilli(log.getTime())
+    			// 	.atZone(ZoneId.of("-5:00"));
+				// tempLog.setTimestamp(dateTime);
 				logs.add(tempLog);	
 			}
 		}
@@ -138,12 +138,12 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 		}
 		catch(Exception e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	//Subscription
+	//TODO
 	@Override
 	public Log logAdded(List<LogLevel> logLevels) {
 		// TODO Auto-generated method stub
