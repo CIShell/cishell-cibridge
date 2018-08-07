@@ -34,7 +34,11 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider,Grap
 		this.mutationResolver = new Mutation(cibridge);
 		this.subscriptionResolver = new Subscription(cibridge);
 		this.schema = this.buildSchema();
-		this.readOnlySchema = GraphQLSchemaProvider.copyReadOnly(this.schema);
+		if (this.schema != null) {
+			this.readOnlySchema = GraphQLSchemaProvider.copyReadOnly(this.schema);
+		} else {
+			this.readOnlySchema = null;
+		}
 	}
 	
 	public void setCIBridge(CIBridge cibridge) {
@@ -63,8 +67,6 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider,Grap
         return gs;
     }
 	
-	
-
 	@Override
 	public GraphQLSchema getSchema(HttpServletRequest request) {
 		return this.getSchema();
