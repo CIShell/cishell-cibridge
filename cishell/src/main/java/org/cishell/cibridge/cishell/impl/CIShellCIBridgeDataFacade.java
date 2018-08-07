@@ -40,20 +40,13 @@ import sun.print.resources.serviceui;
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private CIShellCIBridge cibridge;
 	private final HashMap<String, Long> algorithmInstanceCount = new HashMap<>();
-	//private LocalCIShellContext localCIShellContext;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
-		//localCIShellContext = new LocalCIShellContext(this.cibridge.getBundleContext());
 	}
 
 	@Override
 	public String validateData(String algorithmDefinitionId, List<String> dataIds) {
-		// TODO Auto-generated method stub
-		// check the dataIds validates with top level algorithmDef
-		// not compatible, ret false
-
-		// AlgorithmDefinitionQueryResults
 		List<String> defIDs = new ArrayList<String>();
 		defIDs.add(algorithmDefinitionId);
 		AlgorithmFilter algorithmFilter = new AlgorithmFilter(defIDs, null, null, null, null, null, null, 0, 0);
@@ -135,7 +128,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         );
 
         System.out.println("AlgorithmDefinition created: " + algorithmDefinition);
-
         return algorithmDefinition;
     }
 	
@@ -150,19 +142,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
         algorithmInstanceCount.put(algorithmDefinitionId, newCount);
         return algorithmDefinitionId + newCount;
-
     }
 	
 	@Override //complete
 	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
-		// Determines the input format from the referenced data and finds the chain of
-		// converter algorithms to convert the data to the specified output format
-		//
-		// Arguments
-		// dataId:
-		// outFormat:
-
-		// need to use getFormat()
 		List<AlgorithmInstance> algorithmInstanceList = new ArrayList<AlgorithmInstance>();
 		String algFormat="";
 		Converter[] converters = null;
@@ -177,14 +160,12 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 				if (dataMapping.containsKey(dataId)) {
 					if(dataConversionService != null) {
 						converters = dataConversionService.findConverters(dataMapping.get(dataId), outFormat);
-						
 						for(Converter converter: converters) {
 							ServiceReference[] converterServiceReferences = converter.getConverterChain();
 							if(converterServiceReferences != null && converterServiceReferences.length > 0) {
 								for(ServiceReference ref : converterServiceReferences) {
 									algorithmDefinitions.add(setAlgorithmDefinition(ref));
 								}
-								// adding input DataID to IndataList
 								for(AlgorithmDefinition algorithmDefinition: algorithmDefinitions) {
 									String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinition.getId());
 									AlgorithmInstance algorithmInstance = new AlgorithmInstance(algorithmInstanceId, inDataList, algorithmDefinition.getOtherProperties(), algorithmDefinition, AlgorithmState.IDLE, null, 1, null);
@@ -218,14 +199,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return algorithmInstanceList;
 	}
 
-	@Override //complete
+	@Override
 	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
-		// Find the chain of converter algorithms to convert data from given input format
-		// to given output format
-		//
-		// Arguments
-		// inFormat:
-		// outFormat:
 		List<Data> inDataList = new ArrayList<>();
 		List<AlgorithmInstance> algorithmInstanceList = new ArrayList<AlgorithmInstance>();
 		List<AlgorithmDefinition> algorithmDefinitions = new ArrayList<>();
@@ -235,14 +210,12 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 			if(inFormat != null && outFormat != null) {
 				if(dataConversionService != null) {
 					converters = dataConversionService.findConverters(inFormat, outFormat);
-					//FIXME: returned is converters
 					for(Converter converter: converters) {
 						ServiceReference[] converterServiceReferences = converter.getConverterChain();
 						if(converterServiceReferences != null && converterServiceReferences.length > 0) {
 							for(ServiceReference ref : converterServiceReferences) {
 								algorithmDefinitions.add(setAlgorithmDefinition(ref));
 							}
-							// adding input DataID to IndataList
 							for(AlgorithmDefinition algorithmDefinition: algorithmDefinitions) {
 								String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinition.getId());
 								AlgorithmInstance algorithmInstance = new AlgorithmInstance(algorithmInstanceId, inDataList, algorithmDefinition.getOtherProperties(), algorithmDefinition, AlgorithmState.IDLE, null, 1, null);
@@ -271,12 +244,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return algorithmInstanceList;
 	}
 
-	@Override //complete
+	@Override 
 	public DataQueryResults getData(DataFilter filter) {
-		//  Returns references for all the data objects that matches the given filter
-		//
-		//  Arguments
-		//  filter:
 		DataQueryResults dataQueryResults = null;
 		List<Data> results;
 		try {
@@ -302,7 +271,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return dataQueryResults;
 	}
 
-	@Override //complete
+	@Override
 	public String downloadData(String dataId) {
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
 		try {
@@ -339,7 +308,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return null;
 	}
 
-	@Override //incomplete
+	@Override
 	public Data uploadData(String file, DataProperties properties) {
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		BasicData tempBasicData = null;
@@ -358,7 +327,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return (Data) tempBasicData.getData();
 	}
 
-	@Override //complete
+	@Override
 	public Boolean removeData(String dataId) {
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
@@ -392,7 +361,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		return false;
 	}
 
-	@Override //complete
+	@Override
 	public Boolean updateData(String dataId, DataProperties properties) {
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
 		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();

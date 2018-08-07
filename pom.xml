@@ -21,7 +21,7 @@
 
 	<modules>
 		<module>graphql</module>
-		<!-- <module>mock</module> -->
+		<module>mock</module>
 		<module>cishell</module>
 		<module>core</module>
 		<module>libs</module>
