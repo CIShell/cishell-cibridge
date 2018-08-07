@@ -62,6 +62,7 @@ public class CIBridgeServletActivator implements BundleActivator {
     
                 @Override
                 public void onError(HttpServletRequest request, HttpServletResponse response, Throwable throwable) {
+                    System.out.println("error");
                     throwable.printStackTrace();
                 }
     

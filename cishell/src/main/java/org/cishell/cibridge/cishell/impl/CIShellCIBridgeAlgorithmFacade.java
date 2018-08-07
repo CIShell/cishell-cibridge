@@ -183,7 +183,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     @Override
     public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds,
                                              List<PropertyInput> parameters) {
-
         AlgorithmDefinition algorithmDefinition = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmDefinition();
         AlgorithmFactory algorithmFactory = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmFactory();
 
