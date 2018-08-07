@@ -1,5 +1,22 @@
-# cishell-cibridge
-CIBridge Implementation using CIShell
+# CIShell CIBridge
+
+CIBridge Implementation using CIShell, see http://github.com/CIShell/cibridge/
+
+[![Build Status](https://travis-ci.com/CIShell/cishell-cibridge.svg?branch=develop)](https://travis-ci.com/CIShell/cishell-cibridge)
+
+## Build Instructions
+
+This repository is built using maven. To build this repository, just run:
+```
+mvn clean install
+```
+
+## Running the Container
+
+Container creates a distribution that can be run by command line like this:
+```
+java -jar container/target/org.cishell.container-1.0.0-*.jar container/target/plugins/
+```
 
 ## Build Infrastructure
 
