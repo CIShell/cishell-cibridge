@@ -25,56 +25,57 @@ public class Mutation implements GraphQLMutationResolver{
 		return this.cibridge;
 	}
 
-	AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
+	public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
+		System.out.println("mooo");
 		return cibridge.algorithm.createAlgorithm(algorithmDefinitionId, dataIds, parameters);
 	}
 
-	Data uploadData(String file,DataProperties properties){
+	public Data uploadData(String file,DataProperties properties){
 		return cibridge.data.uploadData(file, properties);
 	}
-	Boolean removeData(String dataId) {
+	public Boolean removeData(String dataId) {
 		return cibridge.data.removeData(dataId);
 	}
-	Boolean updateData(String dataId,DataProperties properties){
+	public Boolean updateData(String dataId,DataProperties properties){
 		return cibridge.data.updateData(dataId, properties);
 	}
-	Boolean setNotificationResponse(String notificationId,NotificationResponse response)
+	public Boolean setNotificationResponse(String notificationId,NotificationResponse response)
 	{
 		return  Boolean.TRUE;
 	}
-	Boolean closeNotification(String notificationId)
+	public Boolean closeNotification(String notificationId)
 	{
 		return Boolean.TRUE;
 	}
-	Boolean setAlgorithmCancelled(String algorithmInstanceId,Boolean isCancelled)
+	public Boolean setAlgorithmCancelled(String algorithmInstanceId,Boolean isCancelled)
 	{
 		return cibridge.scheduler.setAlgorithmCancelled(algorithmInstanceId, isCancelled);
 	}
-	Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused)
+	public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused)
 	{
 		return cibridge.scheduler.setAlgorithmPaused(algorithmInstanceId, isPaused);
 	}
-	Boolean removeAlgorithm(String algorithmInstanceId)
+	public Boolean removeAlgorithm(String algorithmInstanceId)
 	{
 		return cibridge.scheduler.removeAlgorithm(algorithmInstanceId);
 	}
-	Boolean runAlgorithmNow(String algorithmInstanceId)
+	public Boolean runAlgorithmNow(String algorithmInstanceId)
 	{
 		return cibridge.scheduler.runAlgorithmNow(algorithmInstanceId);
 	}
-	Boolean scheduleAlgorithm(String algorithmInstanceId,ZonedDateTime date){
+	public Boolean scheduleAlgorithm(String algorithmInstanceId,ZonedDateTime date){
 		return cibridge.scheduler.scheduleAlgorithm(algorithmInstanceId, date);
 	}
-	Boolean rescheduleAlgorithm(String algorithmInstanceId,ZonedDateTime date){
+	public Boolean rescheduleAlgorithm(String algorithmInstanceId,ZonedDateTime date){
 		return cibridge.scheduler.rescheduleAlgorithm(algorithmInstanceId, date);
 	}
-	Boolean unscheduleAlgorithm(String algorithmInstanceId){
+	public Boolean unscheduleAlgorithm(String algorithmInstanceId){
 		return cibridge.scheduler.unscheduleAlgorithm(algorithmInstanceId);
 	}
-	int clearScheduler(){
+	public int clearScheduler(){
 		return cibridge.scheduler.clearScheduler();
 	}
-	Boolean setSchedulerRunning(Boolean running){
+	public Boolean setSchedulerRunning(Boolean running){
 		return cibridge.scheduler.setSchedulerRunning(running);
 	}
 }

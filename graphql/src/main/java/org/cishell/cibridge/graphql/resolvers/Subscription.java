@@ -21,39 +21,39 @@ public class Subscription implements GraphQLSubscriptionResolver{
 		return this.cibridge;
 	}
 	
-    AlgorithmDefinition algorithmDefinitionAdded(){
+    public AlgorithmDefinition algorithmDefinitionAdded(){
         return null;
     }
-    AlgorithmDefinition algorithmDefinitionRemoved(){
+    public AlgorithmDefinition algorithmDefinitionRemoved(){
         return null;
     }
-    AlgorithmInstance algorithmInstanceUpdated(AlgorithmFilter filter){
-        return null;
-    }
-
-    Notification notificationAdded(){
-        return null;
-    }
-    Notification notificationUpdated(){
-        return null;
-    }
-    Data dataAdded(){
-        return null;
-    }
-    Data dataRemoved(){
-        return null;
-    }
-    Data dataUpdated(){
+    public AlgorithmInstance algorithmInstanceUpdated(AlgorithmFilter filter){
         return null;
     }
 
-    Boolean schedulerCleared(){
+    public Notification notificationAdded(){
+        return null;
+    }
+    public Notification notificationUpdated(){
+        return null;
+    }
+    public Data dataAdded(){
+        return null;
+    }
+    public Data dataRemoved(){
+        return null;
+    }
+    public Data dataUpdated(){
+        return null;
+    }
+
+    public Boolean schedulerCleared(){
         return Boolean.TRUE;
     }
-    Boolean schedulerRunningChanged(){
+    public Boolean schedulerRunningChanged(){
         return Boolean.TRUE;
     }
-    Log logAdded(List<LogLevel> logLevels){
+    public Log logAdded(List<LogLevel> logLevels){
         return null;
     }
 }

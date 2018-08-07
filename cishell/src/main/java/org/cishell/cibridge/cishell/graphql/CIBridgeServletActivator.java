@@ -9,6 +9,8 @@ import java.io.Reader;
 import java.util.Hashtable;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
@@ -17,6 +19,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
 
 import graphql.servlet.SimpleGraphQLHttpServlet;
+import graphql.servlet.GraphQLServletListener;
 
 import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
 import org.cishell.cibridge.cishell.graphql.CIBridgeServlet;
@@ -35,17 +38,38 @@ public class CIBridgeServletActivator implements BundleActivator {
 
       Hashtable props = new Hashtable();
       props.put("osgi.http.whiteboard.servlet.pattern", "/graphiql");
+      props.put("alias", "/graphiql");
       props.put("osgi.http.whiteboard.servlet.name", "graphiql");
       GraphiqlServlet graphiql = new GraphiqlServlet();
       registration1 = context.registerService(new String[]{HttpServlet.class.getName(),Servlet.class.getName()}, graphiql, props);
 
       props = new Hashtable();
       props.put("osgi.http.whiteboard.servlet.pattern", "/graphql");
+      props.put("alias", "/graphql");
       props.put("osgi.http.whiteboard.servlet.name", "cibridge");
       CIShellCIBridge cibridge = new CIShellCIBridge(context);
       CIBridgeGraphQLSchemaProvider cibridgeSchemaProvider = new CIBridgeGraphQLSchemaProvider(cibridge);
       SimpleGraphQLHttpServlet servlet = SimpleGraphQLHttpServlet.newBuilder(cibridgeSchemaProvider).build();
       registration2 = context.registerService(new String[]{HttpServlet.class.getName(),Servlet.class.getName()}, servlet, props);
+
+      servlet.addListener(new GraphQLServletListener() {
+        @Override
+        public GraphQLServletListener.RequestCallback onRequest(HttpServletRequest request, HttpServletResponse response) {
+    
+            return new GraphQLServletListener.RequestCallback() {
+                @Override
+                public void onSuccess(HttpServletRequest request, HttpServletResponse response) { }
+    
+                @Override
+                public void onError(HttpServletRequest request, HttpServletResponse response, Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+    
+                @Override
+                public void onFinally(HttpServletRequest request, HttpServletResponse response) { }
+            };
+        }
+        });
     }
   
     public void stop(BundleContext context) throws Exception {
