@@ -8,8 +8,6 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-
-	<name>CIBridge</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<remote.releaseRepo.url>https://cishell.jfrog.io/cishell/libs-release-local</remote.releaseRepo.url>
@@ -26,6 +24,7 @@
 		<module>core</module>
 		<module>libs</module>
 		<module>container</module>
+		<module>sci2-container</module>
 	</modules>
 
 	<repositories>
@@ -68,6 +67,45 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<version>3.1.0</version>
 			</plugin>
+			<plugin>
+				<groupId>org.jfrog.buildinfo</groupId>
+				<artifactId>artifactory-maven-plugin</artifactId>
+				<version>2.6.1</version>
+				<inherited>false</inherited>
+				<executions>
+					<execution>
+						<id>build-info</id>
+						<goals>
+							<goal>publish</goal>
+						</goals>
+						<configuration>
+							<deployProperties>
+								<groupId>${project.groupId}</groupId>
+								<artifactId>${project.artifactId}</artifactId>
+								<version>${project.version}</version>
+							</deployProperties>
+							<publisher>
+								<contextUrl>${deploy.contextUrl}</contextUrl>
+								<username>${username}</username>
+								<password>${password}</password>
+								<repoKey>${deploy.releaseRepo}</repoKey>
+								<snapshotRepoKey>${deploy.snapshotRepo}</snapshotRepoKey>
+							</publisher>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>bintray-plugins</name>
+			<url>http://jcenter.bintray.com</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

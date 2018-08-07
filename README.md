@@ -1,5 +1,29 @@
-# cishell-cibridge
-CIBridge Implementation using CIShell
+# CIShell CIBridge
+
+CIBridge Implementation using CIShell, see http://github.com/CIShell/cibridge/
+
+[![Build Status](https://travis-ci.com/CIShell/cishell-cibridge.svg?branch=develop)](https://travis-ci.com/CIShell/cishell-cibridge)
+
+## Build Instructions
+
+This repository is built using maven. To build this repository, just run:
+```
+mvn clean install
+```
+
+## Running the Container
+
+Container creates a distribution that can be run by command line like this:
+```
+java -jar container/target/org.cishell.container-1.0.0-*.jar container/target/plugins/
+```
+
+## Prebuild containers
+
+There are two pre-built containers that are deployed with every commit to master or develop. You can download them here:
+
+- [CIShell Container](https://cishell.jfrog.io/cishell/cibridge/latest/cishell-cibridge-container.zip) - An 'empty' shell that has all the cishell dependencies and one test algorithm installed.
+- [Sci2 Container](https://cishell.jfrog.io/cishell/cibridge/sci2/latest/sci2-cibridge-container.zip) -A CIShell/CIBridge container with >100 algorithms from Sci2.
 
 ## Build Infrastructure
 
