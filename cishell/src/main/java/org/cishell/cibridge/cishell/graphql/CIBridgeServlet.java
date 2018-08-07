@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.osgi.framework.BundleContext;
+import graphql.servlet.SimpleGraphQLHttpServlet;
+
+import org.cishell.container.CIShellContainer;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.container.CIShellContainer;
-import org.osgi.framework.BundleContext;
-
-import graphql.servlet.SimpleGraphQLHttpServlet;
 
 @WebServlet(urlPatterns = "/graphql")
 public class CIBridgeServlet extends HttpServlet {

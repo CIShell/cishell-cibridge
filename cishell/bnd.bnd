@@ -4,3 +4,6 @@ Bundle-ClassPath: .
 Bundle-Version:${project.version}
 Bundle-Localization: plugin
 Bundle-Activator: org.cishell.cibridge.cishell.graphql.CIBridgeServletActivator
+Export-Package: org.cishell.cibridge.*
+Import-Package: javax.servlet;version="[2.6,10.0)",javax.servlet.annotation;version="[2.6,10.0)",javax.servlet.http;version="[2.6,10.0)",*
+X-AutoStart: true

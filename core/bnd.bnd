@@ -3,5 +3,4 @@ Bundle-Name: ${project.artifactId}
 Bundle-ClassPath: .
 Bundle-Version:${project.version}
 Bundle-Localization: plugin
-Export-Package: org.cishell.cibridge.core,\
-org.cishell.cibridge.core.model
+Export-Package: org.cishell.cibridge.*

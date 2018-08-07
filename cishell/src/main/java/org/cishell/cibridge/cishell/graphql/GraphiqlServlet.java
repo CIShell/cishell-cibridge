@@ -13,8 +13,10 @@ import javax.servlet.ServletException;
 
 
 public class GraphiqlServlet extends HttpServlet {
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
+            System.out.println("/graphiql");
+            
             response.setContentType("text/html");
 
             PrintWriter out = response.getWriter();
