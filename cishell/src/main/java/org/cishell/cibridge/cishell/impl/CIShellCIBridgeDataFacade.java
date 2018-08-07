@@ -36,7 +36,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
 import sun.print.resources.serviceui;
-
+//TODO: need to test the datafacade implementation
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private CIShellCIBridge cibridge;
 	private final HashMap<String, Long> algorithmInstanceCount = new HashMap<>();
@@ -47,6 +47,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public String validateData(String algorithmDefinitionId, List<String> dataIds) {
+		System.out.println("here......");
 		List<String> defIDs = new ArrayList<String>();
 		defIDs.add(algorithmDefinitionId);
 		AlgorithmFilter algorithmFilter = new AlgorithmFilter(defIDs, null, null, null, null, null, null, 0, 0);
@@ -389,7 +390,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		}
 		return false;
 	}
-	//FIXME: below are subscriptions
+	//TODO: below are unimplemented subscriptions of DataFacade
 	@Override
 	public Data dataAdded() {
 
