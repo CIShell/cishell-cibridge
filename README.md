@@ -18,6 +18,13 @@ Container creates a distribution that can be run by command line like this:
 java -jar container/target/org.cishell.container-1.0.0-*.jar container/target/plugins/
 ```
 
+## Prebuild containers
+
+There are two pre-built containers that are deployed with every commit to master or develop. You can download them here:
+
+- [CIShell Container](https://cishell.jfrog.io/cishell/cibridge/latest/cishell-cibridge-container.zip) - An 'empty' shell that has all the cishell dependencies and one test algorithm installed.
+- [Sci2 Container](https://cishell.jfrog.io/cishell/cibridge/sci2/latest/sci2-cibridge-container.zip) -A CIShell/CIBridge container with >100 algorithms from Sci2.
+
 ## Build Infrastructure
 
 Build infrastructure for CIShell and Sci2 generously provided by the following open source patrons:
