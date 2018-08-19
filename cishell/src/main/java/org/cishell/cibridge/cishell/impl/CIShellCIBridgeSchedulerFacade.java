@@ -5,6 +5,7 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDataObject;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.wrapper.ProgressTrackableAlgorithm;
+import org.cishell.framework.algorithm.Algorithm;
 import org.osgi.framework.ServiceReference;
 
 import java.time.ZonedDateTime;
@@ -45,24 +46,34 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             }
         }
         return count;
-        //TODO another crude of doing this is below. But I think the above code is more reliable if cibridge always stays in sink with cishell
+        //TODO another crude of doing this is below. But I think the above code is more reliable if cibridge always stays in sync with cishell
         //TODO read the documentation here: http://cishell.org/dev/docs/spec/api-1.0/org/cishell/app/service/scheduler/SchedulerService.html#getScheduledAlgorithms()
         //return scheduler.getScheduledAlgorithms().length;
     }
 
     /* Mutations */
+
+    //TODO what do we return here?? was the operation success or not?
     @Override
     public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
-        ProgressTrackableAlgorithm algorithm = getAlgorithm(algorithmInstanceId);
-        algorithm.getProgressMonitor().setCanceled(isCancelled);
-        return algorithm.getProgressMonitor().isCanceled();
+        Algorithm algorithm = getAlgorithm(algorithmInstanceId);
+        if (algorithm instanceof ProgressTrackableAlgorithm) {
+            ProgressTrackableAlgorithm progressTrackableAlgorithm = (ProgressTrackableAlgorithm) algorithm;
+            progressTrackableAlgorithm.getProgressMonitor().setCanceled(isCancelled);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused) {
-        ProgressTrackableAlgorithm algorithm = getAlgorithm(algorithmInstanceId);
-        algorithm.getProgressMonitor().setPaused(isPaused);
-        return algorithm.getProgressMonitor().isPaused();
+        Algorithm algorithm = getAlgorithm(algorithmInstanceId);
+        if (algorithm instanceof ProgressTrackableAlgorithm) {
+            ProgressTrackableAlgorithm progressTrackableAlgorithm = (ProgressTrackableAlgorithm) algorithm;
+            progressTrackableAlgorithm.getProgressMonitor().setPaused(isPaused);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -73,15 +84,13 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             return false;
         }
 
-        //TODO no way of removing algorithms from cishell??
+        //TODO no way of removing algorithms from CIShell??
         return true;
     }
 
     @Override
     public Boolean runAlgorithmNow(String algorithmInstanceId) {
         cibridge.getSchedulerService().runNow(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId));
-        //TODO what should be the algorithm state after its run. It may or may not run instantly. I think it should be
-        //TODO set to waiting. Once there are enough resources the algorithm will run and the state would change to RUNNING
         return true;
     }
 
@@ -110,22 +119,17 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean unscheduleAlgorithm(String algorithmInstanceId) {
-        getAlgorithmInstance(algorithmInstanceId).setState(IDLE);
-        return cibridge.getSchedulerService().unschedule(getAlgorithm(algorithmInstanceId));
+        boolean isUnscheduled = cibridge.getSchedulerService().unschedule(getAlgorithm(algorithmInstanceId));
+        if (isUnscheduled) {
+            getAlgorithmInstance(algorithmInstanceId).setState(IDLE);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public Integer clearScheduler() {
         cibridge.getSchedulerService().clearSchedule();
-        //TODO how to know what algorithms were removed from cishell?? We also need to update the algorithm instances in cibridge
-/*        Set<Algorithm> scheduledAlgorithms = new HashSet<>(Arrays.asList(cibridge.getSchedulerService().getScheduledAlgorithms()));
-
-        for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
-            String algorithmInstanceId = entry.getKey();
-
-
-        }*/
-
         return cibridge.getSchedulerService().getScheduledAlgorithms().length;
     }
 
@@ -146,7 +150,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         return null;
     }
 
-    private ProgressTrackableAlgorithm getAlgorithm(String algorithmInstanceId) {
+    private Algorithm getAlgorithm(String algorithmInstanceId) {
         return cibridge.algorithmDataMap.get(algorithmInstanceId).getAlgorithm();
     }
 

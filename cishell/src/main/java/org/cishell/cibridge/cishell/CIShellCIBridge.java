@@ -8,6 +8,8 @@ import org.cishell.cibridge.core.model.AlgorithmDataObject;
 import org.cishell.cibridge.core.model.AlgorithmFactoryDataObject;
 import org.cishell.cibridge.core.model.PageInfo;
 import org.cishell.cibridge.core.model.interfaces.QueryResults;
+import org.cishell.framework.CIShellContext;
+import org.cishell.framework.LocalCIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -23,6 +25,7 @@ import java.util.List;
 
 public class CIShellCIBridge extends CIBridge {
     private BundleContext context;
+    private CIShellContext ciShellContext;
 
     public final CIShellCIBridgeAlgorithmFacade cishellAlgorithm;
     public final CIShellCIBridgeDataFacade cishellData;
@@ -37,6 +40,8 @@ public class CIShellCIBridge extends CIBridge {
                 new CIShellCIBridgeNotificationFacade(), new CIShellCIBridgeSchedulerFacade(),
                 new CIShellCIBridgeLoggingFacade());
         this.context = context;
+        this.ciShellContext = new LocalCIShellContext(context);
+
 
         this.cishellAlgorithm = (CIShellCIBridgeAlgorithmFacade) this.algorithm;
         this.cishellData = (CIShellCIBridgeDataFacade) this.data;
@@ -50,6 +55,7 @@ public class CIShellCIBridge extends CIBridge {
         cishellScheduler.setCIBridge(this);
         cishellLogging.setCIBridge(this);
 
+        getSchedulerService().addSchedulerListener(new SchedulerServiceListener());
         this.cishellAlgorithm.cacheData();
     }
 
@@ -137,4 +143,7 @@ public class CIShellCIBridge extends CIBridge {
         return queryResults.getQueryResults(queryList, pageInfo);
     }
 
+    public CIShellContext getCIShellContext() {
+        return ciShellContext;
+    }
 }

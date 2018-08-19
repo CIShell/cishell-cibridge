@@ -1,18 +1,18 @@
 package org.cishell.cibridge.core.model;
 
-import org.cishell.cibridge.core.wrapper.ProgressTrackableAlgorithm;
+import org.cishell.framework.algorithm.Algorithm;
 
 public class AlgorithmDataObject {
 
-    private ProgressTrackableAlgorithm algorithm;
+    private Algorithm algorithm;
     private AlgorithmInstance algorithmInstance;
 
-    public AlgorithmDataObject(ProgressTrackableAlgorithm algorithm, AlgorithmInstance algorithmInstance){
+    public AlgorithmDataObject(Algorithm algorithm, AlgorithmInstance algorithmInstance){
         this.algorithm = algorithm;
         this.algorithmInstance = algorithmInstance;
     }
 
-    public ProgressTrackableAlgorithm getAlgorithm() {
+    public Algorithm getAlgorithm() {
         return algorithm;
     }
 

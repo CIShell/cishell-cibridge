@@ -4,10 +4,9 @@ import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.cibridge.core.wrapper.ProgressTrackableAlgorithm;
-import org.cishell.framework.LocalCIShellContext;
+import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
-import org.cishell.framework.algorithm.ProgressMonitor;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
@@ -207,13 +206,14 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             }
         }
 
-        ProgressTrackableAlgorithm algorithm = (ProgressTrackableAlgorithm) algorithmFactory.createAlgorithm(dataArray, paramTable, new LocalCIShellContext(cibridge.getBundleContext()));
-        algorithm.setProgressMonitor(ProgressMonitor.NULL_MONITOR);
+        Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, this.cibridge.getCIShellContext());
+        ProgressTrackableAlgorithm progressTrackableAlgorithm = new ProgressTrackableAlgorithm(algorithm);
 
         String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinitionId);
+        progressTrackableAlgorithm.setAlgorithmInstanceId(algorithmInstanceId);
         AlgorithmInstance algorithmInstance = new AlgorithmInstance(algorithmInstanceId, dataList, paramList, algorithmDefinition, AlgorithmState.IDLE, null, 1, null);
 
-        AlgorithmDataObject algorithmData = new AlgorithmDataObject(algorithm, algorithmInstance);
+        AlgorithmDataObject algorithmData = new AlgorithmDataObject(progressTrackableAlgorithm, algorithmInstance);
         cibridge.algorithmDataMap.put(algorithmInstanceId, algorithmData);
 
         System.out.println("Algorithm Instance created: " + algorithmInstance);
