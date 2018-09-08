@@ -55,8 +55,10 @@ public class CIShellCIBridge extends CIBridge {
         cishellScheduler.setCIBridge(this);
         cishellLogging.setCIBridge(this);
 
-        getSchedulerService().addSchedulerListener(new SchedulerServiceListener());
         this.cishellAlgorithm.cacheData();
+        if (getSchedulerService() != null) {
+            getSchedulerService().addSchedulerListener(new SchedulerServiceListener(this));
+        }
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

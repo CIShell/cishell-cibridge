@@ -28,17 +28,14 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         AlgorithmDefinitionQueryResults queryResults = null;
         int limit = 0, offset = 0;
 
-        for (Map.Entry<String, AlgorithmFactoryDataObject> entry : cibridge.algorithmFactoryDataMap.entrySet()) {
-            algorithmDefinitions.add(entry.getValue().getAlgorithmDefinition());
-        }
+        try {
 
-        if (filter == null) {
-            System.out.println("Filter is empty!");
-            queryResults = new AlgorithmDefinitionQueryResults(algorithmDefinitions, pageInfo);
-        } else {
+            //populate all algorithms in newly populated list. Based on the filter remove non-matching algorithms
+            for (Map.Entry<String, AlgorithmFactoryDataObject> entry : cibridge.algorithmFactoryDataMap.entrySet()) {
+                algorithmDefinitions.add(entry.getValue().getAlgorithmDefinition());
+            }
 
-            try {
-
+            if (filter != null) {
                 //filter based on algorithm definition ids
                 if (filter.getAlgorithmDefinitionIds() != null) {
                     algorithmDefinitions.removeIf(algorithmDefinition -> !filter.getAlgorithmDefinitionIds().contains(algorithmDefinition.getId()));
@@ -76,16 +73,17 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                     }
                     algorithmDefinitions.removeIf(algorithmDefinition -> Collections.disjoint(algorithmDefinition.getInData(), supportedFormats));
                 }*/
-
                 limit = filter.getLimit();
                 offset = filter.getOffset();
-                queryResults = new AlgorithmDefinitionQueryResults(algorithmDefinitions, pageInfo);
-            } catch (Exception e) {
-                e.printStackTrace();
-                queryResults = new AlgorithmDefinitionQueryResults(new ArrayList<>(), pageInfo);
             }
 
+            queryResults = new AlgorithmDefinitionQueryResults(algorithmDefinitions, pageInfo);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            queryResults = new AlgorithmDefinitionQueryResults(new ArrayList<>(), pageInfo);
         }
+
         return (AlgorithmDefinitionQueryResults) cibridge.getPaginatedQueryResults(queryResults, limit, offset);
 
     }
@@ -127,16 +125,13 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         AlgorithmInstanceQueryResults queryResults = null;
         int limit = 0, offset = 0;
 
-        for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
-            algorithmInstances.add(entry.getValue().getAlgorithmInstance());
-        }
+        try {
 
-        if (filter == null) {
-            System.out.println("Filter is empty!");
-            queryResults = new AlgorithmInstanceQueryResults(algorithmInstances, pageInfo);
-        } else {
+            for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
+                algorithmInstances.add(entry.getValue().getAlgorithmInstance());
+            }
 
-            try {
+            if (filter != null) {
                 //filter based on algorithm definition ids
                 if (filter.getAlgorithmDefinitionIds() != null) {
                     algorithmInstances.removeIf(algorithmInstance -> !filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition().getId()));
@@ -169,19 +164,19 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
                 limit = filter.getLimit();
                 offset = filter.getOffset();
-                queryResults = new AlgorithmInstanceQueryResults(algorithmInstances, pageInfo);
-            } catch (Exception e) {
-                e.printStackTrace();
-                queryResults = new AlgorithmInstanceQueryResults(new ArrayList<>(), pageInfo);
             }
+
+            queryResults = new AlgorithmInstanceQueryResults(algorithmInstances, pageInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            queryResults = new AlgorithmInstanceQueryResults(new ArrayList<>(), pageInfo);
         }
 
         return (AlgorithmInstanceQueryResults) cibridge.getPaginatedQueryResults(queryResults, limit, offset);
     }
 
     @Override
-    public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds,
-                                             List<PropertyInput> parameters) {
+    public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
         AlgorithmDefinition algorithmDefinition = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmDefinition();
         AlgorithmFactory algorithmFactory = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmFactory();
 
@@ -274,6 +269,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                     }
                 }
             }
+
+            System.out.println("No of algorithms: " + cibridge.algorithmFactoryDataMap.size());
 
         } catch (Exception e) {
             e.printStackTrace();

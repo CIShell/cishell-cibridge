@@ -16,8 +16,7 @@ public class SchedulerServiceListener implements SchedulerListener {
 
     private CIShellCIBridge cibridge;
 
-    //TODO how to set cibridge??
-    public void setCIBridge(CIShellCIBridge cibridge) {
+    public SchedulerServiceListener(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
     }
 
