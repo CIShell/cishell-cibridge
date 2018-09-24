@@ -13,10 +13,7 @@ import org.cishell.framework.LocalCIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 
@@ -55,26 +52,28 @@ public class CIShellCIBridge extends CIBridge {
         cishellScheduler.setCIBridge(this);
         cishellLogging.setCIBridge(this);
 
-        this.cishellAlgorithm.cacheData();
+        getBundleContext().addServiceListener(event -> {
+            if (event.getType() == ServiceEvent.REGISTERED) {
+                if (event.getServiceReference().toString().equals("[" + AlgorithmFactory.class.getName() + "]")) {
+                    ServiceReference ref = event.getServiceReference();
+                    cishellAlgorithm.cacheAlgorithm(ref);
+                }
+            } else if (event.getType() == ServiceEvent.UNREGISTERING) {
+                if (event.getServiceReference().toString().equals("[" + AlgorithmFactory.class.getName() + "]")) {
+                    ServiceReference ref = event.getServiceReference();
+                    cishellAlgorithm.uncacheAlgorithm(ref);
+                }
+            } else if (event.getType() == ServiceEvent.MODIFIED) {
+                //TODO
+            }
+        });
+
+        this.cishellAlgorithm.cacheAlgorithmData();
         if (getSchedulerService() != null) {
             getSchedulerService().addSchedulerListener(new SchedulerServiceListener(this));
         }
-    }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public AlgorithmFactory getAlgorithmFactory(String pid) {
-        try {
-            ServiceReference[] refs = context.getServiceReferences(AlgorithmFactory.class.getName(),
-                    "(&(" + Constants.SERVICE_PID + "=" + pid + "))");
-            if (refs != null && refs.length > 0) {
-                return (AlgorithmFactory) context.getService(refs[0]);
-            } else {
-                return null;
-            }
-        } catch (InvalidSyntaxException e) {
-            e.printStackTrace();
-        }
-        return null;
+
     }
 
     public GUIBuilderService getGUIBuilderService() {

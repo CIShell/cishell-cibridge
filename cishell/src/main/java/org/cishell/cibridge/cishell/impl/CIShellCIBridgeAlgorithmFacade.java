@@ -8,6 +8,7 @@ import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 import java.util.*;
@@ -184,7 +185,9 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         List<Property> paramList = new ArrayList<>();
 
         if (dataIds != null) {
-            DataQueryResults dataQueryResults = cibridge.cishellData.getData(new DataFilter(dataIds, null, null, null, null));
+            DataFilter dataFilter = new DataFilter();
+            dataFilter.setDataIds(dataIds);
+            DataQueryResults dataQueryResults = cibridge.cishellData.getData(dataFilter);
             dataList = dataQueryResults != null ? dataQueryResults.getResults() : null;
         }
 
@@ -235,6 +238,22 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return null;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public AlgorithmFactory getAlgorithmFactory(String pid) {
+        try {
+            ServiceReference[] refs = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class.getName(),
+                    "(&(" + Constants.SERVICE_PID + "=" + pid + "))");
+            if (refs != null && refs.length > 0) {
+                return (AlgorithmFactory) cibridge.getBundleContext().getService(refs[0]);
+            } else {
+                return null;
+            }
+        } catch (InvalidSyntaxException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private String generateAndGetInstanceId(String algorithmDefinitionId) {
         Long newCount;
 
@@ -249,29 +268,35 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     }
 
-    public void cacheData() {
-        try {
-            ServiceReference[] refs = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class.getName(), null);
-            System.out.println("Caching AlgorithmDefinitions...");
+    public void uncacheAlgorithm(ServiceReference ref) {
+        if (ref.getProperty(Constants.SERVICE_PID) != null) {
+            String pid = ref.getProperty(Constants.SERVICE_PID).toString();
+            if (pid != null) {
+                cibridge.algorithmFactoryDataMap.remove(pid);
+            }
+        }
+    }
 
+    public void cacheAlgorithm(ServiceReference ref) {
+        if (ref.getProperty(Constants.SERVICE_PID) != null) {
+            String pid = ref.getProperty(Constants.SERVICE_PID).toString();
+            if (pid != null) {
+                AlgorithmDefinition algorithmDefinition = setAlgorithmDefinition(ref);
+                AlgorithmFactory algorithmFactory = getAlgorithmFactory(pid);
+                AlgorithmFactoryDataObject algorithmFactoryData = new AlgorithmFactoryDataObject(algorithmDefinition, algorithmFactory);
+                cibridge.algorithmFactoryDataMap.put(pid, algorithmFactoryData);
+            }
+        }
+    }
+
+    public void cacheAlgorithmData() {
+        try {
+            Collection<ServiceReference<AlgorithmFactory>> refs = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);
             if (refs != null) {
                 for (ServiceReference ref : refs) {
-                    if (ref.getProperty(Constants.SERVICE_PID) != null) {
-                        String pid = ref.getProperty(Constants.SERVICE_PID).toString();
-                        if (pid != null) {
-                            System.out.println("Caching Service pid: " + pid);
-                            AlgorithmDefinition algorithmDefinition = setAlgorithmDefinition(ref);
-                            AlgorithmFactory algorithmFactory = cibridge.getAlgorithmFactory(pid);
-
-                            AlgorithmFactoryDataObject algorithmFactoryData = new AlgorithmFactoryDataObject(algorithmDefinition, algorithmFactory);
-                            cibridge.algorithmFactoryDataMap.put(pid, algorithmFactoryData);
-                        }
-                    }
+                    cacheAlgorithm(ref);
                 }
             }
-
-            System.out.println("No of algorithms: " + cibridge.algorithmFactoryDataMap.size());
-
         } catch (Exception e) {
             e.printStackTrace();
         }

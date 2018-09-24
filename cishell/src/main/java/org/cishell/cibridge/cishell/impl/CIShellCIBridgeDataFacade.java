@@ -35,7 +35,6 @@ import org.cishell.service.conversion.DataConversionService;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
-import sun.print.resources.serviceui;
 //TODO: need to test the datafacade implementation
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private CIShellCIBridge cibridge;
@@ -47,15 +46,14 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public String validateData(String algorithmDefinitionId, List<String> dataIds) {
-		System.out.println("here......");
-		List<String> defIDs = new ArrayList<String>();
+		List<String> defIDs = new ArrayList<>();
 		defIDs.add(algorithmDefinitionId);
-		AlgorithmFilter algorithmFilter = new AlgorithmFilter(defIDs, null, null, null, null, null, null, 0, 0);
-		AlgorithmDefinitionQueryResults algorithmDefinitionQueryResults = this.cibridge.cishellAlgorithm.getAlgorithmDefinitions(algorithmFilter);
-		AlgorithmDefinition algDefinition = (AlgorithmDefinition) algorithmDefinitionQueryResults.getResults().get(0);
-		AlgorithmFactory algorithm = this.cibridge.getAlgorithmFactory(algorithmDefinitionId);
-
-		DataFilter dataFilter = new DataFilter(dataIds, null, false, null, null);
+		AlgorithmFilter algorithmFilter = new AlgorithmFilter();
+		algorithmFilter.setAlgorithmDefinitionIds(defIDs);
+		AlgorithmDefinition algDefinition = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmDefinition();
+		AlgorithmFactory algorithm = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmFactory();
+		DataFilter dataFilter = new DataFilter();
+		dataFilter.setDataIds(dataIds);
 		DataQueryResults dataQueryResults = getData(dataFilter);
 		List<Data> data = dataQueryResults.getResults();
 		int counter = 0;
@@ -288,7 +286,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	@Override
 	public String downloadData(String dataId) {
 		//TODO: Testing remaning. Need to create dataId using mutation to download data.
-		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		DataConversionService dataConversionService = /**/cibridge.getDataConversionService();
 		try {
 			if(dataId != null) {
 				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
@@ -382,7 +380,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	public Boolean updateData(String dataId, DataProperties properties) {
 		//TODO: Testing remaining
 		DataManagerService dataManagerService = cibridge.getDataManagerService();
-		DataConversionService dataConversionService = (DataConversionService) this.cibridge.getDataConversionService();
+		DataConversionService dataConversionService = this.cibridge.getDataConversionService();
 		try {
 			if(dataId != null && properties.getLabel() != null) {
 				Map<String, org.cishell.framework.data.Data> dataMapping = getDataMap();
