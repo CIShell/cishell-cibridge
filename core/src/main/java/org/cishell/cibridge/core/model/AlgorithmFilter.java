@@ -10,11 +10,11 @@ public class AlgorithmFilter {
 	private List<String> inputFormats;
 	private List<String> outputFormats;
 	private List<PropertyInput> properties;
-	private int limit;
-	private int offset;
+	private int limit = 0;
+	private int offset = 0;
 	
 	public AlgorithmFilter() {
-		
+		//allow empty instantiation
 	}
 
 	public AlgorithmFilter(List<String> algorithmDefinitionIds, List<String> algorithmInstanceIds,

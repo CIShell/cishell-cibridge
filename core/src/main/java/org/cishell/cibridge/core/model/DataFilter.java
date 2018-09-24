@@ -9,6 +9,10 @@ public class DataFilter {
 	private List<DataType> types;
 	private List<PropertyInput> properties;
 
+	public DataFilter(){
+		//allow empty instantiation
+	}
+
 	public DataFilter(List<String> dataIds, List<String> formats, Boolean isModified, List<DataType> types,
 			List<PropertyInput> properties) {
 		// TODO Auto-generated constructor stub
