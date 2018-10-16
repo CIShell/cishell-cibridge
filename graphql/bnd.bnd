@@ -1,6 +1,0 @@
-Bundle-SymbolicName:${project.artifactId}
-Bundle-Name: ${project.artifactId}
-Bundle-ClassPath: .
-Bundle-Version:${project.version}
-Bundle-Localization: plugin
-Export-Package: org.cishell.cibridge.*
