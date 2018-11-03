@@ -3,19 +3,21 @@ package org.cishell.cibridge.cishell;
 import org.cishell.container.CIShellContainer;
 import org.osgi.framework.BundleContext;
 
-public class IntegrationTestCase {
+public abstract class IntegrationTestCase {
+
+    private static final String PLUGINS_DIRECTORY_PATH = "../integration-tests-container/target/plugins";
+    private static final CIShellContainer CONTAINER = new CIShellContainer(PLUGINS_DIRECTORY_PATH, null);
+    private static final CIShellCIBridge CISHELL_CIBRIDGE = new CIShellCIBridge(CONTAINER.getBundleContext());
 
     public CIShellContainer getContainer() {
-        return ContainerInstanceProvider.getCIShellContainer();
+        return CONTAINER;
     }
 
     public BundleContext getBundleContext() {
-        return ContainerInstanceProvider.getCIShellContainer().getBundleContext();
+        return CONTAINER.getBundleContext();
     }
 
     public CIShellCIBridge getCIShellCIBridge() {
-        return CIShellCIbridgeInstanceProvider.getCIShellCIBridge();
+        return CISHELL_CIBRIDGE;
     }
 }
-
-
