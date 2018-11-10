@@ -1,4 +1,4 @@
-package org.cishell.cibridge.core.wrapper;
+package org.cishell.cibridge.core.api;
 
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmExecutionException;
@@ -6,12 +6,12 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.Data;
 
-public class ProgressTrackableAlgorithm implements Algorithm, ProgressTrackable{
+public class ProgressTrackableAlgorithm implements Algorithm, ProgressTrackable {
     private Algorithm algorithm;
     private String AlgorithmInstanceId;
     private ProgressMonitor progressMonitor = ProgressMonitor.NULL_MONITOR;
 
-    public ProgressTrackableAlgorithm(Algorithm algorithm){
+    public ProgressTrackableAlgorithm(Algorithm algorithm) {
         this.algorithm = algorithm;
     }
 

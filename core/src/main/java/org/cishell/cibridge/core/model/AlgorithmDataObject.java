@@ -7,7 +7,7 @@ public class AlgorithmDataObject {
     private Algorithm algorithm;
     private AlgorithmInstance algorithmInstance;
 
-    public AlgorithmDataObject(Algorithm algorithm, AlgorithmInstance algorithmInstance){
+    public AlgorithmDataObject(Algorithm algorithm, AlgorithmInstance algorithmInstance) {
         this.algorithm = algorithm;
         this.algorithmInstance = algorithmInstance;
     }
@@ -16,7 +16,7 @@ public class AlgorithmDataObject {
         return algorithm;
     }
 
-    public AlgorithmInstance getAlgorithmInstance(){
+    public AlgorithmInstance getAlgorithmInstance() {
         return algorithmInstance;
     }
 }

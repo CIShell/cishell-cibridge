@@ -1,23 +1,22 @@
 package org.cishell.cibridge.core.model;
 
 public class PageInfo {
-	private final boolean hasNextPage;
-	private final boolean hasPreviousPage;
+    private final boolean hasNextPage;
+    private final boolean hasPreviousPage;
 
-	public PageInfo(boolean hasNextPage, boolean hasPreviousPage) {
-		// TODO Auto-generated constructor stub
-		this.hasNextPage = hasNextPage;
-		this.hasPreviousPage = hasPreviousPage;
-	}
+    public PageInfo(boolean hasNextPage, boolean hasPreviousPage) {
+        // TODO Auto-generated constructor stub
+        this.hasNextPage = hasNextPage;
+        this.hasPreviousPage = hasPreviousPage;
+    }
 
-	public boolean isHasNextPage() {
-		return hasNextPage;
-	}
+    public boolean isHasNextPage() {
+        return hasNextPage;
+    }
 
-	public boolean isHasPreviousPage() {
-		return hasPreviousPage;
-	}
+    public boolean isHasPreviousPage() {
+        return hasPreviousPage;
+    }
 
-	
 
 }

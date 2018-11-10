@@ -14,7 +14,7 @@ public class Scheduler {
     private Map<String, ZonedDateTime> schedule = new HashMap<>();
     private Map<String, AlgorithmInstance> algorithms = new HashMap<>();
 
-    public Scheduler(){
+    public Scheduler() {
         algorithms.put("9667904207", new AlgorithmInstance("9667904207", null, null, null, AlgorithmState.IDLE, null, 0, null));
         algorithms.put("3706776691", new AlgorithmInstance("3706776691", null, null, null, AlgorithmState.IDLE, null, 0, null));
         algorithms.put("2037406284", new AlgorithmInstance("2037406284", null, null, null, AlgorithmState.IDLE, null, 0, null));
@@ -24,9 +24,9 @@ public class Scheduler {
     }
 
     public Boolean setRunning(boolean running) {
-        if(running){
+        if (running) {
             System.out.println("scheduler resumed");
-        }else{
+        } else {
             System.out.println("scheduler paused");
         }
         this.running = running;
@@ -42,7 +42,7 @@ public class Scheduler {
     }
 
     public Boolean runAlgorithmNow(String algorithmInstanceId) {
-        if(!algorithms.containsKey(algorithmInstanceId)){
+        if (!algorithms.containsKey(algorithmInstanceId)) {
             System.out.println("algorithm doesn't exist");
             return false;
         }
@@ -54,7 +54,7 @@ public class Scheduler {
     }
 
     public Boolean scheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        if(!algorithms.containsKey(algorithmInstanceId)){
+        if (!algorithms.containsKey(algorithmInstanceId)) {
             System.out.println("algorithm doesn't exist");
             return false;
         }
@@ -65,7 +65,7 @@ public class Scheduler {
     }
 
     public Boolean rescheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        if(!algorithms.containsKey(algorithmInstanceId)){
+        if (!algorithms.containsKey(algorithmInstanceId)) {
             System.out.println("algorithm doesn't exist");
             return false;
         }
@@ -76,7 +76,7 @@ public class Scheduler {
     }
 
     public Boolean unscheduleAlgorithm(String algorithmInstanceId) {
-        if(!algorithms.containsKey(algorithmInstanceId)){
+        if (!algorithms.containsKey(algorithmInstanceId)) {
             System.out.println("algorithm doesnt exist");
             return false;
         }

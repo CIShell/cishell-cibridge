@@ -39,6 +39,11 @@
             <artifactId>org.cishell.container</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>org.cishell.core.libs</groupId>
+            <artifactId>com.google.guava</artifactId>
+            <version>11.0.1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -66,5 +71,5 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>    
+    </build>
 </project>

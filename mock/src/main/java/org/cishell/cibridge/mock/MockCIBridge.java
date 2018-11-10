@@ -5,8 +5,8 @@ import org.cishell.cibridge.mock.impl.*;
 
 public class MockCIBridge extends CIBridge {
 
-	public MockCIBridge() {
-		super(new MockCIBridgeAlgorithmFacade(), new MockCIBridgeDataFacade(), new CIShellCIBridgeNotificationFacade(),
-				new CIShellCIBridgeSchedulerFacade(), new CIShellCIBridgeLoggingFacade());
-	}
+    public MockCIBridge() {
+        super(new MockCIBridgeAlgorithmFacade(), new MockCIBridgeDataFacade(), new CIShellCIBridgeNotificationFacade(),
+                new CIShellCIBridgeSchedulerFacade(), new CIShellCIBridgeLoggingFacade());
+    }
 }

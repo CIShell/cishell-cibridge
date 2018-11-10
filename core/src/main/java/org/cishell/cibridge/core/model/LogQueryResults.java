@@ -1,28 +1,30 @@
 package org.cishell.cibridge.core.model;
 
+import org.cishell.cibridge.core.api.QueryResults;
+
 import java.util.List;
-import org.cishell.cibridge.core.model.interfaces.QueryResults;
+
 public class LogQueryResults implements QueryResults<Log> {
-	private final List<Log> results;
-	private final PageInfo pageInfo;
+    private final List<Log> results;
+    private final PageInfo pageInfo;
 
-	public LogQueryResults(List<Log> results, PageInfo pageInfo) {
-		// TODO Auto-generated constructor stub
-		this.results = results;
-		this.pageInfo = pageInfo;
+    public LogQueryResults(List<Log> results, PageInfo pageInfo) {
+        // TODO Auto-generated constructor stub
+        this.results = results;
+        this.pageInfo = pageInfo;
 
-	}
+    }
 
-	public List<Log> getResults() {
-		return results;
-	}
+    public List<Log> getResults() {
+        return results;
+    }
 
-	public PageInfo getPageInfo() {
-		return pageInfo;
-	}
+    public PageInfo getPageInfo() {
+        return pageInfo;
+    }
 
-	@Override
-	public QueryResults<Log> getQueryResults(List<Log> objList, PageInfo pageInfo) {
-		return new LogQueryResults(objList, pageInfo);
-	}
+    @Override
+    public QueryResults<Log> getQueryResults(List<Log> objList, PageInfo pageInfo) {
+        return new LogQueryResults(objList, pageInfo);
+    }
 }

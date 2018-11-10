@@ -10,16 +10,16 @@ import java.util.List;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 
-	@Override
-	public LogQueryResults getLogs(LogFilter filter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public LogQueryResults getLogs(LogFilter filter) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Log logAdded(List<LogLevel> logLevels) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Log logAdded(List<LogLevel> logLevels) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

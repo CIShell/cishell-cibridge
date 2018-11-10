@@ -2,9 +2,9 @@ package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.app.service.scheduler.SchedulerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.core.api.ProgressTrackableAlgorithm;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmState;
-import org.cishell.cibridge.core.wrapper.ProgressTrackableAlgorithm;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.data.Data;
 
@@ -12,11 +12,11 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 
-public class SchedulerServiceListener implements SchedulerListener {
+public class SchedulerListenerImpl implements SchedulerListener {
 
     private CIShellCIBridge cibridge;
 
-    public SchedulerServiceListener(CIShellCIBridge cibridge) {
+    public SchedulerListenerImpl(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
     }
 

@@ -4,139 +4,139 @@ import java.util.List;
 
 public class AlgorithmDefinition {
 
-	private final String id;
-	private final InputParameters parameters;
-	private final List<String> inData;
-	private final List<String> outData;
-	private final String label;
-	private final String description;
-	private final Boolean parentOutputData;
-	private final AlgorithmType type;
-	private final Boolean remoteable;
-	private final String menuPath;
-	private final ConversionType conversion;
-	private final String authors;
-	private final String implementers;
-	private final String integrators;
-	private final String documentationUrl;
-	private final String reference;
-	private final String referenceUrl;
-	private final String writtenIn;
-	private final List<Property> otherProperties;
+    private final String id;
+    private final InputParameters parameters;
+    private final List<String> inData;
+    private final List<String> outData;
+    private final String label;
+    private final String description;
+    private final Boolean parentOutputData;
+    private final AlgorithmType type;
+    private final Boolean remoteable;
+    private final String menuPath;
+    private final ConversionType conversion;
+    private final String authors;
+    private final String implementers;
+    private final String integrators;
+    private final String documentationUrl;
+    private final String reference;
+    private final String referenceUrl;
+    private final String writtenIn;
+    private final List<Property> otherProperties;
 
-	// constructor with ID initialisation
-	public AlgorithmDefinition(String id, InputParameters parameters, List<String> inData, List<String> outData, String label,
-			String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
-			ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
-			String reference, String referenceUrl, String writtenIn, List<Property> otherProperties) {
-		// TODO Auto-generated constructor stub
-		this.id = id;
-		this.parameters = parameters;
-		this.inData = inData;
-		this.outData = outData;
-		this.label = label;
-		this.description = description;
-		this.parentOutputData = parentOutputData;
-		this.type = type;
-		this.remoteable = remoteable;
-		this.menuPath = menuPath;
-		this.conversion = conversion;
-		this.authors = authors;
-		this.implementers = implementers;
-		this.integrators = integrators;
-		this.documentationUrl = documentationUrl;
-		this.reference=reference;
-		this.referenceUrl = referenceUrl;
-		this.writtenIn = writtenIn;
-		this.otherProperties = otherProperties;
-	}
+    // constructor with ID initialisation
+    public AlgorithmDefinition(String id, InputParameters parameters, List<String> inData, List<String> outData, String label,
+                               String description, Boolean parentOutputData, AlgorithmType type, Boolean remoteable, String menuPath,
+                               ConversionType conversion, String authors, String implementers, String integrators, String documentationUrl,
+                               String reference, String referenceUrl, String writtenIn, List<Property> otherProperties) {
+        // TODO Auto-generated constructor stub
+        this.id = id;
+        this.parameters = parameters;
+        this.inData = inData;
+        this.outData = outData;
+        this.label = label;
+        this.description = description;
+        this.parentOutputData = parentOutputData;
+        this.type = type;
+        this.remoteable = remoteable;
+        this.menuPath = menuPath;
+        this.conversion = conversion;
+        this.authors = authors;
+        this.implementers = implementers;
+        this.integrators = integrators;
+        this.documentationUrl = documentationUrl;
+        this.reference = reference;
+        this.referenceUrl = referenceUrl;
+        this.writtenIn = writtenIn;
+        this.otherProperties = otherProperties;
+    }
 
-	
-	public String getId() {
-		return id;
-	}
 
-	public InputParameters getParameters() {
-		return parameters;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public List<String> getInData() {
-		return inData;
-	}
+    public InputParameters getParameters() {
+        return parameters;
+    }
 
-	public List<String> getOutData() {
-		return outData;
-	}
+    public List<String> getInData() {
+        return inData;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public List<String> getOutData() {
+        return outData;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public Boolean getParentOutputData() {
-		return parentOutputData;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public AlgorithmType getType() {
-		return type;
-	}
+    public Boolean getParentOutputData() {
+        return parentOutputData;
+    }
 
-	public Boolean getRemoteable() {
-		return remoteable;
-	}
+    public AlgorithmType getType() {
+        return type;
+    }
 
-	public String getMenuPath() {
-		return menuPath;
-	}
+    public Boolean getRemoteable() {
+        return remoteable;
+    }
 
-	public ConversionType getConversion() {
-		return conversion;
-	}
+    public String getMenuPath() {
+        return menuPath;
+    }
 
-	public String getAuthors() {
-		return authors;
-	}
+    public ConversionType getConversion() {
+        return conversion;
+    }
 
-	public String getImplementers() {
-		return implementers;
-	}
+    public String getAuthors() {
+        return authors;
+    }
 
-	public String getIntegrators() {
-		return integrators;
-	}
+    public String getImplementers() {
+        return implementers;
+    }
 
-	public String getDocumentationUrl() {
-		return documentationUrl;
-	}
+    public String getIntegrators() {
+        return integrators;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public String getDocumentationUrl() {
+        return documentationUrl;
+    }
 
-	public String getReferenceUrl() {
-		return referenceUrl;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public String getWrittenIn() {
-		return writtenIn;
-	}
+    public String getReferenceUrl() {
+        return referenceUrl;
+    }
 
-	public List<Property> getOtherProperties() {
-		return otherProperties;
-	}
+    public String getWrittenIn() {
+        return writtenIn;
+    }
 
-	@Override
-	public String toString() {
-		return "AlgorithmDefinition [id=" + id + ", parameters=" + parameters + ", inData=" + inData + ", outData="
-				+ outData + ", label=" + label + ", description=" + description + ", parentOutputData="
-				+ parentOutputData + ", type=" + type + ", remoteable=" + remoteable + ", menuPath=" + menuPath
-				+ ", conversion=" + conversion + ", authors=" + authors + ", implementers=" + implementers
-				+ ", integrators=" + integrators + ", documentationUrl=" + documentationUrl + ", reference=" + reference
-				+ ", referenceUrl=" + referenceUrl + ", writtenIn=" + writtenIn + ", otherProperties=" + otherProperties
-				+ "]";
-	}
+    public List<Property> getOtherProperties() {
+        return otherProperties;
+    }
+
+    @Override
+    public String toString() {
+        return "AlgorithmDefinition [id=" + id + ", parameters=" + parameters + ", inData=" + inData + ", outData="
+                + outData + ", label=" + label + ", description=" + description + ", parentOutputData="
+                + parentOutputData + ", type=" + type + ", remoteable=" + remoteable + ", menuPath=" + menuPath
+                + ", conversion=" + conversion + ", authors=" + authors + ", implementers=" + implementers
+                + ", integrators=" + integrators + ", documentationUrl=" + documentationUrl + ", reference=" + reference
+                + ", referenceUrl=" + referenceUrl + ", writtenIn=" + writtenIn + ", otherProperties=" + otherProperties
+                + "]";
+    }
 
 }

@@ -4,16 +4,18 @@ import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.app.service.scheduler.SchedulerService;
 import org.cishell.cibridge.cishell.impl.*;
 import org.cishell.cibridge.core.CIBridge;
+import org.cishell.cibridge.core.api.QueryResults;
 import org.cishell.cibridge.core.model.AlgorithmDataObject;
 import org.cishell.cibridge.core.model.AlgorithmFactoryDataObject;
 import org.cishell.cibridge.core.model.PageInfo;
-import org.cishell.cibridge.core.model.interfaces.QueryResults;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.LocalCIShellContext;
 import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceEvent;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 
@@ -70,7 +72,7 @@ public class CIShellCIBridge extends CIBridge {
 
         this.cishellAlgorithm.cacheAlgorithmData();
         if (getSchedulerService() != null) {
-            getSchedulerService().addSchedulerListener(new SchedulerServiceListener(this));
+            getSchedulerService().addSchedulerListener(new SchedulerListenerImpl(this));
         }
 
 

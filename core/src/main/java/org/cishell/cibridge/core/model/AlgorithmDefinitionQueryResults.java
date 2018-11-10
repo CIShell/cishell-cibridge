@@ -1,8 +1,8 @@
 package org.cishell.cibridge.core.model;
 
-import java.util.List;
+import org.cishell.cibridge.core.api.QueryResults;
 
-import org.cishell.cibridge.core.model.interfaces.QueryResults;
+import java.util.List;
 
 public class AlgorithmDefinitionQueryResults implements QueryResults<AlgorithmDefinition> {
     private final List<AlgorithmDefinition> results;

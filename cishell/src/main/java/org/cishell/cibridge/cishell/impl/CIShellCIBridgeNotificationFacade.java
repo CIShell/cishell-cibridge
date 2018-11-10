@@ -1,19 +1,15 @@
 package org.cishell.cibridge.cishell.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Hashtable;
-
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
-import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
-import org.cishell.cibridge.cishell.impl.CIBridgeGUIBuilderService;
-import org.osgi.framework.Constants;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
     private CIShellCIBridge cibridge;

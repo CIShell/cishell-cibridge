@@ -1,55 +1,55 @@
 package org.cishell.cibridge.core.model;
 
 import java.time.ZonedDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class Log {
-	private  LogLevel logLevel;
-	private  String message;
-	private  List<String> stackTrace;
-	private  ZonedDateTime timestamp;
+    private LogLevel logLevel;
+    private String message;
+    private List<String> stackTrace;
+    private ZonedDateTime timestamp;
 
-	public Log(){}
-	
-	public Log(LogLevel logLevel, String message, List<String> stackTrace, ZonedDateTime timestamp) {
-		// TODO Auto-generated constructor stub
-		this.logLevel = logLevel;
-		this.message = message;
-		this.stackTrace = stackTrace;
-		this.timestamp = timestamp;
-	}
+    public Log() {
+    }
 
-	public LogLevel getLogLevel() {
-		return logLevel;
-	}
+    public Log(LogLevel logLevel, String message, List<String> stackTrace, ZonedDateTime timestamp) {
+        // TODO Auto-generated constructor stub
+        this.logLevel = logLevel;
+        this.message = message;
+        this.stackTrace = stackTrace;
+        this.timestamp = timestamp;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public LogLevel getLogLevel() {
+        return logLevel;
+    }
 
-	public List<String> getStackTrace() {
-		return stackTrace;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public ZonedDateTime getTimestamp() {
-		return timestamp;
-	}
+    public List<String> getStackTrace() {
+        return stackTrace;
+    }
 
-	public void setLogLevel(LogLevel logLevel) {
-		this.logLevel = logLevel;
-	}
+    public ZonedDateTime getTimestamp() {
+        return timestamp;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setLogLevel(LogLevel logLevel) {
+        this.logLevel = logLevel;
+    }
 
-	public void setStackTrace(List<String> stackTrace) {
-		this.stackTrace = stackTrace;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public void setTimestamp(ZonedDateTime timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setStackTrace(List<String> stackTrace) {
+        this.stackTrace = stackTrace;
+    }
+
+    public void setTimestamp(ZonedDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 
 }

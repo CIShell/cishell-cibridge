@@ -1,22 +1,27 @@
 package org.cishell.cibridge.core.model;
 
 public class Property {
-	public final String key;
-	public final String value;
+    private final String key;
+    private final String value;
 
-	public Property(String key,String value) {
-		// TODO Auto-generated constructor stub
-		this.key=key;
-		this.value=value;
-	}
+    public Property(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getValue() {
-		return value;
-	}
-	
-	
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return "Property{" +
+                "key='" + key + '\'' +
+                ", value='" + value + '\'' +
+                '}';
+    }
 }
