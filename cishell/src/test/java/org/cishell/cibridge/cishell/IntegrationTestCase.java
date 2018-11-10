@@ -16,40 +16,40 @@ public abstract class IntegrationTestCase {
     private static final CIShellContainer CONTAINER = new CIShellContainer(PLUGINS_DIRECTORY_PATH, null);
     private static final CIShellCIBridge CISHELL_CIBRIDGE = new CIShellCIBridge(CONTAINER.getBundleContext());
 
-    public BundleContext getBundleContext() {
+    protected BundleContext getBundleContext() {
         return CONTAINER.getBundleContext();
     }
 
-    public CIShellCIBridge getCIShellCIBridge() {
+    protected CIShellCIBridge getCIShellCIBridge() {
         return CISHELL_CIBRIDGE;
     }
 
-    public GUIBuilderService getGUIBuilderService() {
+    protected GUIBuilderService getGUIBuilderService() {
         return (GUIBuilderService) this.getService(GUIBuilderService.class);
     }
 
-    public DataConversionService getDataConversionService() {
+    protected DataConversionService getDataConversionService() {
         return (DataConversionService) this.getService(DataConversionService.class);
     }
 
-    public SchedulerService getSchedulerService() {
+    protected SchedulerService getSchedulerService() {
         return (SchedulerService) this.getService(SchedulerService.class);
     }
 
-    public DataManagerService getDataManagerService() {
+    protected DataManagerService getDataManagerService() {
         return (DataManagerService) this.getService(DataManagerService.class);
     }
 
-    public LogService getLogService() {
+    protected LogService getLogService() {
         return (LogService) this.getService(LogService.class);
     }
 
-    public MetaTypeService getMetaTypeService() {
+    protected MetaTypeService getMetaTypeService() {
         return (MetaTypeService) this.getService(MetaTypeService.class);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object getService(Class c) {
+    protected Object getService(Class c) {
         ServiceReference ref = getBundleContext().getServiceReference(c.getName());
         return ref != null ? getBundleContext().getService(ref) : null;
     }
