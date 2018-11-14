@@ -14,7 +14,7 @@ import java.util.Map;
 //TODO: need to test the datafacade implementation
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     private CIShellCIBridge cibridge;
-    private final Map<String, Data> dataCache = new HashMap<>();
+    private final Map<String, CIShellCIBridgeData> dataCache = new HashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
@@ -65,13 +65,13 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         }
 
         //create data object which is an implementation of cishell frameworks's Data interface
-        CIShellDataImpl ciShellData = new CIShellDataImpl(new File(filePath), format, properties);
+        CIShellDataImpl ciShellData = new CIShellDataImpl(file, format, properties);
 
         //add the cishell data object to data manager service
         cibridge.getDataManagerService().addData(ciShellData);
 
         //create cibridge data object which is a wrapper for cishell data object
-        Data data = new Data(ciShellData, properties);
+        CIShellCIBridgeData data = new CIShellCIBridgeData(ciShellData, properties);
 
         //add the cibridge data object created to map for easier access with its id
         dataCache.put(data.getId(), data);
@@ -88,7 +88,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
             return false;
         }
 
-        Data data = dataCache.get(dataId);
+        CIShellCIBridgeData data = dataCache.get(dataId);
         dataCache.remove(dataId);
         cibridge.getDataManagerService().removeData(data.getCIShellData());
         return true;
@@ -96,7 +96,11 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
     @Override
     public Boolean updateData(String dataId, DataProperties properties) {
-        return null;
+        Preconditions.checkNotNull(dataId, "dataId cannot be null");
+        Preconditions.checkState(dataCache.containsKey(dataId), "Invalid dataId. No data object found with the given dataId");
+
+        Data data = dataCache.get(dataId);
+        return true;
     }
 
     //TODO: below are unimplemented subscriptions of DataFacade
@@ -118,7 +122,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         return null;
     }
 
-    public Map<String, Data> getDataCache() {
+    public Map<String, CIShellCIBridgeData> getDataCache() {
         return dataCache;
     }
 

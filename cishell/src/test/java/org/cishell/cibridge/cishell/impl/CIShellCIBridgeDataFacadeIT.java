@@ -35,11 +35,15 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertNotNull(data);
         assertNotNull(data.getId());
         assertNotNull(data.getFormat());
-        assertNotNull(data.getCIShellData());
         assertEquals("file-ext:txt", data.getFormat());
-        assertEquals("file-ext:txt", data.getCIShellData().getFormat());
 
-        assertEquals(data.getCIShellData(), getDataManagerService().getAllData()[0]);
+        if(data instanceof CIShellCIBridgeData){
+            CIShellCIBridgeData ciShellCIBridgeData = (CIShellCIBridgeData) data;
+            assertNotNull(ciShellCIBridgeData.getCIShellData());
+            assertEquals("file-ext:txt", ciShellCIBridgeData.getCIShellData().getFormat());
+            assertEquals(ciShellCIBridgeData.getCIShellData(), getDataManagerService().getAllData()[0]);
+        }
+
     }
 
     @Test
@@ -65,16 +69,21 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertNotNull(data);
         assertNotNull(data.getId());
         assertNotNull(data.getFormat());
-        assertNotNull(data.getCIShellData());
+
         assertEquals(format, data.getFormat());
         assertEquals(label, data.getLabel());
         assertEquals(name, data.getName());
         assertEquals(dataType, data.getType());
         assertEquals(customProperty.getKey(), data.getOtherProperties().get(0).getKey());
-        assertEquals(format, data.getCIShellData().getFormat());
-        //todo check properties in cishell data
 
-        assertEquals(data.getCIShellData(), getDataManagerService().getAllData()[0]);
+        if(data instanceof CIShellCIBridgeData){
+            CIShellCIBridgeData ciShellCIBridgeData = (CIShellCIBridgeData) data;
+            assertNotNull(ciShellCIBridgeData.getCIShellData());
+            assertEquals(format, ciShellCIBridgeData.getCIShellData().getFormat());
+            //todo check properties in cishell data
+            assertEquals(ciShellCIBridgeData.getCIShellData(), getDataManagerService().getAllData()[0]);
+        }
+
     }
 
     @Test
@@ -89,6 +98,28 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
 
         boolean isSuccess1 = getCIShellCIBridge().cishellData.removeData("SomeNonExistentId");
         assertFalse(isSuccess1);
+    }
+
+    public void updateData() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+        Data data = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+
+        String format = "file:text/csv";
+        String label = "Research papers";
+        String name = "Research papers by Laszlo Barabasi";
+        DataType dataType = DataType.DATABASE;
+        PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
+        List<PropertyInput> otherProperties = new LinkedList<>();
+        otherProperties.add(customProperty);
+
+        DataProperties dataProperties = new DataProperties();
+        dataProperties.setFormat(format);
+        dataProperties.setLabel(label);
+        dataProperties.setName(name);
+        dataProperties.setType(dataType);
+        dataProperties.setOtherProperties(otherProperties);
+        getCIShellCIBridge().cishellData.updateData(data.getId(), dataProperties);
     }
 
     @After

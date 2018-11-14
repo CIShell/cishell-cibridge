@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
 import org.cishell.cibridge.core.model.DataProperties;
+import org.cishell.cibridge.core.model.PropertyInput;
 import org.cishell.framework.data.Data;
 
 import java.util.Dictionary;
@@ -26,9 +27,8 @@ public class CIShellDataImpl implements Data {
         this.properties = new Hashtable<>();
 
         if (dataProperties != null) {
-            //todo how to parse properties? what is the scope of data properties passed in cibridge?
+            updateProperties(dataProperties);
         }
-
     }
 
     public Object getData() {
@@ -41,6 +41,28 @@ public class CIShellDataImpl implements Data {
 
     public String getFormat() {
         return format;
+    }
+
+    public void updateProperties(DataProperties dataProperties) {
+        Preconditions.checkNotNull(dataProperties, "dataProperties cannot be null");
+
+        if (dataProperties.getType() != null) {
+            properties.put("Type", dataProperties.getType().name());
+        }
+
+        if (dataProperties.getLabel() != null) {
+            properties.put("Label", dataProperties.getLabel());
+        }
+
+        if (dataProperties.getName() != null) {
+            properties.put("Name", dataProperties.getName());
+        }
+
+        for (PropertyInput propertyInput : dataProperties.getOtherProperties()) {
+            properties.put(propertyInput.getKey(), propertyInput.getValue());
+        }
+
+        //todo do we need to set other data properties?
     }
 
     public String toString() {
