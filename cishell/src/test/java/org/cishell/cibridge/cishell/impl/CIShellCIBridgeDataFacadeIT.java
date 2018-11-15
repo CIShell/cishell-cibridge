@@ -51,6 +51,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         String format = "file:text/csv";
         String label = "Research papers";
         String name = "Research papers by Laszlo Barabasi";
+        String parentDataId = "someParentId";
         DataType dataType = DataType.DATABASE;
         PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
         List<PropertyInput> otherProperties = new LinkedList<>();
@@ -63,6 +64,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setLabel(label);
         dataProperties.setName(name);
         dataProperties.setType(dataType);
+        dataProperties.setParent(parentDataId);
         dataProperties.setOtherProperties(otherProperties);
         Data data = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties);
 
@@ -74,6 +76,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertEquals(label, data.getLabel());
         assertEquals(name, data.getName());
         assertEquals(dataType, data.getType());
+        assertEquals(parentDataId, data.getParentDataId());
         assertEquals(customProperty.getKey(), data.getOtherProperties().get(0).getKey());
 
         if (data instanceof CIShellCIBridgeData) {
@@ -113,6 +116,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         String label = "Research papers";
         String name = "Research papers by Laszlo Barabasi";
         DataType dataType = DataType.DATABASE;
+        String parentDataId = "someParentId";
         PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
         List<PropertyInput> otherProperties = new LinkedList<>();
         otherProperties.add(customProperty);
@@ -121,6 +125,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setLabel(label);
         dataProperties.setName(name);
         dataProperties.setType(dataType);
+        dataProperties.setParent(parentDataId);
         dataProperties.setOtherProperties(otherProperties);
         Boolean success = getCIShellCIBridge().cishellData.updateData(data.getId(), dataProperties);
         assertTrue(success);
@@ -128,6 +133,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertEquals(label, data.getLabel());
         assertEquals(name, data.getName());
         assertEquals(dataType, data.getType());
+        assertEquals(parentDataId, data.getParentDataId());
         assertEquals(customProperty.getKey(), data.getOtherProperties().get(0).getKey());
 
         if (data instanceof CIShellCIBridgeData) {
