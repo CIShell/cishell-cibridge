@@ -49,11 +49,11 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     //todo should the API user pass the data format or should we auto-detect it? that has bugged me for so long
     @Override
     public Data uploadData(String filePath, DataProperties properties) {
-        Preconditions.checkNotNull(filePath, "filePath cannot be null");
+        Preconditions.checkNotNull(filePath, "File path cannot be null");
         filePath = filePath.trim();
         File file = new File(filePath);
-        Preconditions.checkState(file.exists(), "'%s' doesn't exist", filePath);
-        Preconditions.checkState(file.isFile(), "'%s' is not a file", filePath);
+        Preconditions.checkArgument(file.exists(), "'%s' doesn't exist", filePath);
+        Preconditions.checkArgument(file.isFile(), "'%s' is not a file", filePath);
 
         //if format is specified in properties then set it else parse it from filepath
         String format;
@@ -64,17 +64,19 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
             format = "file-ext:" + FilenameUtils.getExtension(filePath);
         }
 
-        //create data object which is an implementation of cishell frameworks's Data interface
-        CIShellDataImpl ciShellData = new CIShellDataImpl(file, format, properties);
-
-        //add the cishell data object to data manager service
-        cibridge.getDataManagerService().addData(ciShellData);
-
         //create cibridge data object which is a wrapper for cishell data object
-        CIShellCIBridgeData data = new CIShellCIBridgeData(ciShellData, properties);
+        CIShellCIBridgeData data = new CIShellCIBridgeData(file, format);
 
         //add the cibridge data object created to map for easier access with its id
         dataCache.put(data.getId(), data);
+
+        //add properties
+        if (properties != null) {
+            updateData(data.getId(), properties);
+        }
+
+        //add the CIShellData object wrapped inside CIShellCIBridgeData to data manager service
+        cibridge.getDataManagerService().addData(data.getCIShellData());
 
         return data;
     }
@@ -97,9 +99,61 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     @Override
     public Boolean updateData(String dataId, DataProperties properties) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
-        Preconditions.checkState(dataCache.containsKey(dataId), "Invalid dataId. No data object found with the given dataId");
+        Preconditions.checkArgument(dataCache.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
+        Preconditions.checkNotNull(properties);
+        //todo add logic path to return boolean by adding log entries here
 
-        Data data = dataCache.get(dataId);
+        CIShellCIBridgeData data = dataCache.get(dataId);
+
+        //update CIBridgeData
+
+        //todo should we allow to change format later on?
+
+        if (properties.getName() != null) {
+            data.setName(properties.getName());
+        }
+
+        if (properties.getLabel() != null) {
+            data.setLabel(properties.getLabel());
+        }
+
+        if (properties.getType() != null) {
+            data.setType(properties.getType());
+        }
+
+        if (properties.getParent() != null) {
+            data.setParentDataId(properties.getParent());
+            //todo what is the scope of this field. is it useful for cishell? I guess not.
+        }
+
+        if (properties.getOtherProperties() != null) {
+            for (PropertyInput property : properties.getOtherProperties()) {
+                //todo this could potentially add multiple values against a single key if misused
+                data.getOtherProperties().add(new Property(property.getKey(), property.getValue()));
+            }
+        }
+
+        //update CIShell data wrapped inside CIBridge data
+        org.cishell.framework.data.Data ciShellData = data.getCIShellData();
+
+        //todo should we allow to change format later on?
+        if (properties.getType() != null) {
+            ciShellData.getMetadata().put("Type", properties.getType().name());
+        }
+
+        if (properties.getLabel() != null) {
+            ciShellData.getMetadata().put("Label", properties.getLabel());
+        }
+
+        if (properties.getName() != null) {
+            ciShellData.getMetadata().put("Name", properties.getName());
+        }
+
+        for (PropertyInput propertyInput : properties.getOtherProperties()) {
+            ciShellData.getMetadata().put(propertyInput.getKey(), propertyInput.getValue());
+        }
+        //todo do we need to set other data properties? and do we need remove any of the above setters?
+
         return true;
     }
 
