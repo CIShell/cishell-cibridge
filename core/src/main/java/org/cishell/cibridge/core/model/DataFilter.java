@@ -8,20 +8,8 @@ public class DataFilter {
     private Boolean isModified;
     private List<DataType> types;
     private List<PropertyInput> properties;
-
-    public DataFilter() {
-        //allow empty instantiation
-    }
-
-    public DataFilter(List<String> dataIds, List<String> formats, Boolean isModified, List<DataType> types,
-                      List<PropertyInput> properties) {
-        // TODO Auto-generated constructor stub
-        this.dataIds = dataIds;
-        this.formats = formats;
-        this.isModified = isModified;
-        this.types = types;
-        this.properties = properties;
-    }
+    private int limit;
+    private int offset;
 
     public List<String> getDataIds() {
         return dataIds;
@@ -63,4 +51,19 @@ public class DataFilter {
         this.properties = properties;
     }
 
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 }

@@ -9,8 +9,6 @@ public class DataProperties {
     private String parent;
     private DataType type;
     private List<PropertyInput> otherProperties;
-    private int limit;
-    private int offset;
 
     public String getFormat() {
         return format;
@@ -60,20 +58,15 @@ public class DataProperties {
         this.otherProperties = otherProperties;
     }
 
-    public int getLimit() {
-        return limit;
+    @Override
+    public String toString() {
+        return "DataProperties{" +
+                "format='" + format + '\'' +
+                ", name='" + name + '\'' +
+                ", label='" + label + '\'' +
+                ", parent='" + parent + '\'' +
+                ", type=" + type +
+                ", otherProperties=" + otherProperties +
+                '}';
     }
-
-    public void setLimit(int limit) {
-        this.limit = limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
-    }
-
 }
