@@ -40,7 +40,7 @@ public class CIBridgeServlet extends HttpServlet {
 
     public CIBridgeServlet() {
         this(null);// need to give bundle context as an input today
-        //this(new MockCIBridge(null)); // FIXME: Just for development, should be new NullCIBridge().
+        //this(new MockCIBridge(null)); //todo: Just for development, should be new NullCIBridge().
         System.out.println("Here is first constructor of CIBridge Servlet");
     }
 
