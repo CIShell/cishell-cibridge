@@ -1,6 +1,4 @@
-package org.cishell.cibridge.core.api;
-
-import org.cishell.cibridge.core.model.PageInfo;
+package org.cishell.cibridge.core.model;
 
 import java.util.List;
 

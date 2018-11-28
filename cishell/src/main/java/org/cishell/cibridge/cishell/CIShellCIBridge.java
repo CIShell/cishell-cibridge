@@ -4,7 +4,7 @@ import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.app.service.scheduler.SchedulerService;
 import org.cishell.cibridge.cishell.impl.*;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.api.QueryResults;
+import org.cishell.cibridge.core.model.QueryResults;
 import org.cishell.cibridge.core.model.AlgorithmDataObject;
 import org.cishell.cibridge.core.model.AlgorithmFactoryDataObject;
 import org.cishell.cibridge.core.model.PageInfo;

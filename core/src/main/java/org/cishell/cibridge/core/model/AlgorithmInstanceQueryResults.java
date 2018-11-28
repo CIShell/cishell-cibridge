@@ -1,7 +1,5 @@
 package org.cishell.cibridge.core.model;
 
-import org.cishell.cibridge.core.api.QueryResults;
-
 import java.util.List;
 
 public class AlgorithmInstanceQueryResults implements QueryResults<AlgorithmInstance> {
