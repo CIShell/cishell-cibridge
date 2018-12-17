@@ -145,7 +145,28 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
             assertEquals(dataType.name(), ciShellData.getMetadata().get("Type"));
             assertEquals("SomeValue", ciShellData.getMetadata().get("CustomProperty"));
         }
+
+        //todo add test cases for failure
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void updateNonExistentData() {
+        getCIShellCIBridge().cishellData.updateData("someRandomID", new DataProperties());
+    }
+
+    @Test
+    public void downloadFile() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+        Data data = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        assertEquals(dataFileUrl.getFile(), getCIShellCIBridge().cishellData.downloadData(data.getId()));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void downloadNonExistentData() {
+        getCIShellCIBridge().cishellData.downloadData("someRandomID");
+    }
+
 
     @After
     public void tearDown() {

@@ -42,7 +42,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
     @Override
     public String downloadData(String dataId) {
-        return null;
+        Preconditions.checkNotNull(dataId, "dataId cannot be null");
+        Preconditions.checkArgument(dataCache.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
+        CIShellCIBridgeData data = dataCache.get(dataId);
+        return data.getCIShellData().getData().toString();
     }
 
     /* Mutations */
