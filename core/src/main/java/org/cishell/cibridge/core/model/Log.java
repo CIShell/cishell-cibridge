@@ -13,7 +13,6 @@ public class Log {
     }
 
     public Log(LogLevel logLevel, String message, List<String> stackTrace, ZonedDateTime timestamp) {
-        // TODO Auto-generated constructor stub
         this.logLevel = logLevel;
         this.message = message;
         this.stackTrace = stackTrace;

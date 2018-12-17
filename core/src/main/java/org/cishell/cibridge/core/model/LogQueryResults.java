@@ -7,10 +7,8 @@ public class LogQueryResults implements QueryResults<Log> {
     private final PageInfo pageInfo;
 
     public LogQueryResults(List<Log> results, PageInfo pageInfo) {
-        // TODO Auto-generated constructor stub
         this.results = results;
         this.pageInfo = pageInfo;
-
     }
 
     public List<Log> getResults() {
@@ -21,7 +19,6 @@ public class LogQueryResults implements QueryResults<Log> {
         return pageInfo;
     }
 
-    @Override
     public QueryResults<Log> getQueryResults(List<Log> objList, PageInfo pageInfo) {
         return new LogQueryResults(objList, pageInfo);
     }

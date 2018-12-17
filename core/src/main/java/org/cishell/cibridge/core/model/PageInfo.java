@@ -5,7 +5,6 @@ public class PageInfo {
     private final boolean hasPreviousPage;
 
     public PageInfo(boolean hasNextPage, boolean hasPreviousPage) {
-        // TODO Auto-generated constructor stub
         this.hasNextPage = hasNextPage;
         this.hasPreviousPage = hasPreviousPage;
     }
@@ -17,6 +16,5 @@ public class PageInfo {
     public boolean isHasPreviousPage() {
         return hasPreviousPage;
     }
-
 
 }
