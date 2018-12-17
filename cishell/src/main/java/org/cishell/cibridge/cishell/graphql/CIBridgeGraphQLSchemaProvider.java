@@ -53,7 +53,7 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
         GraphQLSchema gs = null;
         try {
             gs = SchemaParser.newParser()
-                    .schemaString(CIBridgeSchema.schemaString)
+                    .schemaString(CIBridgeSchema.SCHEMA_STRING)
                     .resolvers(this.queryResolver, this.mutationResolver, this.subscriptionResolver)
                     .scalars(Scalars.date, Scalars.File, Scalars.Value, Scalars.ID)
                     .build()
