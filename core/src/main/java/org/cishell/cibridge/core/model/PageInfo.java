@@ -9,12 +9,19 @@ public class PageInfo {
         this.hasPreviousPage = hasPreviousPage;
     }
 
-    public boolean isHasNextPage() {
+    public boolean hasNextPage() {
         return hasNextPage;
     }
 
-    public boolean isHasPreviousPage() {
+    public boolean hasPreviousPage() {
         return hasPreviousPage;
     }
 
+    @Override
+    public String toString() {
+        return "PageInfo{" +
+                "hasNextPage=" + hasNextPage +
+                ", hasPreviousPage=" + hasPreviousPage +
+                '}';
+    }
 }

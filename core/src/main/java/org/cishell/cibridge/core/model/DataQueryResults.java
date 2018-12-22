@@ -5,6 +5,8 @@ import java.util.List;
 public class DataQueryResults implements QueryResults<Data> {
     private final List<Data> results;
     private final PageInfo pageInfo;
+    public static final int DEFAULT_OFFSET = 0;
+    public static final int DEFAULT_LIMIT = 500;
 
     public DataQueryResults(List<Data> results, PageInfo pageInfo) {
         this.results = results;
@@ -21,7 +23,7 @@ public class DataQueryResults implements QueryResults<Data> {
 
     @Override
     public QueryResults<Data> getQueryResults(List<Data> objList, PageInfo pageInfo) {
-        return null;
+        return this;
     }
 
 }

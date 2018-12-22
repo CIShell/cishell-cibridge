@@ -7,16 +7,20 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 //TODO: need to test the datafacade implementation
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     private CIShellCIBridge cibridge;
-    private final Map<String, CIShellCIBridgeData> dataCache = new HashMap<>();
+    private final Map<String, CIShellCIBridgeData> dataCache = new LinkedHashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
+        Preconditions.checkArgument(cibridge != null, "CIBridge cannot be null");
         this.cibridge = cibridge;
     }
 
@@ -37,7 +41,104 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
     @Override
     public DataQueryResults getData(DataFilter filter) {
-        return null;
+        Preconditions.checkNotNull(filter, "filter cannot be null");
+
+        List<Predicate<Data>> criteria = new ArrayList<>();
+
+        //predicate on data id
+        if (filter.getDataIds() != null) {
+            criteria.add(data -> {
+                if (data == null) return false;
+                return filter.getDataIds().contains(data.getId());
+            });
+        }
+
+        //predicate on data format
+        if (filter.getFormats() != null) {
+            criteria.add(data -> {
+                if (data == null) return false;
+                return filter.getFormats().contains(data.getFormat());
+            });
+        }
+
+        //predicate on data type
+        if (filter.getTypes() != null) {
+            criteria.add(data -> {
+                if (data == null) return false;
+                return data.getType() != null && filter.getTypes().contains(data.getType());
+            });
+        }
+
+        //predicate on isModified
+        if (filter.getIsModified() != null) {
+            criteria.add(data -> {
+                if (data == null) return false;
+                return data.getModified() != null && filter.getIsModified().booleanValue() == data.getModified().booleanValue();
+            });
+        }
+
+        //predicate on otherProperties
+        if (filter.getProperties() != null) {
+            criteria.add(data -> {
+                if (data == null) return false;
+                if (data.getOtherProperties() == null) return false;
+                Map<String, String> propertyMap = data.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue));
+                boolean satisfied = true;
+                for (PropertyInput propertyInput : filter.getProperties()) {
+                    if (!propertyMap.containsKey(propertyInput.getKey()) || propertyMap.get(propertyInput.getKey()).equals(propertyInput.getValue())) {
+                        satisfied = false;
+                        break;
+                    }
+                }
+                return satisfied;
+            });
+
+        }
+
+        //create pagination related data
+        int offset = DataQueryResults.DEFAULT_OFFSET;
+        int limit = DataQueryResults.DEFAULT_LIMIT;
+        boolean hasNextPage = false;
+        boolean hasPreviousPage = false;
+        if (filter.getOffset() > 0) {
+            offset = filter.getOffset();
+        }
+
+        if (filter.getLimit() > 0) {
+            limit = filter.getLimit();
+        }
+
+        //filter based on criteria
+        List<Data> dataList = new ArrayList<>();
+        for (Map.Entry<String, CIShellCIBridgeData> entry : dataCache.entrySet()) {
+            CIShellCIBridgeData data = entry.getValue();
+            boolean satisfied = true;
+
+            for (Predicate<Data> criterion : criteria) {
+                if (!criterion.test(data)) {
+                    satisfied = false;
+                    break;
+                }
+            }
+
+            if (satisfied) {
+                if (offset == 0) {
+                    if (limit > 0) {
+                        dataList.add(data);
+                        limit--;
+                    } else {
+                        hasNextPage = true;
+                        break;
+                    }
+
+                } else {
+                    hasPreviousPage = true;
+                    offset--;
+                }
+            }
+        }
+
+        return new DataQueryResults(dataList, new PageInfo(hasNextPage, hasPreviousPage));
     }
 
     @Override
@@ -58,7 +159,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         Preconditions.checkArgument(file.exists(), "'%s' doesn't exist", filePath);
         Preconditions.checkArgument(file.isFile(), "'%s' is not a file", filePath);
 
-        //if format is specified in properties then set it else parse it from filepath
+        //if format is specified in properties then set it else parse it from the arguments
         String format;
         if (properties != null && properties.getFormat() != null) {
             format = properties.getFormat();
@@ -130,9 +231,14 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         }
 
         if (properties.getOtherProperties() != null) {
-            for (PropertyInput property : properties.getOtherProperties()) {
-                //todo this could potentially add multiple values against a single key if misused
-                data.getOtherProperties().add(new Property(property.getKey(), property.getValue()));
+            for (PropertyInput propertyInput : properties.getOtherProperties()) {
+                for (Property property : data.getOtherProperties()) {
+                    if (property.getKey().equalsIgnoreCase(propertyInput.getKey())) {
+                        data.getOtherProperties().remove(property);
+                        break;
+                    }
+                }
+                data.getOtherProperties().add(new Property(propertyInput.getKey(), propertyInput.getValue()));
             }
         }
 

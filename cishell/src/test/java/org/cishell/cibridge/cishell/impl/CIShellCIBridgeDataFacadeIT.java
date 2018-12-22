@@ -1,10 +1,7 @@
 package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.cibridge.cishell.IntegrationTestCase;
-import org.cishell.cibridge.core.model.Data;
-import org.cishell.cibridge.core.model.DataProperties;
-import org.cishell.cibridge.core.model.DataType;
-import org.cishell.cibridge.core.model.PropertyInput;
+import org.cishell.cibridge.core.model.*;
 import org.junit.After;
 import org.junit.Test;
 
@@ -78,6 +75,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertEquals(dataType, data.getType());
         assertEquals(parentDataId, data.getParentDataId());
         assertEquals(customProperty.getKey(), data.getOtherProperties().get(0).getKey());
+        assertEquals(customProperty.getValue(), data.getOtherProperties().get(0).getValue());
 
         if (data instanceof CIShellCIBridgeData) {
             CIShellCIBridgeData ciShellCIBridgeData = (CIShellCIBridgeData) data;
@@ -134,7 +132,9 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertEquals(name, data.getName());
         assertEquals(dataType, data.getType());
         assertEquals(parentDataId, data.getParentDataId());
+        assertEquals(1, data.getOtherProperties().size());
         assertEquals(customProperty.getKey(), data.getOtherProperties().get(0).getKey());
+        assertEquals(customProperty.getValue(), data.getOtherProperties().get(0).getValue());
 
         if (data instanceof CIShellCIBridgeData) {
             CIShellCIBridgeData ciShellCIBridgeData = (CIShellCIBridgeData) data;
@@ -145,6 +145,19 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
             assertEquals(dataType.name(), ciShellData.getMetadata().get("Type"));
             assertEquals("SomeValue", ciShellData.getMetadata().get("CustomProperty"));
         }
+
+        //update custom property. this should not add a new property entry with a new value but should update the value
+        //against the already present key
+        PropertyInput sameCustomPropertyWithDiffValue = new PropertyInput("CustomProperty", "SomeOtherValue");
+        List<PropertyInput> newOtherProperties = new LinkedList<>();
+        newOtherProperties.add(sameCustomPropertyWithDiffValue);
+        DataProperties newDataProperties = new DataProperties();
+        newDataProperties.setOtherProperties(newOtherProperties);
+
+        assertTrue(getCIShellCIBridge().cishellData.updateData(data.getId(), newDataProperties));
+        assertEquals(1, data.getOtherProperties().size());
+        assertEquals(sameCustomPropertyWithDiffValue.getKey(), data.getOtherProperties().get(0).getKey());
+        assertEquals(sameCustomPropertyWithDiffValue.getValue(), data.getOtherProperties().get(0).getValue());
 
         //todo add test cases for failure
     }
@@ -168,13 +181,84 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     }
 
 
+    @Test
+    public void getDataWithPagination() {
+
+        DataFilter filter = new DataFilter();
+        List<String> formats = new LinkedList<>();
+        formats.add("file-ext:txt");
+        filter.setFormats(formats);
+        filter.setLimit(3);
+        filter.setOffset(0);
+
+        DataQueryResults queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertFalse(queryResults.getPageInfo().hasNextPage());
+        assertFalse(queryResults.getPageInfo().hasPreviousPage());
+        assertEquals(0, queryResults.getResults().size());
+
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+        Data txtData1 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData2 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData3 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData4 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData5 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData6 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData7 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData8 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+
+        filter.setLimit(3);
+        filter.setOffset(0);
+
+        queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertTrue(queryResults.getPageInfo().hasNextPage());
+        assertFalse(queryResults.getPageInfo().hasPreviousPage());
+        assertEquals(3, queryResults.getResults().size());
+        assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData2.getId(), queryResults.getResults().get(1).getId());
+        assertEquals(txtData3.getId(), queryResults.getResults().get(2).getId());
+
+        filter.setOffset(3);
+        filter.setLimit(3);
+        queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertTrue(queryResults.getPageInfo().hasNextPage());
+        assertTrue(queryResults.getPageInfo().hasPreviousPage());
+        assertEquals(3, queryResults.getResults().size());
+        assertEquals(txtData4.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData5.getId(), queryResults.getResults().get(1).getId());
+        assertEquals(txtData6.getId(), queryResults.getResults().get(2).getId());
+
+        filter.setLimit(3);
+        filter.setOffset(6);
+        queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertFalse(queryResults.getPageInfo().hasNextPage());
+        assertTrue(queryResults.getPageInfo().hasPreviousPage());
+        assertEquals(2, queryResults.getResults().size());
+        assertEquals(txtData7.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData8.getId(), queryResults.getResults().get(1).getId());
+
+        filter.setLimit(9);
+        filter.setOffset(0);
+        queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertFalse(queryResults.getPageInfo().hasNextPage());
+        assertFalse(queryResults.getPageInfo().hasPreviousPage());
+        assertEquals(8, queryResults.getResults().size());
+
+        filter.setLimit(9);
+        filter.setOffset(9);
+        queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertFalse(queryResults.getPageInfo().hasNextPage());
+        assertTrue(queryResults.getPageInfo().hasPreviousPage());
+        assertEquals(0, queryResults.getResults().size());
+    }
+
     @After
     public void tearDown() {
-        if (getDataManagerService().getAllData() != null && getDataManagerService().getAllData().length > 0) {
-            for (org.cishell.framework.data.Data data : getDataManagerService().getAllData()) {
-                getDataManagerService().removeData(data);
-            }
+        List<String> dataIdList = new LinkedList<>(getCIShellCIBridge().cishellData.getDataCache().keySet());
+        for (String dataId : dataIdList) {
+            getCIShellCIBridge().cishellData.removeData(dataId);
         }
         assertEquals(0, getDataManagerService().getAllData().length);
+        assertEquals(0, getCIShellCIBridge().cishellData.getDataCache().size());
     }
 }
