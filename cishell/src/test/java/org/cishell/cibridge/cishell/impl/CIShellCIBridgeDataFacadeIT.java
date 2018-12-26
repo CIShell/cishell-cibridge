@@ -6,6 +6,8 @@ import org.junit.After;
 import org.junit.Test;
 
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void uploadFile() {
+    public void uploadFileWithoutProperties() {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
         Data data = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
@@ -51,8 +53,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         String parentDataId = "someParentId";
         DataType dataType = DataType.DATABASE;
         PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
-        List<PropertyInput> otherProperties = new LinkedList<>();
-        otherProperties.add(customProperty);
 
         URL dataFileUrl = getClass().getClassLoader().getResource("LaszloBarabasi.csv");
         assertNotNull(dataFileUrl);
@@ -62,7 +62,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setName(name);
         dataProperties.setType(dataType);
         dataProperties.setParent(parentDataId);
-        dataProperties.setOtherProperties(otherProperties);
+        dataProperties.setOtherProperties(Collections.singletonList(customProperty));
         Data data = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties);
 
         assertNotNull(data);
@@ -116,15 +116,13 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         DataType dataType = DataType.DATABASE;
         String parentDataId = "someParentId";
         PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
-        List<PropertyInput> otherProperties = new LinkedList<>();
-        otherProperties.add(customProperty);
 
         DataProperties dataProperties = new DataProperties();
         dataProperties.setLabel(label);
         dataProperties.setName(name);
         dataProperties.setType(dataType);
         dataProperties.setParent(parentDataId);
-        dataProperties.setOtherProperties(otherProperties);
+        dataProperties.setOtherProperties(Collections.singletonList(customProperty));
         Boolean success = getCIShellCIBridge().cishellData.updateData(data.getId(), dataProperties);
         assertTrue(success);
 
@@ -149,10 +147,8 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         //update custom property. this should not add a new property entry with a new value but should update the value
         //against the already present key
         PropertyInput sameCustomPropertyWithDiffValue = new PropertyInput("CustomProperty", "SomeOtherValue");
-        List<PropertyInput> newOtherProperties = new LinkedList<>();
-        newOtherProperties.add(sameCustomPropertyWithDiffValue);
         DataProperties newDataProperties = new DataProperties();
-        newDataProperties.setOtherProperties(newOtherProperties);
+        newDataProperties.setOtherProperties(Collections.singletonList(sameCustomPropertyWithDiffValue));
 
         assertTrue(getCIShellCIBridge().cishellData.updateData(data.getId(), newDataProperties));
         assertEquals(1, data.getOtherProperties().size());
@@ -182,12 +178,10 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
 
 
     @Test
-    public void getDataWithPagination() {
+    public void getDataWithSpecifiedPagination() {
 
         DataFilter filter = new DataFilter();
-        List<String> formats = new LinkedList<>();
-        formats.add("file-ext:txt");
-        filter.setFormats(formats);
+        filter.setFormats(Collections.singletonList("file-ext:txt"));
         filter.setLimit(3);
         filter.setOffset(0);
 
@@ -250,6 +244,137 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertFalse(queryResults.getPageInfo().hasNextPage());
         assertTrue(queryResults.getPageInfo().hasPreviousPage());
         assertEquals(0, queryResults.getResults().size());
+    }
+
+    @Test
+    public void getDataWithSpecifiedFormats() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        DataProperties dataProperties1 = new DataProperties();
+        String format1 = "file:text/plain";
+        dataProperties1.setFormat(format1);
+
+        DataProperties dataProperties2 = new DataProperties();
+        String format2 = "file-ext:txt";
+        dataProperties2.setFormat(format2);
+
+        Data txtData1 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties1);
+        Data txtData2 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties2);
+
+        DataFilter filter = new DataFilter();
+
+        filter.setFormats(Collections.singletonList(format1));
+        DataQueryResults queryResults1 = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(1, queryResults1.getResults().size());
+        assertEquals(txtData1.getId(), queryResults1.getResults().get(0).getId());
+
+        filter.setFormats(Arrays.asList(format1, format2));
+        DataQueryResults queryResults2 = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(2, queryResults2.getResults().size());
+
+    }
+
+    @Test
+    public void getDataWithSpecifiedType() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        DataProperties dataProperties1 = new DataProperties();
+        dataProperties1.setType(DataType.TEXT);
+
+        DataProperties dataProperties2 = new DataProperties();
+        dataProperties2.setType(DataType.UNKNOWN);
+
+        Data txtData1 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties1);
+        Data txtData2 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties2);
+
+        DataFilter filter = new DataFilter();
+
+        filter.setTypes(Collections.singletonList(DataType.TEXT));
+        DataQueryResults queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(1, queryResults.getResults().size());
+        assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
+
+        filter.setTypes(Arrays.asList(DataType.TEXT, DataType.UNKNOWN));
+        DataQueryResults queryResults2 = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(2, queryResults2.getResults().size());
+    }
+
+    @Test
+    public void getDataWithSpecifiedIds() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        Data txtData1 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData2 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData3 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+
+        DataFilter filter = new DataFilter();
+        filter.setDataIds(Arrays.asList(txtData1.getId(), txtData3.getId()));
+
+        DataQueryResults queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(2, queryResults.getResults().size());
+        assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
+    }
+
+    @Test
+    public void getModifiedOrUnmodifiedData() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        Data txtData1 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        txtData1.setModified(true);
+        Data txtData2 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData3 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        txtData3.setModified(true);
+        Data txtData4 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+
+        DataFilter filter = new DataFilter();
+        filter.setIsModified(true);
+
+        DataQueryResults queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(2, queryResults.getResults().size());
+        assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
+
+        filter.setIsModified(false);
+        DataQueryResults queryResults2 = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(2, queryResults2.getResults().size());
+        assertEquals(txtData2.getId(), queryResults2.getResults().get(0).getId());
+        assertEquals(txtData4.getId(), queryResults2.getResults().get(1).getId());
+    }
+
+    @Test
+    public void getDataWithSpecifiedCustomProperties() {
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        PropertyInput propertyInput = new PropertyInput("CustomKey", "CustomValue");
+        PropertyInput propertyInput2 = new PropertyInput("CustomKey2", "CustomValue2");
+
+        DataProperties dataProperties1 = new DataProperties();
+        dataProperties1.setOtherProperties(Collections.singletonList(propertyInput));
+        DataProperties dataProperties2 = new DataProperties();
+        dataProperties2.setOtherProperties(Arrays.asList(propertyInput, propertyInput2));
+
+        Data txtData1 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties1);
+        Data txtData2 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
+        Data txtData3 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties2);
+
+        DataFilter filter = new DataFilter();
+        filter.setProperties(Collections.singletonList(propertyInput));
+        DataQueryResults queryResults = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(2, queryResults.getResults().size());
+        assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
+
+        //todo this predicate is OR or AND of the individual criteria
+        filter.setProperties(Arrays.asList(propertyInput, propertyInput2));
+        DataQueryResults queryResults2 = getCIShellCIBridge().cishellData.getData(filter);
+        assertEquals(1, queryResults2.getResults().size());
+        assertEquals(txtData3.getId(), queryResults2.getResults().get(0).getId());
     }
 
     @After

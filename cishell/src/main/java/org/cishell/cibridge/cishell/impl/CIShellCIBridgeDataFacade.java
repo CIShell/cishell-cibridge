@@ -85,7 +85,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
                 Map<String, String> propertyMap = data.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue));
                 boolean satisfied = true;
                 for (PropertyInput propertyInput : filter.getProperties()) {
-                    if (!propertyMap.containsKey(propertyInput.getKey()) || propertyMap.get(propertyInput.getKey()).equals(propertyInput.getValue())) {
+                    if (!(propertyMap.containsKey(propertyInput.getKey()) && propertyMap.get(propertyInput.getKey()).equals(propertyInput.getValue()))) {
                         satisfied = false;
                         break;
                     }
@@ -258,8 +258,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
             ciShellData.getMetadata().put("Name", properties.getName());
         }
 
-        for (PropertyInput propertyInput : properties.getOtherProperties()) {
-            ciShellData.getMetadata().put(propertyInput.getKey(), propertyInput.getValue());
+        if (properties.getOtherProperties() != null) {
+            for (PropertyInput propertyInput : properties.getOtherProperties()) {
+                ciShellData.getMetadata().put(propertyInput.getKey(), propertyInput.getValue());
+            }
         }
         //todo do we need to set other data properties? and do we need remove any of the above setters?
 
