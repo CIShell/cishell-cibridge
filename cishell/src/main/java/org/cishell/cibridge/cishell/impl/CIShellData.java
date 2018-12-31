@@ -6,7 +6,6 @@ import org.cishell.framework.data.Data;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-//todo refactor the class name to something more useful
 public class CIShellData implements Data {
     private final Object data;
     private final String format;

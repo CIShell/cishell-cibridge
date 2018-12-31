@@ -9,13 +9,12 @@ public class CIShellCIBridgeData extends Data {
     private final org.cishell.framework.data.Data ciShellData;
 
     public CIShellCIBridgeData(File file, String format) {
-        super(generateAndGetUniqueID());
+        super(generateAndGetUniqueID(), format);
         Preconditions.checkNotNull(file, "File cannot be null");
         Preconditions.checkNotNull(format, "File format cannot be null");
 
         //create CIShellData object which is an implementation of CIShell frameworks's Data interface
         this.ciShellData = new CIShellData(file, format);
-        this.format = format;
     }
 
     public org.cishell.framework.data.Data getCIShellData() {

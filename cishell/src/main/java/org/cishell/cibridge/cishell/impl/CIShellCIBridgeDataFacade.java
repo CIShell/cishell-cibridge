@@ -210,9 +210,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         CIShellCIBridgeData data = dataCache.get(dataId);
 
         //update CIBridgeData
-
-        //todo should we allow to change format later on?
-
         if (properties.getName() != null) {
             data.setName(properties.getName());
         }
@@ -245,7 +242,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         //update CIShell data wrapped inside CIBridge data
         org.cishell.framework.data.Data ciShellData = data.getCIShellData();
 
-        //todo should we allow to change format later on?
         if (properties.getType() != null) {
             ciShellData.getMetadata().put("Type", properties.getType().name());
         }
