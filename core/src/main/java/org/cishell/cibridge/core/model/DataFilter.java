@@ -27,12 +27,12 @@ public class DataFilter {
         this.formats = formats;
     }
 
-    public Boolean getIsModified() {
+    public Boolean getModified() {
         return isModified;
     }
 
-    public void setIsModified(Boolean isModified) {
-        this.isModified = isModified;
+    public void setModified(Boolean modified) {
+        isModified = modified;
     }
 
     public List<DataType> getTypes() {

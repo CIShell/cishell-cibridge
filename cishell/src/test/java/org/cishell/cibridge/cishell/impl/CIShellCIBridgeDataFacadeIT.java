@@ -332,14 +332,14 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         Data txtData4 = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), null);
 
         DataFilter filter = new DataFilter();
-        filter.setIsModified(true);
+        filter.setModified(true);
 
         DataQueryResults queryResults = getCIShellCIBridge().cishellData.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
         assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
 
-        filter.setIsModified(false);
+        filter.setModified(false);
         DataQueryResults queryResults2 = getCIShellCIBridge().cishellData.getData(filter);
         assertEquals(2, queryResults2.getResults().size());
         assertEquals(txtData2.getId(), queryResults2.getResults().get(0).getId());

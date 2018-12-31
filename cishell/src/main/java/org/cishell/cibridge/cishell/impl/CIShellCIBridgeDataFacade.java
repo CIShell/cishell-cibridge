@@ -70,10 +70,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         }
 
         //predicate on isModified
-        if (filter.getIsModified() != null) {
+        if (filter.getModified() != null) {
             criteria.add(data -> {
                 if (data == null) return false;
-                return data.getModified() != null && filter.getIsModified().booleanValue() == data.getModified().booleanValue();
+                return data.getModified() != null && filter.getModified().booleanValue() == data.getModified().booleanValue();
             });
         }
 
