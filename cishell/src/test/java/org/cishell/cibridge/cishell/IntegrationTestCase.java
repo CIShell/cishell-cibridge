@@ -13,11 +13,11 @@ import org.osgi.service.metatype.MetaTypeService;
 public abstract class IntegrationTestCase {
 
     private static final String PLUGINS_DIRECTORY_PATH = "../integration-tests-container/target/plugins";
-    private static final CIShellContainer CONTAINER = new CIShellContainer(PLUGINS_DIRECTORY_PATH, null);
-    private static final CIShellCIBridge CISHELL_CIBRIDGE = new CIShellCIBridge(CONTAINER.getBundleContext());
+    private static final CIShellContainer CISHELL_CONTAINER = CIShellContainer.getBuilder().pluginsDirectoryPath(PLUGINS_DIRECTORY_PATH).build();
+    private static final CIShellCIBridge CISHELL_CIBRIDGE = new CIShellCIBridge(CISHELL_CONTAINER.getBundleContext());
 
     protected BundleContext getBundleContext() {
-        return CONTAINER.getBundleContext();
+        return CISHELL_CONTAINER.getBundleContext();
     }
 
     protected CIShellCIBridge getCIShellCIBridge() {
@@ -25,32 +25,43 @@ public abstract class IntegrationTestCase {
     }
 
     protected GUIBuilderService getGUIBuilderService() {
-        return (GUIBuilderService) this.getService(GUIBuilderService.class);
+        return CISHELL_CONTAINER.getGUIBuilderService();
     }
 
     protected DataConversionService getDataConversionService() {
-        return (DataConversionService) this.getService(DataConversionService.class);
+        return CISHELL_CONTAINER.getDataConversionService();
     }
 
     protected SchedulerService getSchedulerService() {
-        return (SchedulerService) this.getService(SchedulerService.class);
+        return CISHELL_CONTAINER.getSchedulerService();
     }
 
     protected DataManagerService getDataManagerService() {
-        return (DataManagerService) this.getService(DataManagerService.class);
+        return CISHELL_CONTAINER.getDataManagerService();
     }
 
     protected LogService getLogService() {
-        return (LogService) this.getService(LogService.class);
+        return CISHELL_CONTAINER.getLogService();
     }
 
     protected MetaTypeService getMetaTypeService() {
-        return (MetaTypeService) this.getService(MetaTypeService.class);
+        return CISHELL_CONTAINER.getMetaTypeService();
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     protected Object getService(Class c) {
-        ServiceReference ref = getBundleContext().getServiceReference(c.getName());
-        return ref != null ? getBundleContext().getService(ref) : null;
+        return CISHELL_CONTAINER.getService(c);
+    }
+
+    protected Object waitAndGetService(Class c) throws InterruptedException {
+        int ticks = 200;
+        ServiceReference serviceReference = null;
+        while (ticks-- > 0) {
+            if (getBundleContext().getServiceReference(c.getName()) != null) {
+                serviceReference = getBundleContext().getServiceReference(c.getName());
+                break;
+            }
+            Thread.sleep(100);
+        }
+        return serviceReference != null ? getBundleContext().getService(serviceReference) : null;
     }
 }

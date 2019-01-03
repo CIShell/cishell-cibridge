@@ -32,7 +32,7 @@ public class CIBridgeServlet extends HttpServlet {
         System.out.println("Servlet Initialized...");
         if (this.bundleContext == null) {
             System.out.println("Starting Container...");
-            CIShellContainer ciContainer = new CIShellContainer(null, null);
+            CIShellContainer ciContainer = CIShellContainer.getBuilder().build();
             this.setBundleContext(ciContainer.getBundleContext());
         }
         this.setCIBridge(new CIShellCIBridge(bundleContext));
