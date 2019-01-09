@@ -4,6 +4,9 @@ import java.util.List;
 
 public interface QueryResults<T> {
 
+    int DEFAULT_OFFSET = 0;
+    int DEFAULT_LIMIT = 500;
+
     public List<T> getResults();
 
     public PageInfo getPageInfo();
