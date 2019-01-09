@@ -88,6 +88,11 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <includes>
+                        <include>**/IntegrationTestSuite.java</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
