@@ -1,0 +1,7 @@
+Service-Component:OSGI-INF/standard-algorithm.xml,OSGI-INF/lossy-converter-algorithm.xml,OSGI-INF/lossless-converter-algorithm.xml,OSGI-INF/validator-algorithm.xml
+Bundle-SymbolicName:${project.artifactId}
+Bundle-Name: ${project.artifactId}
+Bundle-Version:${project.version}
+Bundle-Localization: plugin
+X-AutoStart: true
+Bundle-ClassPath: .

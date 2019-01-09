@@ -19,6 +19,7 @@
 
 	<modules>
 		<module>graphql</module>
+		<module>integration-tests-algorithms</module>
         <module>integration-tests-container</module>
 		<!-- <module>mock</module> -->
 		<module>cishell</module>
