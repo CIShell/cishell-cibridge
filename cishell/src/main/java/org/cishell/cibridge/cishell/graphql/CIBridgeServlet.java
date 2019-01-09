@@ -17,8 +17,8 @@ import java.io.IOException;
 public class CIBridgeServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final CIBridgeGraphQLSchemaProvider cibridgeSchemaProvider;
-    BundleContext bundleContext;
-    SimpleGraphQLHttpServlet simpleGraphQLHttpServlet;
+    private BundleContext bundleContext;
+    private SimpleGraphQLHttpServlet simpleGraphQLHttpServlet;
 
 
     @Override
