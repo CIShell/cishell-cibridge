@@ -3,8 +3,8 @@ package org.cishell.cibridge.core.model;
 import java.util.List;
 
 public class AlgorithmInstanceQueryResults implements QueryResults<AlgorithmInstance> {
-    public final List<AlgorithmInstance> results;
-    public final PageInfo pageInfo;
+    private final List<AlgorithmInstance> results;
+    private final PageInfo pageInfo;
 
     public AlgorithmInstanceQueryResults(List<AlgorithmInstance> results, PageInfo pageInfo) {
         this.results = results;
@@ -17,11 +17,6 @@ public class AlgorithmInstanceQueryResults implements QueryResults<AlgorithmInst
 
     public PageInfo getPageInfo() {
         return pageInfo;
-    }
-
-    @Override
-    public QueryResults<AlgorithmInstance> getQueryResults(List<AlgorithmInstance> objList, PageInfo pageInfo) {
-        return null;
     }
 
 }

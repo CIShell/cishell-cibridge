@@ -19,7 +19,4 @@ public class LogQueryResults implements QueryResults<Log> {
         return pageInfo;
     }
 
-    public QueryResults<Log> getQueryResults(List<Log> objList, PageInfo pageInfo) {
-        return new LogQueryResults(objList, pageInfo);
-    }
 }

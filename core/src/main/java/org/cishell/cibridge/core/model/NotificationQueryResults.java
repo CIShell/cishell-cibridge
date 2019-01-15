@@ -19,9 +19,4 @@ public class NotificationQueryResults implements QueryResults<Notification> {
         return pageInfo;
     }
 
-    @Override
-    public QueryResults<Notification> getQueryResults(List<Notification> objList, PageInfo pageInfo) {
-        return new NotificationQueryResults(objList, pageInfo);
-    }
-
 }

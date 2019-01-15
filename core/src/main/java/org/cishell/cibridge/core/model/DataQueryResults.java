@@ -19,9 +19,4 @@ public class DataQueryResults implements QueryResults<Data> {
         return pageInfo;
     }
 
-    @Override
-    public QueryResults<Data> getQueryResults(List<Data> objList, PageInfo pageInfo) {
-        return this;
-    }
-
 }

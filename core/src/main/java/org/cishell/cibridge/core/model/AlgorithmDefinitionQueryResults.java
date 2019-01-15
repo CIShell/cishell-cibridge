@@ -19,10 +19,4 @@ public class AlgorithmDefinitionQueryResults implements QueryResults<AlgorithmDe
     public PageInfo getPageInfo() {
         return pageInfo;
     }
-
-    @Override
-    public QueryResults<AlgorithmDefinition> getQueryResults(List<AlgorithmDefinition> objList, PageInfo pageInfo) {
-        return new AlgorithmDefinitionQueryResults(objList, pageInfo);
-    }
-
 }
