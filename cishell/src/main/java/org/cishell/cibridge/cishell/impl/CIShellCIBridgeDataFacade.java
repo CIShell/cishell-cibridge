@@ -7,10 +7,7 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -80,66 +77,32 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
         //predicate on otherProperties
         if (filter.getProperties() != null) {
-            criteria.add(data -> {
-                if (data == null) return false;
-                if (data.getOtherProperties() == null) return false;
-                Map<String, String> propertyMap = data.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue));
-                boolean satisfied = true;
-                for (PropertyInput propertyInput : filter.getProperties()) {
-                    if (!(propertyMap.containsKey(propertyInput.getKey()) && propertyMap.get(propertyInput.getKey()).equals(propertyInput.getValue()))) {
-                        satisfied = false;
-                        break;
-                    }
+            Map<String, Set<String>> propertyValuesMap = new HashMap<>();
+            filter.getProperties().forEach(propertyInput -> {
+                if (!propertyValuesMap.containsKey(propertyInput.getKey())) {
+                    propertyValuesMap.put(propertyInput.getKey(), new HashSet<>());
                 }
-                return satisfied;
+                propertyValuesMap.get(propertyInput.getKey()).add(propertyInput.getValue());
             });
 
-        }
-
-        //create pagination related data
-        int offset = QueryResults.DEFAULT_OFFSET;
-        int limit = QueryResults.DEFAULT_LIMIT;
-        boolean hasNextPage = false;
-        boolean hasPreviousPage = false;
-        if (filter.getOffset() > 0) {
-            offset = filter.getOffset();
-        }
-
-        if (filter.getLimit() > 0) {
-            limit = filter.getLimit();
-        }
-
-        //filter based on criteria
-        List<Data> dataList = new ArrayList<>();
-        for (Map.Entry<String, CIShellCIBridgeData> entry : dataCache.entrySet()) {
-            CIShellCIBridgeData data = entry.getValue();
-            boolean satisfied = true;
-
-            for (Predicate<Data> criterion : criteria) {
-                if (!criterion.test(data)) {
-                    satisfied = false;
-                    break;
-                }
-            }
-
-            if (satisfied) {
-                if (offset == 0) {
-                    if (limit > 0) {
-                        dataList.add(data);
-                        limit--;
-                    } else {
-                        hasNextPage = true;
-                        break;
+            for (Map.Entry<String, Set<String>> entry : propertyValuesMap.entrySet()) {
+                criteria.add(data -> {
+                    String key = entry.getKey();
+                    if (data == null) return false;
+                    Map<String, String> otherProperties = data.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue));
+                    if (otherProperties.containsKey(key)) {
+                        return entry.getValue().contains(otherProperties.get(key));
                     }
-
-                } else {
-                    hasPreviousPage = true;
-                    offset--;
-                }
+                    return false;
+                });
             }
+
         }
 
-        return new DataQueryResults(dataList, new PageInfo(hasNextPage, hasPreviousPage));
+        QueryResults<Data> paginatedQueryResults = PaginationUtil.getPaginatedResults(
+                new ArrayList<>(dataCache.values()), criteria, filter.getOffset(), filter.getLimit());
+
+        return new DataQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
 
     @Override
@@ -255,7 +218,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         }
 
         if (properties.getOtherProperties() != null) {
-            properties.getOtherProperties().stream()
+            properties.getOtherProperties()
                     .forEach(propertyInput -> ciShellData.getMetadata().put(propertyInput.getKey(), propertyInput.getValue()));
         }
         //todo do we need to set other data properties? and do we need remove any of the above setters?

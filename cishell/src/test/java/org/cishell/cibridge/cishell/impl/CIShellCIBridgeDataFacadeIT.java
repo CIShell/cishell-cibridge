@@ -318,7 +318,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         queryResults = ciShellCIBridgeDataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
 
-
     }
 
     @Test
@@ -350,7 +349,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertEquals(2, queryResults.getResults().size());
 
         //query for any other data type should return nothing
-        filter.setTypes(Arrays.asList(DataType.PLOT));
+        filter.setTypes(Collections.singletonList(DataType.PLOT));
         queryResults = ciShellCIBridgeDataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
     }
@@ -375,7 +374,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
 
         //querying for non-existent data id should not return anything
-        filter.setDataIds(Arrays.asList("someNonExistentID"));
+        filter.setDataIds(Collections.singletonList("someNonExistentID"));
         queryResults = ciShellCIBridgeDataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
     }
@@ -413,17 +412,20 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
 
-        PropertyInput propertyInput = new PropertyInput("CustomKey", "CustomValue");
-        PropertyInput propertyInput2 = new PropertyInput("CustomKey2", "CustomValue2");
+        PropertyInput propertyInput = new PropertyInput("PropertyKey1", "PropertyValue1");
+        PropertyInput propertyInput2 = new PropertyInput("PropertyKey2", "PropertyValue2");
+        PropertyInput propertyInput3 = new PropertyInput("PropertyKey2", "PropertyValue3");
 
         DataProperties dataProperties1 = new DataProperties();
         dataProperties1.setOtherProperties(Collections.singletonList(propertyInput));
         DataProperties dataProperties2 = new DataProperties();
         dataProperties2.setOtherProperties(Arrays.asList(propertyInput, propertyInput2));
+        DataProperties dataProperties3 = new DataProperties();
+        dataProperties3.setOtherProperties(Collections.singletonList(propertyInput3));
 
         Data txtData1 = ciShellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
-        Data txtData2 = ciShellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData3 = ciShellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
+        Data txtData2 = ciShellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
+        Data txtData3 = ciShellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties3);
 
         DataFilter filter = new DataFilter();
         DataQueryResults queryResults;
@@ -433,13 +435,25 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         queryResults = ciShellCIBridgeDataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
-        assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
+        assertEquals(txtData2.getId(), queryResults.getResults().get(1).getId());
 
         //query to match both properties should return second result
         filter.setProperties(Arrays.asList(propertyInput, propertyInput2));
         queryResults = ciShellCIBridgeDataFacade.getData(filter);
         assertEquals(1, queryResults.getResults().size());
-        assertEquals(txtData3.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData2.getId(), queryResults.getResults().get(0).getId());
+
+        //query to match either of the the value for a property should return required result
+        filter.setProperties(Arrays.asList(propertyInput2, propertyInput3));
+        queryResults = ciShellCIBridgeDataFacade.getData(filter);
+        assertEquals(2, queryResults.getResults().size());
+        assertEquals(txtData2.getId(), queryResults.getResults().get(0).getId());
+        assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
+
+        //query to check if the data has multiple properties when they have at least one of those
+        filter.setProperties(Arrays.asList(propertyInput, propertyInput3));
+        queryResults = ciShellCIBridgeDataFacade.getData(filter);
+        assertEquals(0, queryResults.getResults().size());
 
         //if matched on non-existent property key, should not return anything
         filter.setProperties(Collections.singletonList(new PropertyInput("someNonExistentPropertyKey", "Its Value")));
