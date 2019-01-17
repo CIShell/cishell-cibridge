@@ -3,15 +3,13 @@ package org.cishell.cibridge.cishell.impl;
 import org.cishell.cibridge.core.model.PageInfo;
 import org.cishell.cibridge.core.model.QueryResults;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 //todo rename the class and place it in appropriate package
 public class PaginationUtil {
-    public static <T, R> QueryResults<T> getPaginatedResults(Iterator<Map.Entry<String, R>> iterator, List<Predicate<T>> criteria, int offset, int limit) {
+    public static <T> QueryResults<T> getPaginatedResults(List<T> items, List<Predicate<T>> criteria, int offset, int limit) {
 
         if (offset < 1) {
             offset = QueryResults.DEFAULT_OFFSET;
@@ -27,9 +25,7 @@ public class PaginationUtil {
         //filter based on criteria
         List<T> resultList = new LinkedList<>();
 
-        while (iterator.hasNext()) {
-            //todo put some kind of check here
-            T item = (T) iterator.next().getValue();
+        for (T item : items) {
             boolean satisfied = true;
 
             for (Predicate<T> criterion : criteria) {
