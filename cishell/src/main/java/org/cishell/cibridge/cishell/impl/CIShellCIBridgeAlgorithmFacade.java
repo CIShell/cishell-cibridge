@@ -1,21 +1,27 @@
 package org.cishell.cibridge.cishell.impl;
 
+import com.google.common.base.Preconditions;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.api.ProgressTrackableAlgorithm;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.algorithm.AlgorithmProperty;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
 
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static org.osgi.framework.Constants.OBJECTCLASS;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
     private CIShellCIBridge cibridge;
-    private final HashMap<String, Long> algorithmInstanceCount = new HashMap<>();
+    //todo should we make this concurrent hashmap?
+    private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceCache = new LinkedHashMap<>();
+    private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionCache = new LinkedHashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
@@ -23,199 +29,171 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     @Override
     public AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter) {
+        Preconditions.checkNotNull(filter, "filter cannot be null");
 
-        List<AlgorithmDefinition> algorithmDefinitions = new ArrayList<>();
-        PageInfo pageInfo = new PageInfo(false, false);
-        AlgorithmDefinitionQueryResults queryResults = null;
-        int limit = 0, offset = 0;
+        List<Predicate<AlgorithmDefinition>> criteria = new LinkedList<>();
 
-        try {
-
-            //populate all algorithms in newly populated list. Based on the filter remove non-matching algorithms
-            for (Map.Entry<String, AlgorithmFactoryDataObject> entry : cibridge.algorithmFactoryDataMap.entrySet()) {
-                algorithmDefinitions.add(entry.getValue().getAlgorithmDefinition());
-            }
-
-            if (filter != null) {
-                //filter based on algorithm definition ids
-                if (filter.getAlgorithmDefinitionIds() != null) {
-                    algorithmDefinitions.removeIf(algorithmDefinition -> !filter.getAlgorithmDefinitionIds().contains(algorithmDefinition.getId()));
-                }
-
-                //filter based on algorithm instance ids
-                if (filter.getAlgorithmInstanceIds() != null) {
-                    Set<String> algorithmDefinitionIds = new HashSet<>();
-
-                    for (String instanceId : filter.getAlgorithmInstanceIds()) {
-                        if (cibridge.algorithmDataMap.get(instanceId) != null) {
-                            algorithmDefinitionIds.add(cibridge.algorithmDataMap.get(instanceId).getAlgorithmInstance().getAlgorithmDefinition().getId());
-                        }
-                    }
-
-                    algorithmDefinitions.removeIf(algorithmDefinition -> !algorithmDefinitionIds.contains(algorithmDefinition.getId()));
-                }
-
-                //filter based on input data format
-                if (filter.getInputFormats() != null) {
-                    algorithmDefinitions.removeIf(algorithmDefinition -> Collections.disjoint(filter.getInputFormats(), algorithmDefinition.getInData()));
-                }
-
-                //filter based on output data format
-                if (filter.getOutputFormats() != null) {
-                    algorithmDefinitions.removeIf(algorithmDefinition -> Collections.disjoint(filter.getOutputFormats(), algorithmDefinition.getOutData()));
-                }
-
-                //filter based on input data ids
-                // TODO right now, nothing is being stored in memory for data instances. Uncomment this after the caching data instances
-                /*if (filter.getInputDataIds() != null) {
-                    Set<String> supportedFormats = new HashSet<>();
-                    for (String inputDataId : filter.getInputDataIds()) {
-                        supportedFormats.add(cibridge.dataInstanceMap.get(inputDataId).getFormat());
-                    }
-                    algorithmDefinitions.removeIf(algorithmDefinition -> Collections.disjoint(algorithmDefinition.getInData(), supportedFormats));
-                }*/
-                limit = filter.getLimit();
-                offset = filter.getOffset();
-            }
-
-            queryResults = new AlgorithmDefinitionQueryResults(algorithmDefinitions, pageInfo);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            queryResults = new AlgorithmDefinitionQueryResults(new ArrayList<>(), pageInfo);
+        //predicate on algorithm definitions
+        if (filter.getAlgorithmDefinitionIds() != null) {
+            criteria.add(algorithmDefinition -> {
+                if (algorithmDefinition == null) return false;
+                return filter.getAlgorithmDefinitionIds().contains(algorithmDefinition.getId());
+            });
         }
 
-        return (AlgorithmDefinitionQueryResults) cibridge.getPaginatedQueryResults(queryResults, limit, offset);
+        //predicate on algorithm instances
+        if (filter.getAlgorithmInstanceIds() != null) {
+            Set<String> algorithmDefinitionIds = new HashSet<>();
 
-    }
+            for (String instanceId : filter.getAlgorithmInstanceIds()) {
+                if (algorithmInstanceCache.get(instanceId) != null) {
+                    algorithmDefinitionIds.add(algorithmInstanceCache.get(instanceId).getAlgorithmDefinition().getId());
+                }
+            }
 
-    private AlgorithmDefinition setAlgorithmDefinition(ServiceReference ref) {
+            criteria.add(algorithmDefinition -> {
+                if (algorithmDefinition == null) return false;
+                return algorithmDefinitionIds.contains(algorithmDefinition.getId());
+            });
+        }
 
-        AlgorithmDefinition algorithmDefinition = new AlgorithmDefinition(
-                ref.getProperty(Constants.SERVICE_PID) != null ? ref.getProperty(Constants.SERVICE_PID).toString() : null,
-                null,//InputParameters parameters
-                ref.getProperty(AlgorithmProperty.IN_DATA) != null ? Arrays.asList(ref.getProperty(AlgorithmProperty.IN_DATA).toString()) : null,//List<String> inData
-                ref.getProperty(AlgorithmProperty.OUT_DATA) != null ? Arrays.asList(ref.getProperty(AlgorithmProperty.OUT_DATA).toString()) : null,//List<String> outData
-                ref.getProperty(AlgorithmProperty.LABEL) != null ? ref.getProperty(AlgorithmProperty.LABEL).toString() : null,//String label
-                ref.getProperty(AlgorithmProperty.DESCRIPTION) != null ? ref.getProperty(AlgorithmProperty.DESCRIPTION).toString() : null,//String description
-                null,//Boolean parentOutputData
-                ref.getProperty(AlgorithmProperty.ALGORITHM_TYPE) != null ? AlgorithmType.valueOf(ref.getProperty(AlgorithmProperty.ALGORITHM_TYPE).toString().toUpperCase()) : null,//AlgorithmType type
-                ref.getProperty(AlgorithmProperty.REMOTEABLE) != null ? Boolean.valueOf(ref.getProperty(AlgorithmProperty.REMOTEABLE).toString()) : null,//String menuPath,//Boolean remoteable
-                ref.getProperty(AlgorithmProperty.MENU_PATH) != null ? ref.getProperty(AlgorithmProperty.MENU_PATH).toString() : null,//String menuPath
-                ref.getProperty(AlgorithmProperty.CONVERSION) != null ? ConversionType.valueOf(ref.getProperty(AlgorithmProperty.CONVERSION).toString().toUpperCase()) : null,//ConversionType conversion
-                ref.getProperty(AlgorithmProperty.AUTHORS) != null ? ref.getProperty(AlgorithmProperty.AUTHORS).toString() : null,//String authors
-                ref.getProperty(AlgorithmProperty.IMPLEMENTERS) != null ? ref.getProperty(AlgorithmProperty.IMPLEMENTERS).toString() : null,//String implementers
-                ref.getProperty(AlgorithmProperty.INTEGRATORS) != null ? ref.getProperty(AlgorithmProperty.INTEGRATORS).toString() : null,//String integrators
-                ref.getProperty(AlgorithmProperty.DOCUMENTATION_URL) != null ? ref.getProperty(AlgorithmProperty.DOCUMENTATION_URL).toString() : null,//String documentationUrl
-                ref.getProperty(AlgorithmProperty.REFERENCE) != null ? ref.getProperty(AlgorithmProperty.REFERENCE).toString() : null,//String reference
-                ref.getProperty(AlgorithmProperty.REFERENCE_URL) != null ? ref.getProperty(AlgorithmProperty.REFERENCE_URL).toString() : null,//String referenceUrl
-                ref.getProperty(AlgorithmProperty.WRITTEN_IN) != null ? ref.getProperty(AlgorithmProperty.WRITTEN_IN).toString() : null,//String writtenIn
-                null//List<Property> otherProperties
-        );
+        //predicate on input data ids
+        //todo need to clarify about how to filter based on input data ids
+        if (filter.getInputDataIds() != null) {
+            Set<String> supportedFormats = new HashSet<>();
+            for (String inputDataId : filter.getInputDataIds()) {
+                supportedFormats.add(cibridge.cishellData.getDataCache().get(inputDataId).getFormat());
+            }
 
-        System.out.println("AlgorithmDefinition created: " + algorithmDefinition);
+            criteria.add(algorithmDefinition -> {
+                if (algorithmDefinition == null) return false;
+                return !Collections.disjoint(algorithmDefinition.getInData(), supportedFormats);
+            });
+        }
 
-        return algorithmDefinition;
+        //predicate on input data format
+        if (filter.getInputFormats() != null) {
+            criteria.add(algorithmDefinition -> {
+                if (algorithmDefinition == null) return false;
+                return !Collections.disjoint(algorithmDefinition.getInData(), filter.getInputFormats());
+            });
+        }
+
+        //todo how to filter algorithm that have no input or output data format
+        //predicate on output data format
+        if (filter.getOutputFormats() != null) {
+            criteria.add(algorithmDefinition -> {
+                if (algorithmDefinition == null) return false;
+                return !Collections.disjoint(algorithmDefinition.getOutData(), filter.getOutputFormats());
+            });
+        }
+
+        //predicate on other properties
+        if (filter.getProperties() != null) {
+            Map<String, Set<String>> propertyValuesMap = new HashMap<>();
+            filter.getProperties().forEach(propertyInput -> {
+                if (!propertyValuesMap.containsKey(propertyInput.getKey())) {
+                    propertyValuesMap.put(propertyInput.getKey(), new HashSet<>());
+                }
+                propertyValuesMap.get(propertyInput.getKey()).add(propertyInput.getValue());
+            });
+
+            for (Map.Entry<String, Set<String>> entry : propertyValuesMap.entrySet()) {
+                criteria.add(algorithmDefinition -> {
+                    String key = entry.getKey();
+                    if (algorithmDefinition == null) return false;
+                    Map<String, String> otherProperties = algorithmDefinition.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue));
+                    if (otherProperties.containsKey(key)) {
+                        return entry.getValue().contains(otherProperties.get(key));
+                    }
+                    return false;
+                });
+            }
+
+        }
+
+        QueryResults<AlgorithmDefinition> paginatedQueryResults = PaginationUtil.getPaginatedResults(
+                new ArrayList<>(algorithmDefinitionCache.values()), criteria, filter.getOffset(), filter.getLimit());
+
+        return new AlgorithmDefinitionQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
 
     @Override
     public AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter) {
 
-        List<AlgorithmInstance> algorithmInstances = new ArrayList<>();
-        PageInfo pageInfo = new PageInfo(false, false);
-        AlgorithmInstanceQueryResults queryResults = null;
-        int limit = 0, offset = 0;
+        Preconditions.checkNotNull(filter, "filter cannot be null");
+        List<Predicate<AlgorithmInstance>> criteria = new LinkedList<>();
 
-        try {
-
-            for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
-                algorithmInstances.add(entry.getValue().getAlgorithmInstance());
-            }
-
-            if (filter != null) {
-                //filter based on algorithm definition ids
-                if (filter.getAlgorithmDefinitionIds() != null) {
-                    algorithmInstances.removeIf(algorithmInstance -> !filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition().getId()));
-                }
-
-                //filter based on algorithm instance ids
-                if (filter.getAlgorithmInstanceIds() != null) {
-                    algorithmInstances.removeIf(algorithmInstance -> !filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId()));
-                }
-
-                //filter based on input data ids
-                if (filter.getInputDataIds() != null) {
-                    algorithmInstances.removeIf(algorithmInstance -> Collections.disjoint(filter.getInputDataIds(), algorithmInstance.getInData()));
-                }
-
-                //filter based on algorithm instance states
-                if (filter.getStates() != null) {
-                    algorithmInstances.removeIf(algorithmInstance -> !filter.getStates().contains(algorithmInstance.getState()));
-                }
-
-                //filter based on teh input data format
-                if (filter.getInputFormats() != null) {
-                    algorithmInstances.removeIf(algorithmInstance -> Collections.disjoint(filter.getInputFormats(), algorithmInstance.getAlgorithmDefinition().getInData()));
-                }
-
-                //filter based on the output data format
-                if (filter.getOutputFormats() != null) {
-                    algorithmInstances.removeIf(algorithmInstance -> Collections.disjoint(filter.getOutputFormats(), algorithmInstance.getAlgorithmDefinition().getOutData()));
-                }
-
-                limit = filter.getLimit();
-                offset = filter.getOffset();
-            }
-
-            queryResults = new AlgorithmInstanceQueryResults(algorithmInstances, pageInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            queryResults = new AlgorithmInstanceQueryResults(new ArrayList<>(), pageInfo);
+        //filter based on algorithm instance ids
+        if (filter.getAlgorithmInstanceIds() != null) {
+            criteria.add(algorithmInstance -> {
+                if (algorithmInstance == null) return false;
+                return filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId());
+            });
         }
 
-        return (AlgorithmInstanceQueryResults) cibridge.getPaginatedQueryResults(queryResults, limit, offset);
+        //filter based on algorithm definition ids
+        if (filter.getAlgorithmDefinitionIds() != null) {
+            criteria.add(algorithmInstance -> {
+                if (algorithmInstance == null) return false;
+                return filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition().getId());
+            });
+        }
+
+        // filter based on algorithm instance states
+        if (filter.getStates() != null) {
+            criteria.add(algorithmInstance -> {
+                if (algorithmInstance == null) return false;
+                return filter.getStates().contains(algorithmInstance.getState());
+            });
+        }
+
+        // filter based on input data ids
+        // filter based on input data format
+        // filter based on output data format
+
+        QueryResults<AlgorithmInstance> paginatedQueryResults = PaginationUtil.getPaginatedResults(
+                new ArrayList<>(algorithmInstanceCache.values()), criteria, filter.getOffset(), filter.getLimit());
+
+        return new AlgorithmInstanceQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
 
     @Override
     public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
-        AlgorithmDefinition algorithmDefinition = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmDefinition();
-        AlgorithmFactory algorithmFactory = cibridge.algorithmFactoryDataMap.get(algorithmDefinitionId).getAlgorithmFactory();
+        CIShellCIBridgeAlgorithmDefinition algorithmDefinition = algorithmDefinitionCache.get(algorithmDefinitionId);
+        AlgorithmFactory algorithmFactory = algorithmDefinitionCache.get(algorithmDefinitionId).getAlgorithmFactory();
 
-        List<Data> dataList = new ArrayList<>();
+        List<CIShellCIBridgeData> dataList = new ArrayList<>();
         List<Property> paramList = new ArrayList<>();
 
-        if (dataIds != null) {
-            DataFilter dataFilter = new DataFilter();
-            dataFilter.setDataIds(dataIds);
-            DataQueryResults dataQueryResults = cibridge.cishellData.getData(dataFilter);
-            dataList = dataQueryResults != null ? dataQueryResults.getResults() : null;
+        if (dataIds != null && !dataIds.isEmpty()) {
+            dataList = cibridge.cishellData.getDataCache().entrySet()
+                    .stream()
+                    .filter(entry -> dataIds.contains(entry.getKey()))
+                    .map(Map.Entry::getValue)
+                    .collect(Collectors.toList());
         }
 
         org.cishell.framework.data.Data[] dataArray = null;
-        if (dataList != null && !dataList.isEmpty()) {
-            dataArray = (org.cishell.framework.data.Data[]) dataList.toArray();
+        if (!dataList.isEmpty()) {
+            dataArray = (org.cishell.framework.data.Data[]) dataList.stream().map(CIShellCIBridgeData::getCIShellData).toArray();
         }
 
-        Dictionary<String, Object> paramTable = new Hashtable<>();
-        if (parameters != null) {
+        Dictionary<String, Object> paramTable = null;
+        if (parameters != null && !parameters.isEmpty()) {
+            paramTable = new Hashtable<>();
             for (PropertyInput property : parameters) {
                 paramList.add(new Property(property.getKey(), property.getValue()));
                 paramTable.put(property.getKey(), property.getValue());
             }
         }
 
-        Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, this.cibridge.getCIShellContext());
-        ProgressTrackableAlgorithm progressTrackableAlgorithm = new ProgressTrackableAlgorithm(algorithm);
+        Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext());
 
-        String algorithmInstanceId = generateAndGetInstanceId(algorithmDefinitionId);
-        progressTrackableAlgorithm.setAlgorithmInstanceId(algorithmInstanceId);
-        AlgorithmInstance algorithmInstance = new AlgorithmInstance(algorithmInstanceId, dataList, paramList, algorithmDefinition, AlgorithmState.IDLE, null, 1, null);
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
+        algorithmInstance.setParameters(paramList);
 
-        AlgorithmDataObject algorithmData = new AlgorithmDataObject(progressTrackableAlgorithm, algorithmInstance);
-        cibridge.algorithmDataMap.put(algorithmInstanceId, algorithmData);
-
-        System.out.println("Algorithm Instance created: " + algorithmInstance);
-
+        algorithmInstanceCache.put(algorithmInstance.getId(), algorithmInstance);
         return algorithmInstance;
     }
 
@@ -238,69 +216,60 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return null;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public AlgorithmFactory getAlgorithmFactory(String pid) {
-        try {
-            ServiceReference[] refs = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class.getName(),
-                    "(&(" + Constants.SERVICE_PID + "=" + pid + "))");
-            if (refs != null && refs.length > 0) {
-                return (AlgorithmFactory) cibridge.getBundleContext().getService(refs[0]);
-            } else {
-                return null;
-            }
-        } catch (InvalidSyntaxException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String generateAndGetInstanceId(String algorithmDefinitionId) {
-        Long newCount;
-
-        if (algorithmInstanceCount.get(algorithmDefinitionId) != null) {
-            newCount = algorithmInstanceCount.get(algorithmDefinitionId) + 1;
-        } else {
-            newCount = 0L;
-        }
-
-        algorithmInstanceCount.put(algorithmDefinitionId, newCount);
-        return algorithmDefinitionId + newCount;
-
-    }
-
-    public void uncacheAlgorithm(ServiceReference ref) {
-        if (ref.getProperty(Constants.SERVICE_PID) != null) {
-            String pid = ref.getProperty(Constants.SERVICE_PID).toString();
+    private void uncacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
+        if (reference.getProperty(Constants.SERVICE_PID) != null) {
+            String pid = reference.getProperty(Constants.SERVICE_PID).toString();
             if (pid != null) {
-                cibridge.algorithmFactoryDataMap.remove(pid);
+                algorithmDefinitionCache.remove(pid);
             }
         }
     }
 
-    public void cacheAlgorithm(ServiceReference ref) {
-        if (ref.getProperty(Constants.SERVICE_PID) != null) {
-            String pid = ref.getProperty(Constants.SERVICE_PID).toString();
+    private void cacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
+        if (reference != null && reference.getProperty(Constants.SERVICE_PID) != null) {
+            String pid = reference.getProperty(Constants.SERVICE_PID).toString();
             if (pid != null) {
-                AlgorithmDefinition algorithmDefinition = setAlgorithmDefinition(ref);
-                AlgorithmFactory algorithmFactory = getAlgorithmFactory(pid);
-                AlgorithmFactoryDataObject algorithmFactoryData = new AlgorithmFactoryDataObject(algorithmDefinition, algorithmFactory);
-                cibridge.algorithmFactoryDataMap.put(pid, algorithmFactoryData);
+                CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(reference, cibridge.getBundleContext().getService(reference));
+                algorithmDefinitionCache.put(pid, algorithmDefinition);
             }
         }
     }
 
-    public void cacheAlgorithmData() {
+    public void cacheAlgorithmDefinitions() {
+        //cache all the algorithms registered in the future through service listener
         try {
-            Collection<ServiceReference<AlgorithmFactory>> refs = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);
-            if (refs != null) {
-                for (ServiceReference ref : refs) {
-                    cacheAlgorithm(ref);
+            cibridge.getBundleContext().addServiceListener(event -> {
+                if (event.getType() == ServiceEvent.REGISTERED) {
+                    cacheAlgorithmDefinition((ServiceReference<AlgorithmFactory>) event.getServiceReference());
+                } else if (event.getType() == ServiceEvent.UNREGISTERING) {
+                    uncacheAlgorithmDefinition((ServiceReference<AlgorithmFactory>) event.getServiceReference());
+                } else if (event.getType() == ServiceEvent.MODIFIED) {
+                    //TODOda
+                }
+            }, "(" + OBJECTCLASS + "=" + AlgorithmFactory.class.getName() + ")");
+        } catch (InvalidSyntaxException ignored) {
+        }
+
+        //cache all the algorithms already registered
+        try {
+            Collection<ServiceReference<AlgorithmFactory>> references = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);
+            if (references != null) {
+                for (ServiceReference<AlgorithmFactory> reference : references) {
+                    cacheAlgorithmDefinition(reference);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceCache() {
+        return algorithmInstanceCache;
+    }
+
+    Map<String, CIShellCIBridgeAlgorithmDefinition> getAlgorithmDefinitionCache() {
+        return algorithmDefinitionCache;
     }
 
 }
