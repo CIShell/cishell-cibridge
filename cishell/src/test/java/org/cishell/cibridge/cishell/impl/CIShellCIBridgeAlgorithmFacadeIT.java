@@ -276,32 +276,6 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         assertEquals(2, queryResults.getResults().size());
     }
 
-
-    @Test
-    public void getAlgorithmDefinitionsWithSpecifiedPagination() {
-        AlgorithmFilter filter = new AlgorithmFilter();
-        QueryResults<AlgorithmDefinition> queryResults;
-        filter.setLimit(2);
-
-        filter.setOffset(0);
-        queryResults = ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
-        assertTrue(queryResults.getPageInfo().hasNextPage());
-        assertFalse(queryResults.getPageInfo().hasPreviousPage());
-        assertEquals(2, queryResults.getResults().size());
-
-        filter.setOffset(2);
-        queryResults = ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
-        assertTrue(queryResults.getPageInfo().hasNextPage());
-        assertTrue(queryResults.getPageInfo().hasPreviousPage());
-        assertEquals(2, queryResults.getResults().size());
-
-        filter.setOffset(4);
-        queryResults = ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
-        assertFalse(queryResults.getPageInfo().hasNextPage());
-        assertTrue(queryResults.getPageInfo().hasPreviousPage());
-        assertEquals(1, queryResults.getResults().size());
-    }
-
     @Test
     public void createAlgorithm() {
         String pid = "org.cishell.algorithm.DummyAlgorithm";
