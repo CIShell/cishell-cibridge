@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
@@ -19,7 +20,7 @@ import static org.osgi.framework.Constants.OBJECTCLASS;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
     private CIShellCIBridge cibridge;
-    //todo should we make this concurrent hashmap?
+    //todo convert this into a lists since we are not using keys directly
     private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceCache = new LinkedHashMap<>();
     private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionCache = new LinkedHashMap<>();
 

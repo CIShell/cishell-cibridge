@@ -3,6 +3,7 @@ package org.cishell.cibridge.cishell.impl;
 import com.google.common.base.Preconditions;
 import org.apache.commons.io.FilenameUtils;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 
@@ -11,14 +12,13 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-//TODO: need to test the datafacade implementation
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     private CIShellCIBridge cibridge;
-    //todo should we make this concurrent hashmap?
+    //todo manybe convert this to list since we are not using keys directly
     private final Map<String, CIShellCIBridgeData> dataCache = new LinkedHashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
-        Preconditions.checkArgument(cibridge != null, "CIBridge cannot be null");
+        Preconditions.checkNotNull(cibridge, "CIBridge cannot be null");
         this.cibridge = cibridge;
     }
 
