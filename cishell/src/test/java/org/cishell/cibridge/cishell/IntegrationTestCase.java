@@ -6,7 +6,6 @@ import org.cishell.container.CIShellContainer;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 
@@ -48,20 +47,18 @@ public abstract class IntegrationTestCase {
         return CISHELL_CONTAINER.getMetaTypeService();
     }
 
-    protected Object getService(Class c) {
-        return CISHELL_CONTAINER.getService(c);
+    protected <S> S getService(Class<S> clazz) {
+        return CISHELL_CONTAINER.getService(clazz);
     }
 
-    protected Object waitAndGetService(Class c) throws InterruptedException {
+    protected <S> S waitAndGetService(Class<S> clazz) throws InterruptedException {
         int ticks = 200;
-        ServiceReference serviceReference = null;
         while (ticks-- > 0) {
-            if (getBundleContext().getServiceReference(c.getName()) != null) {
-                serviceReference = getBundleContext().getServiceReference(c.getName());
-                break;
+            if (getService(clazz) != null) {
+                return getService(clazz);
             }
             Thread.sleep(100);
         }
-        return serviceReference != null ? getBundleContext().getService(serviceReference) : null;
+        return null;
     }
 }
