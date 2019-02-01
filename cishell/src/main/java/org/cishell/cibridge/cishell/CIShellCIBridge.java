@@ -6,11 +6,9 @@ import org.cishell.cibridge.cishell.impl.*;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.framework.CIShellContext;
 import org.cishell.framework.LocalCIShellContext;
-import org.cishell.framework.algorithm.AlgorithmFactory;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
@@ -45,10 +43,6 @@ public class CIShellCIBridge extends CIBridge {
         cishellLogging.setCIBridge(this);
 
         this.cishellAlgorithm.cacheAlgorithmDefinitions();
-//        if (getSchedulerService() != null) {
-//            getSchedulerService().addSchedulerListener(new SchedulerListenerImpl(this));
-//        }
-
     }
 
     public GUIBuilderService getGUIBuilderService() {

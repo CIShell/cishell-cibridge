@@ -26,6 +26,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
+        cacheAlgorithmDefinitions();
     }
 
     @Override
@@ -238,31 +239,31 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     public void cacheAlgorithmDefinitions() {
         //cache all the algorithms registered in the future through service listener
-        try {
-            cibridge.getBundleContext().addServiceListener(event -> {
-                if (event.getType() == ServiceEvent.REGISTERED) {
-                    cacheAlgorithmDefinition((ServiceReference<AlgorithmFactory>) event.getServiceReference());
-                } else if (event.getType() == ServiceEvent.UNREGISTERING) {
-                    uncacheAlgorithmDefinition((ServiceReference<AlgorithmFactory>) event.getServiceReference());
-                } else if (event.getType() == ServiceEvent.MODIFIED) {
-                    //TODOda
-                }
-            }, "(" + OBJECTCLASS + "=" + AlgorithmFactory.class.getName() + ")");
-        } catch (InvalidSyntaxException ignored) {
-        }
 
-        //cache all the algorithms already registered
-        try {
-            Collection<ServiceReference<AlgorithmFactory>> references = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);
-            if (references != null) {
-                for (ServiceReference<AlgorithmFactory> reference : references) {
-                    cacheAlgorithmDefinition(reference);
-                }
+        synchronized (this) {
+            try {
+                cibridge.getBundleContext().addServiceListener(event -> {
+                    if (event.getType() == ServiceEvent.REGISTERED) {
+                        cacheAlgorithmDefinition((ServiceReference<AlgorithmFactory>) event.getServiceReference());
+                    } else if (event.getType() == ServiceEvent.UNREGISTERING) {
+                        uncacheAlgorithmDefinition((ServiceReference<AlgorithmFactory>) event.getServiceReference());
+                    }
+                }, "(" + OBJECTCLASS + "=" + AlgorithmFactory.class.getName() + ")");
+            } catch (InvalidSyntaxException ignored) {
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
+            //cache all the algorithms already registered
+            try {
+                Collection<ServiceReference<AlgorithmFactory>> references = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);
+                if (references != null) {
+                    for (ServiceReference<AlgorithmFactory> reference : references) {
+                        cacheAlgorithmDefinition(reference);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceCache() {
