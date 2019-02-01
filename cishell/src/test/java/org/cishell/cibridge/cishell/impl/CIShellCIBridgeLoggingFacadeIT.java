@@ -28,7 +28,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 	private CIShellCIBridgeLoggingFacade ciShellCIBridgeLoggingFacade = getCIShellCIBridge().cishellLogging;
 
 	@Before
-	public void waitForAllAlgorithmDefinitionsToBeCached() {
+	public void creatingLogsToTest() {
 		getLogService().log(1, "Error Log");
 		getLogService().log(2, "Warning Log");
 		getLogService().log(3, "Info Log");
@@ -57,6 +57,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		logLevels.add(LogLevel.ERROR);
 		filter.setLogLevel(logLevels);
 
+		// Checking if Error level logs are only returned
 		LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
 		assertNotNull(logQueryResults);
 		assertTrue(logQueryResults.getResults().size() >= 1);
@@ -68,6 +69,8 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		}
 		assertTrue(set.size() == 1);
 
+		// Adding WARNING level messages and Checking if both ERROR and WARNING messages
+		// are returned
 		logLevels.add(LogLevel.WARNING);
 		filter.setLogLevel(logLevels);
 		logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
@@ -82,6 +85,8 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 	public void validateResultsWithLogsSinceFilter() {
 		LogFilter filter = new LogFilter();
 
+		// Creating a ZonedTime which is a minute earlier to fetch all Logs since the
+		// last minute
 		Instant i = Instant.now().minusSeconds(60);
 		ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
 		filter.setLogsSince(z);
@@ -97,6 +102,8 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 	@Test
 	public void validateResultsWithLogsBeforeFilter() {
 		LogFilter filter = new LogFilter();
+
+		// Creating a zoned time with current time to fetch all logs before current time
 		Instant i = Instant.now();
 		ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
 		filter.setLogsBefore(z);
@@ -112,6 +119,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 
 		LogFilter filter = new LogFilter();
 
+		// Adding multiple filters at Once
 		List<LogLevel> logLevels = new ArrayList<LogLevel>();
 		logLevels.add(LogLevel.ERROR);
 		filter.setLogLevel(logLevels);
@@ -141,7 +149,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		assertTrue(set.size() == 2);
 
 		assertNotNull(logQueryResults);
-		
+
 		for (Log log : logQueryResults.getResults()) {
 			System.out.println(log.getTimestamp());
 		}
@@ -153,13 +161,8 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 
 	}
 
-	@Test
-	public void validateResultWithInvalidDateFormat() {
-
-	}
-
 	@After
 	public void tearDown() {
-//		ciShellCIBridgeLoggingFacade.
+
 	}
 }

@@ -34,11 +34,14 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
 
+		// Checking if Filter is not null
 		Preconditions.checkNotNull(filter, "filter can't be empty");
 
 		LogQueryResults results = null;
 		ArrayList<LogEntry> listOfLogs;
 		List<Predicate<LogEntry>> criteria = new ArrayList<>();
+
+		// Maps integers with LogLevel
 		HashMap<Integer, LogLevel> logLevelMap = new HashMap<>();
 		logLevelMap.put(1, LogLevel.ERROR);
 		logLevelMap.put(2, LogLevel.WARNING);
@@ -46,9 +49,12 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 		logLevelMap.put(4, LogLevel.DEBUG);
 
 		try {
+
 			LogReaderService logReaderService = getLogReaderService();
+			// Getting the Logs from service
 			listOfLogs = Collections.list(logReaderService.getLog());
 
+			// Adding LogLevel to Criteria
 			criteria.add(data -> {
 				if (data == null)
 					return false;
@@ -57,6 +63,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				return filter.getLogLevel().contains(logLevelMap.get(data.getLevel()));
 			});
 
+			// Adding LogsBefore timestamp to the criteria
 			criteria.add(data -> {
 				if (data == null)
 					return false;
@@ -70,6 +77,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 
 			});
 
+			// Adding LogsSince timestamp to the criteria
 			criteria.add(data -> {
 				if (data == null)
 					return false;
@@ -83,15 +91,18 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 
 			});
 
+			// Paginating the results
 			QueryResults<LogEntry> paginatedQueryResults = PaginationUtil.getPaginatedResults(listOfLogs, criteria,
 					filter.getOffset(), filter.getLimit());
 
+			// Converting the LogLevel to List Of Lgs
 			List<Log> log = new ArrayList<Log>();
 			for (LogEntry ll : paginatedQueryResults.getResults()) {
 				Log temp = new Log();
 				temp.setLogLevel(logLevelMap.get(ll.getLevel()));
 				temp.setMessage(ll.getMessage());
 				List<String> stacktrace = new ArrayList<String>();
+				// Adding Stacktrace if it exists
 				if (ll.getException() != null) {
 					StackTraceElement[] stackTraceArray = ll.getException().getStackTrace();
 					if (stackTraceArray != null) {
