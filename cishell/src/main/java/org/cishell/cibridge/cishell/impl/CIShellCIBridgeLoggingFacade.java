@@ -34,11 +34,10 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
 
-		// Checking if Filter is not null
 		Preconditions.checkNotNull(filter, "filter can't be empty");
 
 		LogQueryResults results = null;
-		ArrayList<LogEntry> listOfLogs;
+		ArrayList<LogEntry> listOfLogEntries;
 		List<Predicate<LogEntry>> criteria = new ArrayList<>();
 
 		// Maps integers with LogLevel
@@ -52,7 +51,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 
 			LogReaderService logReaderService = getLogReaderService();
 			// Getting the Logs from service
-			listOfLogs = Collections.list(logReaderService.getLog());
+			listOfLogEntries = Collections.list(logReaderService.getLog());
 
 			// Adding LogLevel to Criteria
 			criteria.add(data -> {
@@ -70,11 +69,8 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				if (filter.getLogsBefore() == null)
 					return true;
 				else {
-					Instant i = Instant.ofEpochMilli(data.getTime());
-					ZonedDateTime logCreatedTIme = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
-					return filter.getLogsBefore().isAfter(logCreatedTIme);
+					return filter.getLogsBefore().toInstant().toEpochMilli()>data.getTime();
 				}
-
 			});
 
 			// Adding LogsSince timestamp to the criteria
@@ -84,45 +80,43 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				if (filter.getLogsSince() == null)
 					return true;
 				else {
-					Instant i = Instant.ofEpochMilli(data.getTime());
-					ZonedDateTime logCreatedTIme = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
-					return filter.getLogsSince().isBefore(logCreatedTIme);
+					return filter.getLogsSince().toInstant().toEpochMilli()<data.getTime();
 				}
 
 			});
 
 			// Paginating the results
-			QueryResults<LogEntry> paginatedQueryResults = PaginationUtil.getPaginatedResults(listOfLogs, criteria,
-					filter.getOffset(), filter.getLimit());
+			QueryResults<LogEntry> paginatedQueryResults = PaginationUtil.getPaginatedResults(listOfLogEntries,
+					criteria, filter.getOffset(), filter.getLimit());
 
-			// Converting the LogLevel to List Of Lgs
-			List<Log> log = new ArrayList<Log>();
-			for (LogEntry ll : paginatedQueryResults.getResults()) {
-				Log temp = new Log();
-				temp.setLogLevel(logLevelMap.get(ll.getLevel()));
-				temp.setMessage(ll.getMessage());
+			// Converting the LogLevel to List Of Logs
+			List<Log> listOfLogs = new ArrayList<Log>();
+			for (LogEntry logEntry : paginatedQueryResults.getResults()) {
+				Log log = new Log();
+				log.setLogLevel(logLevelMap.get(logEntry.getLevel()));
+				log.setMessage(logEntry.getMessage());
 				List<String> stacktrace = new ArrayList<String>();
 				// Adding Stacktrace if it exists
-				if (ll.getException() != null) {
-					StackTraceElement[] stackTraceArray = ll.getException().getStackTrace();
+				if (logEntry.getException() != null) {
+					StackTraceElement[] stackTraceArray = logEntry.getException().getStackTrace();
 					if (stackTraceArray != null) {
 						for (StackTraceElement e : stackTraceArray) {
 							stacktrace.add(e.toString());
 						}
-						temp.setStackTrace(stacktrace);
+						log.setStackTrace(stacktrace);
 					} else {
-						temp.setStackTrace(null);
+						log.setStackTrace(null);
 					}
 				} else {
-					temp.setStackTrace(null);
+					log.setStackTrace(null);
 				}
-				Instant i = Instant.ofEpochSecond(ll.getTime());
-				ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
-				temp.setTimestamp(z);
-				log.add(temp);
+				Instant logEntryInstant = Instant.ofEpochSecond(logEntry.getTime());
+				ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(logEntryInstant, ZoneOffset.UTC);
+				log.setTimestamp(zonedDateTime);
+				listOfLogs.add(log);
 			}
 
-			return new LogQueryResults(log, paginatedQueryResults.getPageInfo());
+			return new LogQueryResults(listOfLogs, paginatedQueryResults.getPageInfo());
 
 		} catch (Exception e) {
 			System.out.println("LogReader service returned null");
@@ -136,7 +130,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 	// TODO use log service listener for subscriptions
 	@Override
 	public Log logAdded(List<LogLevel> logLevels) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

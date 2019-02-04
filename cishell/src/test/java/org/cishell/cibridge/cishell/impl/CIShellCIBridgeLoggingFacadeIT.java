@@ -2,14 +2,11 @@ package org.cishell.cibridge.cishell.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,7 +16,6 @@ import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
 import org.cishell.cibridge.core.model.LogLevel;
 import org.cishell.cibridge.core.model.LogQueryResults;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -92,11 +88,22 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		filter.setLogsSince(z);
 		LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
 		assertNotNull(logQueryResults);
-		System.out.println(logQueryResults.getResults().size());
-		for (Log log : logQueryResults.getResults()) {
-			System.out.println(log.getTimestamp());
-		}
 		assertTrue(logQueryResults.getResults().size() >= 1);
+		getLogService().log(1, "new log");
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		filter = new LogFilter();
+		getLogService().log(1, "new log");
+		i = Instant.now().minusMillis(2000);
+		z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
+		filter.setLogsSince(z);
+		logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+		assertNotNull(logQueryResults);
+		assertTrue(logQueryResults.getResults().size() == 1);
+
 	}
 
 	@Test
@@ -105,7 +112,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 
 		// Creating a zoned time with current time to fetch all logs before current time
 		Instant i = Instant.now();
-		ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
+		ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
 		filter.setLogsBefore(z);
 
 		LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
@@ -116,7 +123,6 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 
 	@Test
 	public void validateResultsWithMutlipleFilters() {
-
 		LogFilter filter = new LogFilter();
 
 		// Adding multiple filters at Once
@@ -124,13 +130,21 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		logLevels.add(LogLevel.ERROR);
 		filter.setLogLevel(logLevels);
 
-		Instant i = Instant.now();
-		ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
-		filter.setLogsBefore(z);
-
-		Instant i1 = Instant.now().minusSeconds(60);
-		ZonedDateTime z2 = ZonedDateTime.ofInstant(i1, ZoneOffset.systemDefault());
+		Instant i1 = Instant.now();
+		ZonedDateTime z2 = ZonedDateTime.ofInstant(i1, ZoneOffset.UTC);
 		filter.setLogsSince(z2);
+
+		getLogService().log(1, "Test Log for unit test cases");
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		Instant i = Instant.now();
+		ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
+		filter.setLogsBefore(z);
 
 		LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
 
@@ -138,6 +152,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		for (Log log : logQueryResults.getResults()) {
 			set.add(log.getLogLevel());
 		}
+
 		assertTrue(set.size() == 1);
 
 		logLevels.add(LogLevel.WARNING);
@@ -146,23 +161,13 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		for (Log log : logQueryResults.getResults()) {
 			set.add(log.getLogLevel());
 		}
-		assertTrue(set.size() == 2);
 
+		assertTrue(set.size() == 1);
 		assertNotNull(logQueryResults);
-
-		for (Log log : logQueryResults.getResults()) {
-			System.out.println(log.getTimestamp());
-		}
-		assertTrue(logQueryResults.getResults().size() >= 1);
-
+		assertTrue(logQueryResults.getResults().size() == 1);
 		assertNotNull(logQueryResults);
-		assertTrue(logQueryResults.getResults().size() >= 1);
 		assertTrue(z.isBefore(logQueryResults.getResults().get(0).getTimestamp()));
 
 	}
 
-	@After
-	public void tearDown() {
-
-	}
 }
