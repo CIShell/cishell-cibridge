@@ -310,12 +310,12 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
 
     @After
     public void tearDown() {
-        List<String> dataIdList = new LinkedList<>(getCIShellCIBridge().cishellData.getDataCache().keySet());
+        List<String> dataIdList = new LinkedList<>(getCIShellCIBridge().cishellData.getCIBridgeDataMap().keySet());
         for (String dataId : dataIdList) {
             getCIShellCIBridge().cishellData.removeData(dataId);
         }
         assertEquals(0, getDataManagerService().getAllData().length);
-        assertEquals(0, getCIShellCIBridge().cishellData.getDataCache().size());
+        assertEquals(0, getCIShellCIBridge().cishellData.getCIBridgeDataMap().size());
 
         List<String> algorithmInstanceIdList = new LinkedList<>(ciShellCIBridgeAlgorithmFacade.getAlgorithmInstanceCache().keySet());
         for (String algorithmInstanceId : algorithmInstanceIdList) {

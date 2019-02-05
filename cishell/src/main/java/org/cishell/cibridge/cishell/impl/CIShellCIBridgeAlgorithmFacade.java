@@ -64,7 +64,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (filter.getInputDataIds() != null) {
             Set<String> supportedFormats = new HashSet<>();
             for (String inputDataId : filter.getInputDataIds()) {
-                supportedFormats.add(cibridge.cishellData.getDataCache().get(inputDataId).getFormat());
+                supportedFormats.add(cibridge.cishellData.getCIBridgeDataMap().get(inputDataId).getFormat());
             }
 
             criteria.add(algorithmDefinition -> {
@@ -169,7 +169,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         List<Property> paramList = new ArrayList<>();
 
         if (dataIds != null && !dataIds.isEmpty()) {
-            dataList = cibridge.cishellData.getDataCache().entrySet()
+            dataList = cibridge.cishellData.getCIBridgeDataMap().entrySet()
                     .stream()
                     .filter(entry -> dataIds.contains(entry.getKey()))
                     .map(Map.Entry::getValue)
