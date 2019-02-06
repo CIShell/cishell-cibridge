@@ -91,13 +91,13 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 		assertTrue(logQueryResults.getResults().size() >= 1);
 		getLogService().log(1, "new log");
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(1000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 		filter = new LogFilter();
 		getLogService().log(1, "new log");
-		i = Instant.now().minusMillis(2000);
+		i = Instant.now().minusMillis(1000);
 		z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
 		filter.setLogsSince(z);
 		logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
