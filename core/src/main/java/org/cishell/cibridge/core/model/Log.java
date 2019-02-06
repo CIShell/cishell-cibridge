@@ -51,4 +51,13 @@ public class Log {
         this.timestamp = timestamp;
     }
 
+    @Override
+    public String toString() {
+        return "Log{" +
+                "logLevel=" + logLevel +
+                ", message='" + message + '\'' +
+                ", stackTrace=" + stackTrace +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }
