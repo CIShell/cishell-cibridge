@@ -1,9 +1,8 @@
 package org.cishell.cibridge.cishell.impl;
 
+import com.google.common.base.Preconditions;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.api.ProgressTrackableAlgorithm;
-import org.cishell.cibridge.core.model.AlgorithmDataObject;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;
 import org.osgi.framework.ServiceReference;
@@ -16,9 +15,12 @@ import static org.cishell.cibridge.core.model.AlgorithmState.*;
 
 public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade {
     private CIShellCIBridge cibridge;
+    private SchedulerListenerImpl schedulerListener = new SchedulerListenerImpl();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
+        Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
+        this.schedulerListener.setCIBridge(cibridge);
     }
 
     /* Queries */
@@ -35,20 +37,17 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     @Override
     public Integer getSchedulerQueueWaiting() {
         int count = 0;
-        for (Map.Entry<String, AlgorithmDataObject> entry : cibridge.algorithmDataMap.entrySet()) {
+        for (Map.Entry<String, CIShellCIBridgeAlgorithmInstance> entry : cibridge.cishellAlgorithm.getAlgorithmInstanceMap().entrySet()) {
 
-            AlgorithmInstance algorithmInstace = entry.getValue().getAlgorithmInstance();
-            if (algorithmInstace.getState() == IDLE ||
-                    algorithmInstace.getState() == PAUSED ||
-                    algorithmInstace.getState() == RUNNING ||
-                    algorithmInstace.getState() == WAITING) {
+            AlgorithmInstance algorithmInstance = entry.getValue();
+            if (algorithmInstance.getState() == IDLE ||
+                    algorithmInstance.getState() == PAUSED ||
+                    algorithmInstance.getState() == RUNNING ||
+                    algorithmInstance.getState() == WAITING) {
                 count++;
             }
         }
         return count;
-        //TODO another crude of doing this is below. But I think the above code is more reliable if cibridge always stays in sync with cishell
-        //TODO read the documentation here: http://cishell.org/dev/docs/spec/api-1.0/org/cishell/app/service/scheduler/SchedulerService.html#getScheduledAlgorithms()
-        //return scheduler.getScheduledAlgorithms().length;
     }
 
     /* Mutations */
@@ -56,29 +55,17 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     //TODO what do we return here?? was the operation success or not?
     @Override
     public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
-        Algorithm algorithm = getAlgorithm(algorithmInstanceId);
-        if (algorithm instanceof ProgressTrackableAlgorithm) {
-            ProgressTrackableAlgorithm progressTrackableAlgorithm = (ProgressTrackableAlgorithm) algorithm;
-            progressTrackableAlgorithm.getProgressMonitor().setCanceled(isCancelled);
-            return true;
-        }
         return false;
     }
 
     @Override
     public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused) {
-        Algorithm algorithm = getAlgorithm(algorithmInstanceId);
-        if (algorithm instanceof ProgressTrackableAlgorithm) {
-            ProgressTrackableAlgorithm progressTrackableAlgorithm = (ProgressTrackableAlgorithm) algorithm;
-            progressTrackableAlgorithm.getProgressMonitor().setPaused(isPaused);
-            return true;
-        }
         return false;
     }
 
     @Override
     public Boolean removeAlgorithm(String algorithmInstanceId) {
-        AlgorithmDataObject algoData = cibridge.algorithmDataMap.remove(algorithmInstanceId);
+        AlgorithmInstance algoData = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().remove(algorithmInstanceId);
         if (algoData == null) {
             System.out.println("Algorithm not present");
             return false;
@@ -151,11 +138,11 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     }
 
     private Algorithm getAlgorithm(String algorithmInstanceId) {
-        return cibridge.algorithmDataMap.get(algorithmInstanceId).getAlgorithm();
+        return cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId).getAlgorithm();
     }
 
     private AlgorithmInstance getAlgorithmInstance(String algorithmInstanceId) {
-        return cibridge.algorithmDataMap.get(algorithmInstanceId).getAlgorithmInstance();
+        return cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId);
     }
 
     private ServiceReference getServiceReference(String algorithmInstanceId) {
