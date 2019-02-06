@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Data {
     private final String id;
-    protected final String format;
+    protected String format;
     protected String name;
     protected String label;
     protected String parentDataId;
@@ -13,9 +13,8 @@ public class Data {
     protected Boolean isModified = false;
     protected final List<Property> otherProperties = new LinkedList<>();
 
-    public Data(String id, String format) {
+    public Data(String id) {
         this.id = id;
-        this.format = format;
     }
 
     public String getId() {
@@ -24,6 +23,10 @@ public class Data {
 
     public String getFormat() {
         return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
     }
 
     public String getName() {
