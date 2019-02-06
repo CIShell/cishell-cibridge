@@ -66,13 +66,13 @@ public class CIBridgeServletActivator implements BundleActivator {
         if (ciShellServicesTracker != null) {
             ciShellServicesTracker.close();
         }
+        stopCIBridge();
+    }
 
+    private void stopCIBridge() {
         //unregister all the services registered by this bundle
         graphiqlServletRegistration.unregister();
         graphQLServletRegistration.unregister();
-
-        graphiqlServletRegistration = null;
-        graphQLServletRegistration = null;
     }
 
     private void startCIBridge() {
@@ -141,6 +141,24 @@ public class CIBridgeServletActivator implements BundleActivator {
 
         @Override
         public void removedService(ServiceReference<S> serviceReference, T t) {
+
+            System.out.println("Removed : " + serviceReference);
+            List<String> removedCIShellServices = Arrays.stream((String[]) serviceReference.getProperty(OBJECTCLASS))
+                    .filter(CISHELL_SERVICES::contains)
+                    .collect(Collectors.toList());
+
+
+            System.out.println("Removed CIShell services: " + removedCIShellServices);
+
+            for (String service : removedCIShellServices) {
+                if (bundleContext.getServiceReference(service) == null) {
+                    unavailableServices.add(service);
+                }
+            }
+
+            if (unavailableServices.size() > 0) {
+                stopCIBridge();
+            }
         }
     }
 }
