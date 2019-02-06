@@ -34,6 +34,7 @@ import graphql.servlet.GraphQLServletListener;
 import graphql.servlet.SimpleGraphQLHttpServlet;
 
 public class CIBridgeServletActivator implements BundleActivator {
+
 	private BundleContext bundleContext;
 	private ServiceTracker ciShellServicesTracker;
 	private CIShellCIBridge ciBridge;

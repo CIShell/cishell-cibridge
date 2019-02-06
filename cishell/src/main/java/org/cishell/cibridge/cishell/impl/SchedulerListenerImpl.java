@@ -1,8 +1,8 @@
 package org.cishell.cibridge.cishell.impl;
 
+import com.google.common.base.Preconditions;
 import org.cishell.app.service.scheduler.SchedulerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.cibridge.core.api.ProgressTrackableAlgorithm;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmState;
 import org.cishell.framework.algorithm.Algorithm;
@@ -16,7 +16,8 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     private CIShellCIBridge cibridge;
 
-    public SchedulerListenerImpl(CIShellCIBridge cibridge) {
+    public void setCIBridge(CIShellCIBridge cibridge) {
+        Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
     }
 
@@ -65,19 +66,15 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     private void setAlgorithmState(Algorithm algorithm, AlgorithmState algorithmState) {
-        if (algorithm instanceof ProgressTrackableAlgorithm) {
-            String algorithmInstanceId = ((ProgressTrackableAlgorithm) algorithm).getAlgorithmInstanceId();
-            AlgorithmInstance algorithmInstance = cibridge.algorithmDataMap.get(algorithmInstanceId).getAlgorithmInstance();
-            algorithmInstance.setState(algorithmState);
-        }
+        String algorithmInstanceId = cibridge.cishellAlgorithm.getCishellAlgorithmCIBridgeAlgorithmMap().get(algorithm).getId();
+        AlgorithmInstance algorithmInstance = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId);
+        algorithmInstance.setState(algorithmState);
     }
 
     private void setScheduledRunTime(Algorithm algorithm, Calendar calendar) {
-        if (algorithm instanceof ProgressTrackableAlgorithm) {
-            String algorithmInstanceId = ((ProgressTrackableAlgorithm) algorithm).getAlgorithmInstanceId();
-            AlgorithmInstance algorithmInstance = cibridge.algorithmDataMap.get(algorithmInstanceId).getAlgorithmInstance();
-            ZonedDateTime zonedDateTime = calendar.toInstant().atZone(ZoneId.systemDefault());
-            algorithmInstance.setScheduledRunTime(zonedDateTime);
-        }
+        String algorithmInstanceId = cibridge.cishellAlgorithm.getCishellAlgorithmCIBridgeAlgorithmMap().get(algorithm).getId();
+        AlgorithmInstance algorithmInstance = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId);
+        ZonedDateTime zonedDateTime = calendar.toInstant().atZone(ZoneId.systemDefault());
+        algorithmInstance.setScheduledRunTime(zonedDateTime);
     }
 }
