@@ -122,7 +122,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 	}
 
 	@Test
-	public void validateResultsWithMutlipleFilters() {
+	public void validateResultsWithMultipleFilters() {
 		LogFilter filter = new LogFilter();
 
 		// Adding multiple filters at Once
