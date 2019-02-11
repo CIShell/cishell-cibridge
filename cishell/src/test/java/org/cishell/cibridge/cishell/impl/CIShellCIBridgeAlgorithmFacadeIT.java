@@ -282,7 +282,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         assertNotNull(waitAndGetAlgorithmDefinition(pid));
         AlgorithmInstance algorithmInstance = ciShellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
         assertNotNull(algorithmInstance);
-        assertTrue(ciShellCIBridgeAlgorithmFacade.getAlgorithmInstanceCache().containsKey(algorithmInstance.getId()));
+        assertTrue(ciShellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
     }
 
     @Test
@@ -296,8 +296,8 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         int ticks = timePeriod / tickTime;
         try {
             while (ticks-- > 0) {
-                if (ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitionCache().get(pid) != null) {
-                    return ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitionCache().get(pid);
+                if (ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().get(pid) != null) {
+                    return ciShellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().get(pid);
                 }
                 Thread.sleep(100);
             }
@@ -310,16 +310,16 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
 
     @After
     public void tearDown() {
-        List<String> dataIdList = new LinkedList<>(getCIShellCIBridge().cishellData.getDataCache().keySet());
+        List<String> dataIdList = new LinkedList<>(getCIShellCIBridge().cishellData.getCIBridgeDataMap().keySet());
         for (String dataId : dataIdList) {
             getCIShellCIBridge().cishellData.removeData(dataId);
         }
         assertEquals(0, getDataManagerService().getAllData().length);
-        assertEquals(0, getCIShellCIBridge().cishellData.getDataCache().size());
+        assertEquals(0, getCIShellCIBridge().cishellData.getCIBridgeDataMap().size());
 
-        List<String> algorithmInstanceIdList = new LinkedList<>(ciShellCIBridgeAlgorithmFacade.getAlgorithmInstanceCache().keySet());
+        List<String> algorithmInstanceIdList = new LinkedList<>(ciShellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().keySet());
         for (String algorithmInstanceId : algorithmInstanceIdList) {
-            getCIShellCIBridge().cishellAlgorithm.getAlgorithmDefinitionCache().remove(algorithmInstanceId);
+            getCIShellCIBridge().cishellAlgorithm.getAlgorithmDefinitionMap().remove(algorithmInstanceId);
         }
     }
 }

@@ -21,8 +21,9 @@ import static org.osgi.framework.Constants.OBJECTCLASS;
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
     private CIShellCIBridge cibridge;
     //todo convert this into a lists since we are not using keys directly
-    private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceCache = new LinkedHashMap<>();
-    private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionCache = new LinkedHashMap<>();
+    private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceMap = new LinkedHashMap<>();
+    private final Map<Algorithm, CIShellCIBridgeAlgorithmInstance> cishellAlgorithmCIBridgeAlgorithmMap = new HashMap<>();
+    private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionMap = new LinkedHashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
@@ -48,8 +49,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             Set<String> algorithmDefinitionIds = new HashSet<>();
 
             for (String instanceId : filter.getAlgorithmInstanceIds()) {
-                if (algorithmInstanceCache.get(instanceId) != null) {
-                    algorithmDefinitionIds.add(algorithmInstanceCache.get(instanceId).getAlgorithmDefinition().getId());
+                if (algorithmInstanceMap.get(instanceId) != null) {
+                    algorithmDefinitionIds.add(algorithmInstanceMap.get(instanceId).getAlgorithmDefinition().getId());
                 }
             }
 
@@ -64,7 +65,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (filter.getInputDataIds() != null) {
             Set<String> supportedFormats = new HashSet<>();
             for (String inputDataId : filter.getInputDataIds()) {
-                supportedFormats.add(cibridge.cishellData.getDataCache().get(inputDataId).getFormat());
+                supportedFormats.add(cibridge.cishellData.getCIBridgeDataMap().get(inputDataId).getFormat());
             }
 
             criteria.add(algorithmDefinition -> {
@@ -115,7 +116,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         }
 
         QueryResults<AlgorithmDefinition> paginatedQueryResults = PaginationUtil.getPaginatedResults(
-                new ArrayList<>(algorithmDefinitionCache.values()), criteria, filter.getOffset(), filter.getLimit());
+                new ArrayList<>(algorithmDefinitionMap.values()), criteria, filter.getOffset(), filter.getLimit());
 
         return new AlgorithmDefinitionQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
@@ -155,21 +156,21 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         // filter based on output data format
 
         QueryResults<AlgorithmInstance> paginatedQueryResults = PaginationUtil.getPaginatedResults(
-                new ArrayList<>(algorithmInstanceCache.values()), criteria, filter.getOffset(), filter.getLimit());
+                new ArrayList<>(algorithmInstanceMap.values()), criteria, filter.getOffset(), filter.getLimit());
 
         return new AlgorithmInstanceQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
 
     @Override
     public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
-        CIShellCIBridgeAlgorithmDefinition algorithmDefinition = algorithmDefinitionCache.get(algorithmDefinitionId);
-        AlgorithmFactory algorithmFactory = algorithmDefinitionCache.get(algorithmDefinitionId).getAlgorithmFactory();
+        CIShellCIBridgeAlgorithmDefinition algorithmDefinition = algorithmDefinitionMap.get(algorithmDefinitionId);
+        AlgorithmFactory algorithmFactory = algorithmDefinitionMap.get(algorithmDefinitionId).getAlgorithmFactory();
 
         List<CIShellCIBridgeData> dataList = new ArrayList<>();
         List<Property> paramList = new ArrayList<>();
 
         if (dataIds != null && !dataIds.isEmpty()) {
-            dataList = cibridge.cishellData.getDataCache().entrySet()
+            dataList = cibridge.cishellData.getCIBridgeDataMap().entrySet()
                     .stream()
                     .filter(entry -> dataIds.contains(entry.getKey()))
                     .map(Map.Entry::getValue)
@@ -195,7 +196,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
         algorithmInstance.setParameters(paramList);
 
-        algorithmInstanceCache.put(algorithmInstance.getId(), algorithmInstance);
+        algorithmInstanceMap.put(algorithmInstance.getId(), algorithmInstance);
         return algorithmInstance;
     }
 
@@ -222,7 +223,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (reference.getProperty(Constants.SERVICE_PID) != null) {
             String pid = reference.getProperty(Constants.SERVICE_PID).toString();
             if (pid != null) {
-                algorithmDefinitionCache.remove(pid);
+                algorithmDefinitionMap.remove(pid);
             }
         }
     }
@@ -232,7 +233,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             String pid = reference.getProperty(Constants.SERVICE_PID).toString();
             if (pid != null) {
                 CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(reference, cibridge.getBundleContext().getService(reference));
-                algorithmDefinitionCache.put(pid, algorithmDefinition);
+                algorithmDefinitionMap.put(pid, algorithmDefinition);
             }
         }
     }
@@ -266,12 +267,15 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         }
     }
 
-    Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceCache() {
-        return algorithmInstanceCache;
+    Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceMap() {
+        return algorithmInstanceMap;
     }
 
-    Map<String, CIShellCIBridgeAlgorithmDefinition> getAlgorithmDefinitionCache() {
-        return algorithmDefinitionCache;
+    Map<String, CIShellCIBridgeAlgorithmDefinition> getAlgorithmDefinitionMap() {
+        return algorithmDefinitionMap;
     }
 
+    Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCishellAlgorithmCIBridgeAlgorithmMap() {
+        return cishellAlgorithmCIBridgeAlgorithmMap;
+    }
 }

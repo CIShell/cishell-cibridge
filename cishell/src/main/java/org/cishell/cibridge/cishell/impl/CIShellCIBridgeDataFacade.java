@@ -12,14 +12,18 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.cishell.framework.data.DataProperty.*;
+
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     private CIShellCIBridge cibridge;
-    //todo manybe convert this to list since we are not using keys directly
-    private final Map<String, CIShellCIBridgeData> dataCache = new LinkedHashMap<>();
+    private DataManagerListenerImpl dataManagerListener = new DataManagerListenerImpl();
+    private final Map<String, CIShellCIBridgeData> ciBridgeDataMap = new LinkedHashMap<>();
+    private final Map<org.cishell.framework.data.Data, CIShellCIBridgeData> cishellDataCIBridgeDataMap = new HashMap<>();
 
-    public void setCIBridge(CIShellCIBridge cibridge) {
-        Preconditions.checkNotNull(cibridge, "CIBridge cannot be null");
-        this.cibridge = cibridge;
+    public void setCIBridge(CIShellCIBridge ciBridge) {
+        Preconditions.checkNotNull(ciBridge, "CIBridge cannot be null");
+        this.cibridge = ciBridge;
+        this.dataManagerListener.setCIBridge(ciBridge);
     }
 
     @Override
@@ -100,7 +104,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         }
 
         QueryResults<Data> paginatedQueryResults = PaginationUtil.getPaginatedResults(
-                new ArrayList<>(dataCache.values()), criteria, filter.getOffset(), filter.getLimit());
+                new ArrayList<>(ciBridgeDataMap.values()), criteria, filter.getOffset(), filter.getLimit());
 
         return new DataQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
@@ -108,8 +112,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     @Override
     public String downloadData(String dataId) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
-        Preconditions.checkArgument(dataCache.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
-        return dataCache.get(dataId).getCIShellData().getData().toString();
+        Preconditions.checkArgument(ciBridgeDataMap.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
+        return ciBridgeDataMap.get(dataId).getCIShellData().getData().toString();
     }
 
     /* Mutations */
@@ -131,35 +135,28 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
             format = "file-ext:" + FilenameUtils.getExtension(filePath);
         }
 
-        //create cibridge data object which is a wrapper for cishell data object
-        CIShellCIBridgeData data = new CIShellCIBridgeData(file, format);
+        //create CIShellData object which is an implementation of CIShell frameworks's Data interface
+        CIShellData cishellData = new CIShellData(file, format);
 
-        //add the cibridge data object created to map for easier access with its id
-        dataCache.put(data.getId(), data);
-
-        //add properties
         if (properties != null) {
-            updateData(data.getId(), properties);
+            updateCIShellDataProperties(cishellData, properties);
         }
-
         //add the CIShellData object wrapped inside CIShellCIBridgeData to data manager service
-        cibridge.getDataManagerService().addData(data.getCIShellData());
+        cibridge.getDataManagerService().addData(cishellData);
 
-        return data;
+        return cishellDataCIBridgeDataMap.get(cishellData);
     }
 
     @Override
     public Boolean removeData(String dataId) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
-        if (!dataCache.containsKey(dataId)) {
+        if (!ciBridgeDataMap.containsKey(dataId)) {
             //todo convert below statement into a log entry
             //System.out.println("Invalid dataId. No data present with dataId '" + dataId + "'");
             return false;
         }
 
-        CIShellCIBridgeData data = dataCache.get(dataId);
-        dataCache.remove(dataId);
-        cibridge.getDataManagerService().removeData(data.getCIShellData());
+        cibridge.getDataManagerService().removeData(ciBridgeDataMap.get(dataId).getCIShellData());
         return true;
     }
 
@@ -167,63 +164,71 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     public Boolean updateData(String dataId, DataProperties properties) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
         Preconditions.checkNotNull(properties, "dataProperties cannot be null");
-        Preconditions.checkArgument(dataCache.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
+        Preconditions.checkArgument(ciBridgeDataMap.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
 
-        CIShellCIBridgeData datum = dataCache.get(dataId);
+        CIShellCIBridgeData cishellCIBridgedata = ciBridgeDataMap.get(dataId);
 
-        //update CIBridgeData
+        //update CIShellCIBridgeData properties
+        updateCIShellCIBridgeDataProperties(cishellCIBridgedata, properties);
+
+        //also update properties of CIShellData object wrapped inside CIShellCIBridgeData object
+        updateCIShellDataProperties(cishellCIBridgedata.getCIShellData(), properties);
+        return true;
+    }
+
+    private void updateCIShellCIBridgeDataProperties(CIShellCIBridgeData data, DataProperties properties) {
         if (properties.getName() != null) {
-            datum.setName(properties.getName());
+            data.setName(properties.getName());
         }
 
         if (properties.getLabel() != null) {
-            datum.setLabel(properties.getLabel());
+            data.setLabel(properties.getLabel());
         }
 
         if (properties.getType() != null) {
-            datum.setType(properties.getType());
+            data.setType(properties.getType());
         }
 
         if (properties.getParent() != null) {
-            datum.setParentDataId(properties.getParent());
-            //todo what is the scope of this field. is it useful for cishell? I guess not.
+            data.setParentDataId(properties.getParent());
         }
 
         if (properties.getOtherProperties() != null) {
             for (PropertyInput propertyInput : properties.getOtherProperties()) {
-                for (Property property : datum.getOtherProperties()) {
-                    //todo should we use equals or equalignorecase??
+                for (Property property : data.getOtherProperties()) {
                     if (property.getKey().equals(propertyInput.getKey())) {
-                        datum.getOtherProperties().remove(property);
+                        data.getOtherProperties().remove(property);
                         break;
                     }
                 }
-                datum.getOtherProperties().add(new Property(propertyInput.getKey(), propertyInput.getValue()));
+                data.getOtherProperties().add(new Property(propertyInput.getKey(), propertyInput.getValue()));
             }
         }
+    }
 
-        //update CIShell data wrapped inside CIBridge data
-        org.cishell.framework.data.Data ciShellData = datum.getCIShellData();
+    private void updateCIShellDataProperties(org.cishell.framework.data.Data data, DataProperties properties) {
 
         if (properties.getType() != null) {
-            ciShellData.getMetadata().put("Type", properties.getType().name());
+            data.getMetadata().put(TYPE, properties.getType().name());
         }
 
         if (properties.getLabel() != null) {
-            ciShellData.getMetadata().put("Label", properties.getLabel());
+            data.getMetadata().put(LABEL, properties.getLabel());
         }
 
         if (properties.getName() != null) {
-            ciShellData.getMetadata().put("Name", properties.getName());
+            data.getMetadata().put("Name", properties.getName());
+        }
+
+        if (properties.getParent() != null) {
+            String parentDataId = properties.getParent();
+            data.getMetadata().put(PARENT, ciBridgeDataMap.get(parentDataId).getCIShellData());
         }
 
         if (properties.getOtherProperties() != null) {
             properties.getOtherProperties()
-                    .forEach(propertyInput -> ciShellData.getMetadata().put(propertyInput.getKey(), propertyInput.getValue()));
+                    .forEach(propertyInput -> data.getMetadata().put(propertyInput.getKey(), propertyInput.getValue()));
         }
-        //todo do we need to set other data properties? and do we need remove any of the above setters?
-
-        return true;
     }
 
     //TODO: below are unimplemented subscriptions of DataFacade
@@ -244,8 +249,11 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         return null;
     }
 
-    Map<String, CIShellCIBridgeData> getDataCache() {
-        return dataCache;
+    Map<String, CIShellCIBridgeData> getCIBridgeDataMap() {
+        return ciBridgeDataMap;
     }
 
+    Map<org.cishell.framework.data.Data, CIShellCIBridgeData> getCIShellDataCIBridgeDataMap() {
+        return cishellDataCIBridgeDataMap;
+    }
 }
