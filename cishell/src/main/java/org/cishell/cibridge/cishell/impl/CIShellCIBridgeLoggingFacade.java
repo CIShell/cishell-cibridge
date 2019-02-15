@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
@@ -20,10 +21,14 @@ import org.cishell.cibridge.core.model.QueryResults;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogReaderService;
+import org.reactivestreams.Publisher;
 
+import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import com.google.common.base.Preconditions;
 
-public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
+import io.reactivex.Flowable;
+
+public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, GraphQLSubscriptionResolver {
 	private CIShellCIBridge cibridge;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
@@ -69,7 +74,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				if (filter.getLogsBefore() == null)
 					return true;
 				else {
-					return filter.getLogsBefore().toInstant().toEpochMilli()>data.getTime();
+					return filter.getLogsBefore().toInstant().toEpochMilli() > data.getTime();
 				}
 			});
 
@@ -80,7 +85,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 				if (filter.getLogsSince() == null)
 					return true;
 				else {
-					return filter.getLogsSince().toInstant().toEpochMilli()<data.getTime();
+					return filter.getLogsSince().toInstant().toEpochMilli() < data.getTime();
 				}
 
 			});
@@ -129,8 +134,13 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade {
 
 	// TODO use log service listener for subscriptions
 	@Override
-	public Log logAdded(List<LogLevel> logLevels) {
-		return null;
+	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
+		LogFilter filter = new LogFilter();
+		filter.setLogLevel(logLevels);
+		List<Log> results = getLogs(filter).getResults();
+		System.out.println(results);
+		System.out.println(results.size());
+		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 
 	private LogReaderService getLogReaderService() {

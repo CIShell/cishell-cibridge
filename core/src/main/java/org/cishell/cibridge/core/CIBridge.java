@@ -1,6 +1,7 @@
 package org.cishell.cibridge.core;
 
 import org.cishell.cibridge.core.model.*;
+import org.reactivestreams.Publisher;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -120,6 +121,6 @@ public abstract class CIBridge {
         LogQueryResults getLogs(LogFilter filter);
 
         //subscription
-        Log logAdded(List<LogLevel> logLevels);
+        Publisher<Log> logAdded(List<LogLevel> logLevels);
     }
 }

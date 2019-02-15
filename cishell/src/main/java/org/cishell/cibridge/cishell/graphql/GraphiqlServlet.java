@@ -16,7 +16,7 @@ public class GraphiqlServlet extends HttpServlet {
         out.close();
     }
 
-    private static final String graphiqlHTML = GraphiqlServlet.entryToString("/graphiql.html");
+    private static final String graphiqlHTML = GraphiqlServlet.entryToString("/playground.html");
 
     private static String entryToString(String entryPath) {
         try {

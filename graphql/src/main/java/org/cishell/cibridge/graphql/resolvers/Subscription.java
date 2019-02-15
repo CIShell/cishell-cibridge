@@ -3,6 +3,7 @@ package org.cishell.cibridge.graphql.resolvers;
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
+import org.reactivestreams.Publisher;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class Subscription implements GraphQLSubscriptionResolver {
         return Boolean.TRUE;
     }
 
-    public Log logAdded(List<LogLevel> logLevels) {
-        return null;
+    public Publisher<Log> logAdded(List<LogLevel> logLevels) {
+        return this.cibridge.logging.logAdded(logLevels);
     }
 }

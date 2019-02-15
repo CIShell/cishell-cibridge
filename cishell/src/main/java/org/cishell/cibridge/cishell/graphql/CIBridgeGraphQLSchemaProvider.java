@@ -11,6 +11,9 @@ import org.cishell.cibridge.graphql.resolvers.Query;
 import org.cishell.cibridge.graphql.resolvers.Subscription;
 import org.cishell.cibridge.graphql.scalars.Scalars;
 import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
+import org.eclipse.jetty.websocket.api.RemoteEndpoint;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.HandshakeRequest;
@@ -25,7 +28,9 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
     private final Mutation mutationResolver;
     private final Subscription subscriptionResolver;
 
-    public CIBridgeGraphQLSchemaProvider(CIBridge cibridge) {
+
+
+	public CIBridgeGraphQLSchemaProvider(CIBridge cibridge) {
         this.cibridge = cibridge;
         this.queryResolver = new Query(cibridge);
         this.mutationResolver = new Mutation(cibridge);
@@ -61,7 +66,6 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return gs;
     }
 
