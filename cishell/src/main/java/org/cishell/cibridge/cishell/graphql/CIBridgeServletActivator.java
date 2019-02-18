@@ -49,7 +49,7 @@ public class CIBridgeServletActivator implements BundleActivator {
 
 	private static final Set<String> CISHELL_SERVICES = new HashSet<>(Arrays.asList(DataManagerService.class.getName(),
 			SchedulerService.class.getName(), DataConversionService.class.getName(), LogService.class.getName(),
-			MetaTypeService.class.getName()));
+			MetaTypeService.class.getName(), HttpService.class.getName()));
 
 	@Override
 	public void start(BundleContext bundleContext) {
@@ -131,7 +131,13 @@ public class CIBridgeServletActivator implements BundleActivator {
 
 //		GraphQLWebsocketServlet subscriptionServlet = new GraphQLWebsocketServlet(queryInvoker, factory,
 //				graphQLObjectMapper);
-
+		
+		EchoServlet echoServlet = new EchoServlet(ciBridge);
+		echoServlet.m_bundleContext = this.bundleContext;
+		System.out.println("Starting subscriptions");
+		echoServlet.m_httpService = (HttpService)this.getService(HttpService.class);
+		echoServlet.start();
+		
 		CIBridgeWebSocketServlet subscriptionServlet = new CIBridgeWebSocketServlet();
 
 		subscriptionServlet.configure(new WebSocketServletFactory() {
@@ -140,60 +146,70 @@ public class CIBridgeServletActivator implements BundleActivator {
 			public boolean acceptWebSocket(HttpServletRequest request, HttpServletResponse response)
 					throws IOException {
 				// TODO Auto-generated method stub
-				return false;
+				System.out.println('1');
+				return true;
 			}
 
 			@Override
 			public boolean acceptWebSocket(WebSocketCreator creator, HttpServletRequest request,
 					HttpServletResponse response) throws IOException {
 				// TODO Auto-generated method stub
-				return false;
+				System.out.println('2');
+				return true;
 			}
 
 			@Override
 			public WebSocketCreator getCreator() {
+				System.out.println('3');
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public ExtensionFactory getExtensionFactory() {
+				System.out.println('4');
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public WebSocketPolicy getPolicy() {
+				System.out.println('5');
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public boolean isUpgradeRequest(HttpServletRequest request, HttpServletResponse response) {
+				System.out.println('6');
 				// TODO Auto-generated method stub
 				return false;
 			}
 
 			@Override
 			public void register(Class<?> websocketPojo) {
+				System.out.println('7');
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void setCreator(WebSocketCreator creator) {
+				System.out.println('8');
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void start() throws Exception {
+				System.out.println('9');
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
 			public void stop() throws Exception {
+				System.out.println("10");
 				// TODO Auto-generated method stub
 
 			}
@@ -203,9 +219,9 @@ public class CIBridgeServletActivator implements BundleActivator {
 //		BundleWiring bundleWiring = findHttpService().adapt(BundleWiring.class);
 //		ServletContextHandler handler = (ServletContextHandler)ServletContextHandler.getContextHandler();
 
-		graphQLServletRegistration = bundleContext.registerService(
-				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, subscriptionServlet,
-				subscriptionServletProperties);
+//		graphQLServletRegistration = bundleContext.registerService(
+//				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, subscriptionServlet,
+//				subscriptionServletProperties);
 
 		graphQLServlet.addListener(new GraphQLServletListener() {
 			@Override
@@ -229,7 +245,6 @@ public class CIBridgeServletActivator implements BundleActivator {
 				};
 			}
 		});
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

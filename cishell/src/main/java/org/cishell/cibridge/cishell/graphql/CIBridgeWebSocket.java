@@ -1,12 +1,29 @@
 package org.cishell.cibridge.cishell.graphql;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.cishell.cibridge.cishell.util.JsonKit;
+import org.cishell.cibridge.cishell.util.QueryParameters;
+import org.cishell.cibridge.graphql.scalars.Scalars;
+import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
+import com.coxautodev.graphql.tools.SchemaParser;
+
+import graphql.ExecutionInput;
+import graphql.ExecutionResult;
+import graphql.GraphQL;
+import graphql.execution.instrumentation.ChainedInstrumentation;
+import graphql.execution.instrumentation.Instrumentation;
+import graphql.execution.instrumentation.tracing.TracingInstrumentation;
+import graphql.schema.GraphQLSchema;
 
 public class CIBridgeWebSocket extends WebSocketAdapter {
 
@@ -17,6 +34,8 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	public void onWebSocketConnect(Session session) {
 		System.out.println("session open");
 		super.onWebSocketConnect(session);
+		session.setIdleTimeout(10000);
+		System.out.println(session.isOpen());
 	}
 
 	@Override
@@ -28,29 +47,53 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 			subscription.cancel();
 		}
 	}
+	
+	@Override
+    public void onWebSocketError(Throwable cause) {
+		System.out.println("boom");
+        cause.printStackTrace();
+    }
 
 	@Override
 	public void onWebSocketText(String graphqlQuery) {
+		System.out.println(graphqlQuery);
+		try {
+			this.getRemote().sendString("{\"type\":\"connection_ack\"}");
+			Thread.sleep(1000);
+			this.getRemote().sendString("{\"type\":\"data\", \"data\":{\"message\":\"hello world!!!!\"}}");
+//			this.getSession().close();
+//			System.out.println("closed session?");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 //		QueryParameters parameters = QueryParameters.from(graphqlQuery);
 //
+//		System.out.println(parameters.getQuery());
 //		ExecutionInput executionInput = ExecutionInput.newExecutionInput().query(parameters.getQuery())
 //				.variables(parameters.getVariables()).operationName(parameters.getOperationName()).build();
 //
-		
-//		Instrumentation instrumentation = new ChainedInstrumentation(singletonList(new TracingInstrumentation()));
+//		Instrumentation instrumentation = new ChainedInstrumentation(Collections.singletonList(new TracingInstrumentation()));
 //
 //		//
 //		// In order to have subscriptions in graphql-java you MUST use the
 //		// SubscriptionExecutionStrategy strategy.
 //		//
-//		GraphQL graphQL = GraphQL.newGraphQL(graphqlPublisher.getGraphQLSchema()).instrumentation(instrumentation)
+//		
+//		CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(EchoServlet.ciBridge);
+//		
+//		GraphQL graphQL = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema()).instrumentation(instrumentation)
 //				.build();
 //
 //		ExecutionResult executionResult = graphQL.execute(executionInput);
 //
 //		Publisher<ExecutionResult> stockPriceStream = executionResult.getData();
-
+//
 //		stockPriceStream.subscribe(new Subscriber<ExecutionResult>() {
 //
 //			@Override
@@ -61,7 +104,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 //
 //			@Override
 //			public void onNext(ExecutionResult er) {
-//				log.debug("Sending stick price update");
 //				try {
 //					Object stockPriceUpdate = er.getData();
 //					getRemote().sendString(JsonKit.toJsonString(stockPriceUpdate));
@@ -73,13 +115,11 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 //
 //			@Override
 //			public void onError(Throwable t) {
-//				log.error("Subscription threw an exception", t);
 //				getSession().close();
 //			}
 //
 //			@Override
 //			public void onComplete() {
-//				log.info("Subscription complete");
 //				getSession().close();
 //			}
 //		});

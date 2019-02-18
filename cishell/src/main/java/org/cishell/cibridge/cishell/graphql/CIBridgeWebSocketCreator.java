@@ -33,9 +33,12 @@ import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
 
 @WebSocket
-public class CIBridgeWebSocketCreator implements Runnable
+public class CIBridgeWebSocketCreator implements Runnable, WebSocketCreator
 {
     private TimeZone timezone;
     private Session session;
@@ -74,4 +77,10 @@ public class CIBridgeWebSocketCreator implements Runnable
             }
         }
     }
+
+	@Override
+	public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
