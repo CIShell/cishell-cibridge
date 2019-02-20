@@ -46,7 +46,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 	@Override
 	public void onWebSocketError(Throwable cause) {
-		System.out.println("boom");
+		System.out.println("Web Socket Error");
 		cause.printStackTrace();
 	}
 

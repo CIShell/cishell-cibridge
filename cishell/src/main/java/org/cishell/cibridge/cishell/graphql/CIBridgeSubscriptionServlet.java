@@ -20,26 +20,26 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	public HttpService m_httpService;
-	
+	private HttpService httpService;
 	// TODO Find a better way to pass CIBridge instance
 	private static CIBridge ciBridge;
-	public BundleContext m_bundleContext;
-	public CIBridgeSubscriptionServlet(CIBridge bridge) {
-		ciBridge = bridge;
+	private BundleContext bundleContext;
+	
+	public CIBridgeSubscriptionServlet(CIBridge ciBridge, BundleContext bundleContext, HttpService httpService) {
+		this.ciBridge = ciBridge;
+		this.bundleContext = bundleContext;
+		this.httpService = httpService;
 	}
 
 	public void start() {
 		try {
 			// Store the current CCL
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-			// We have to set the CCL to Jetty's bundle classloader
+			// We have to set the CCL to Jetty's bundle class loader
 			BundleWiring bundleWiring = findJettyBundle().adapt(BundleWiring.class);
 			ClassLoader classLoader = bundleWiring.getClassLoader();
 			Thread.currentThread().setContextClassLoader(classLoader);
-
-			m_httpService.registerServlet("/subscriptions", this, null, null);
-
+			httpService.registerServlet("/subscriptions", this, null, null);
 			// Restore the CCL
 			Thread.currentThread().setContextClassLoader(ccl);
 
@@ -49,7 +49,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 	}
 
 	private Bundle findJettyBundle() {
-		return Arrays.stream(m_bundleContext.getBundles())
+		return Arrays.stream(bundleContext.getBundles())
 				.filter(b -> b.getSymbolicName().equals("org.apache.felix.http.jetty")).findAny().get();
 	}
 
@@ -70,4 +70,21 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 	public static CIBridge getCiBridge() {
 		return ciBridge;
 	}
+
+	public HttpService getHttpService() {
+		return httpService;
+	}
+
+	public void setHttpService(HttpService httpService) {
+		this.httpService = httpService;
+	}
+
+	public BundleContext getBundleContext() {
+		return bundleContext;
+	}
+
+	public void setBundleContext(BundleContext bundleContext) {
+		this.bundleContext = bundleContext;
+	}
+	
 }
