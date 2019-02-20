@@ -75,7 +75,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 					Collections.singletonList(new TracingInstrumentation()));
 
 			CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(
-					CIBridgeSubscriptionServlet.ciBridge);
+					CIBridgeSubscriptionServlet.getCiBridge());
 
 			GraphQL graphQL = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema())
 					.subscriptionExecutionStrategy(new SubscriptionExecutionStrategy()).instrumentation(instrumentation)
@@ -89,14 +89,12 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 				@Override
 				public void onSubscribe(Subscription s) {
-					System.out.println("1");
 					subscriptionRef.set(s);
 					request(1);
 				}
 
 				@Override
 				public void onNext(ExecutionResult er) {
-					System.out.println("2");
 					try {
 						Object stockPriceUpdate = er.getData();
 						String jsonData = JsonKit.toJsonString(stockPriceUpdate);
@@ -112,7 +110,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 				@Override
 				public void onError(Throwable t) {
-					System.out.println("3");
 					try {
 						getRemote()
 								.sendString("{\"id\": \"" + id + "\", \"type\":\"error\", \"payload\": \"ERRROR!!!\"}");
@@ -124,7 +121,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 				@Override
 				public void onComplete() {
-					System.out.println("4");
 					try {
 						getRemote().sendString("{\"id\": \"" + id + "\", \"type\":\"complete\"}");
 					} catch (IOException e) {
@@ -134,8 +130,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 				}
 			});
 		} else {
-			System.out.println("Parameters is NULL");
-			System.out.println(graphqlQuery);
+			System.out.println("Parameters is NULL for query: " + graphqlQuery);
 		}
 	}
 

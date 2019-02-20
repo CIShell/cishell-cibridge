@@ -102,7 +102,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 				log.setLogLevel(logLevelMap.get(logEntry.getLevel()));
 				log.setMessage(logEntry.getMessage());
 				List<String> stacktrace = new ArrayList<String>();
-				// Adding Stacktrace if it exists
+				// Adding stacktrace if it exists
 				if (logEntry.getException() != null) {
 					StackTraceElement[] stackTraceArray = logEntry.getException().getStackTrace();
 					if (stackTraceArray != null) {
@@ -136,13 +136,10 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	// TODO use log service listener for subscriptions
 	@Override
 	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
-		System.out.println("Log Added Func call");
 		LogFilter filter = new LogFilter();
 		filter.setLogLevel(logLevels);
 		filter.setLimit(2);
 		List<Log> results = getLogs(filter).getResults();
-//		System.out.println(results);
-//		System.out.println(results.size());
 		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 

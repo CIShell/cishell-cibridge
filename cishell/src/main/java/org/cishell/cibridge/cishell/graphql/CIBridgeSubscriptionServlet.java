@@ -18,14 +18,13 @@ import org.osgi.service.http.NamespaceException;
 
 public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	public HttpService m_httpService;
-	public static CIBridge ciBridge;
-	public BundleContext m_bundleContext;
 
+	public HttpService m_httpService;
+	
+	// TODO Find a better way to pass CIBridge instance
+	private static CIBridge ciBridge;
+	public BundleContext m_bundleContext;
 	public CIBridgeSubscriptionServlet(CIBridge bridge) {
 		ciBridge = bridge;
 	}
@@ -34,8 +33,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 		try {
 			// Store the current CCL
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-
-			// We have to set the CCL to Jetty's bunle classloader
+			// We have to set the CCL to Jetty's bundle classloader
 			BundleWiring bundleWiring = findJettyBundle().adapt(BundleWiring.class);
 			ClassLoader classLoader = bundleWiring.getClassLoader();
 			Thread.currentThread().setContextClassLoader(classLoader);
@@ -66,7 +64,10 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 	public void configure(WebSocketServletFactory factory) {
 		factory.getPolicy().setMaxTextMessageBufferSize(1024 * 1024);
 		factory.getPolicy().setIdleTimeout(30 * 1000);
-		// factory.register(MyEchoSocket.class);
 		factory.register(CIBridgeWebSocket.class);
+	}
+
+	public static CIBridge getCiBridge() {
+		return ciBridge;
 	}
 }

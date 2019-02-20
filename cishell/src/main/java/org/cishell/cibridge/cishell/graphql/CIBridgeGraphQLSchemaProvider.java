@@ -1,23 +1,23 @@
 package org.cishell.cibridge.cishell.graphql;
 
-import com.coxautodev.graphql.tools.SchemaParser;
-import graphql.GraphQLError;
-import graphql.schema.GraphQLSchema;
-import graphql.servlet.GraphQLErrorHandler;
-import graphql.servlet.GraphQLSchemaProvider;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.websocket.server.HandshakeRequest;
+
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.graphql.resolvers.Mutation;
 import org.cishell.cibridge.graphql.resolvers.Query;
 import org.cishell.cibridge.graphql.resolvers.Subscription;
 import org.cishell.cibridge.graphql.scalars.Scalars;
 import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
-import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.server.HandshakeRequest;
-import java.util.List;
+import com.coxautodev.graphql.tools.SchemaParser;
+
+import graphql.GraphQLError;
+import graphql.schema.GraphQLSchema;
+import graphql.servlet.GraphQLErrorHandler;
+import graphql.servlet.GraphQLSchemaProvider;
 
 public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, GraphQLErrorHandler {
     private CIBridge cibridge;
