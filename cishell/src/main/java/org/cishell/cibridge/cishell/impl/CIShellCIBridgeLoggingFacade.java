@@ -39,6 +39,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
 
+		System.out.println("Get Logs Func call");
 		Preconditions.checkNotNull(filter, "filter can't be empty");
 
 		LogQueryResults results = null;
@@ -135,11 +136,13 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	// TODO use log service listener for subscriptions
 	@Override
 	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
+		System.out.println("Log Added Func call");
 		LogFilter filter = new LogFilter();
 		filter.setLogLevel(logLevels);
+		filter.setLimit(2);
 		List<Log> results = getLogs(filter).getResults();
-		System.out.println(results);
-		System.out.println(results.size());
+//		System.out.println(results);
+//		System.out.println(results.size());
 		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 

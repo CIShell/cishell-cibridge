@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.graphql;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.cishell.cibridge.cishell.util.JsonKit;
@@ -20,6 +21,7 @@ import com.coxautodev.graphql.tools.SchemaParser;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.execution.SubscriptionExecutionStrategy;
 import graphql.execution.instrumentation.ChainedInstrumentation;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.tracing.TracingInstrumentation;
@@ -47,82 +49,105 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 			subscription.cancel();
 		}
 	}
-	
+
 	@Override
-    public void onWebSocketError(Throwable cause) {
+	public void onWebSocketError(Throwable cause) {
 		System.out.println("boom");
-        cause.printStackTrace();
-    }
+		cause.printStackTrace();
+	}
 
 	@Override
 	public void onWebSocketText(String graphqlQuery) {
+
 		System.out.println(graphqlQuery);
 		try {
 			this.getRemote().sendString("{\"type\":\"connection_ack\"}");
-			Thread.sleep(1000);
-			this.getRemote().sendString("{\"type\":\"data\", \"data\":{\"message\":\"hello world!!!!\"}}");
-//			this.getSession().close();
-//			System.out.println("closed session?");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
-//		QueryParameters parameters = QueryParameters.from(graphqlQuery);
-//
-//		System.out.println(parameters.getQuery());
-//		ExecutionInput executionInput = ExecutionInput.newExecutionInput().query(parameters.getQuery())
-//				.variables(parameters.getVariables()).operationName(parameters.getOperationName()).build();
-//
-//		Instrumentation instrumentation = new ChainedInstrumentation(Collections.singletonList(new TracingInstrumentation()));
-//
-//		//
-//		// In order to have subscriptions in graphql-java you MUST use the
-//		// SubscriptionExecutionStrategy strategy.
-//		//
-//		
-//		CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(EchoServlet.ciBridge);
-//		
-//		GraphQL graphQL = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema()).instrumentation(instrumentation)
-//				.build();
-//
-//		ExecutionResult executionResult = graphQL.execute(executionInput);
-//
-//		Publisher<ExecutionResult> stockPriceStream = executionResult.getData();
-//
-//		stockPriceStream.subscribe(new Subscriber<ExecutionResult>() {
-//
-//			@Override
-//			public void onSubscribe(Subscription s) {
-//				subscriptionRef.set(s);
-//				request(1);
-//			}
-//
-//			@Override
-//			public void onNext(ExecutionResult er) {
-//				try {
-//					Object stockPriceUpdate = er.getData();
-//					getRemote().sendString(JsonKit.toJsonString(stockPriceUpdate));
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//				request(1);
-//			}
-//
-//			@Override
-//			public void onError(Throwable t) {
-//				getSession().close();
-//			}
-//
-//			@Override
-//			public void onComplete() {
-//				getSession().close();
-//			}
-//		});
+		QueryParameters parameters = QueryParameters.from(graphqlQuery);
+
+		if (parameters.getQuery() != null) {
+			String id = (String) parameters.getID();
+
+			System.out.println("*********************************************");
+			System.out.println(parameters.getQuery());
+
+			ExecutionInput executionInput = ExecutionInput.newExecutionInput().query(parameters.getQuery())
+					.variables(parameters.getVariables()).operationName(parameters.getOperationName()).build();
+
+			Instrumentation instrumentation = new ChainedInstrumentation(
+					Collections.singletonList(new TracingInstrumentation()));
+
+			//
+			// In order to have subscriptions in graphql-java you MUST use the
+			// SubscriptionExecutionStrategy strategy.
+			//
+
+			CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(
+					EchoServlet.ciBridge);
+
+			GraphQL graphQL = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema())
+					.subscriptionExecutionStrategy(new SubscriptionExecutionStrategy()).instrumentation(instrumentation)
+					.build();
+
+			ExecutionResult executionResult = graphQL.execute(executionInput);
+
+			Publisher<ExecutionResult> stockPriceStream = executionResult.getData();
+
+			stockPriceStream.subscribe(new Subscriber<ExecutionResult>() {
+
+				@Override
+				public void onSubscribe(Subscription s) {
+					System.out.println("1");
+					subscriptionRef.set(s);
+					request(1);
+				}
+
+				@Override
+				public void onNext(ExecutionResult er) {
+					System.out.println("2");
+					try {
+						Object stockPriceUpdate = er.getData();
+						String jsonData = JsonKit.toJsonString(stockPriceUpdate);
+						System.out.println("*****************************");
+						System.out.println(jsonData);
+						getRemote().sendString("{\"id\": \"" + id + "\", \"type\":\"data\", \"payload\": {\"data\":"
+								+ jsonData + "}}");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					request(1);
+				}
+
+				@Override
+				public void onError(Throwable t) {
+					System.out.println("3");
+					try {
+						getRemote()
+								.sendString("{\"id\": \"" + id + "\", \"type\":\"error\", \"payload\": \"ERRROR!!!\"}");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					getSession().close();
+				}
+
+				@Override
+				public void onComplete() {
+					System.out.println("4");
+					try {
+						getRemote().sendString("{\"id\": \"" + id + "\", \"type\":\"complete\"}");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					getSession().close();
+				}
+			});
+		} else {
+			System.out.println("Parameters is NULL");
+			System.out.println(graphqlQuery);
+		}
 	}
 
 	private void request(int n) {

@@ -119,109 +119,11 @@ public class CIBridgeServletActivator implements BundleActivator {
 				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, graphQLServlet,
 				graphQLServletProperties);
 
-//		GraphQLInvocationInputFactory factory = GraphQLInvocationInputFactory.newBuilder(ciBridgeGraphQLSchemaProvider)
-//				.build();
-//
-//		DefaultExecutionStrategyProvider provider = new DefaultExecutionStrategyProvider();
-//		GraphQLQueryInvoker queryInvoker = GraphQLQueryInvoker.newBuilder().withExecutionStrategyProvider(provider)
-//				.build();
-//
-//		GraphQLObjectMapper graphQLObjectMapper = GraphQLObjectMapper.newBuilder()
-//				.withGraphQLErrorHandler(ciBridgeGraphQLSchemaProvider).build();
-
-//		GraphQLWebsocketServlet subscriptionServlet = new GraphQLWebsocketServlet(queryInvoker, factory,
-//				graphQLObjectMapper);
-		
 		EchoServlet echoServlet = new EchoServlet(ciBridge);
 		echoServlet.m_bundleContext = this.bundleContext;
 		System.out.println("Starting subscriptions");
-		echoServlet.m_httpService = (HttpService)this.getService(HttpService.class);
+		echoServlet.m_httpService = (HttpService) this.getService(HttpService.class);
 		echoServlet.start();
-		
-		CIBridgeWebSocketServlet subscriptionServlet = new CIBridgeWebSocketServlet();
-
-		subscriptionServlet.configure(new WebSocketServletFactory() {
-
-			@Override
-			public boolean acceptWebSocket(HttpServletRequest request, HttpServletResponse response)
-					throws IOException {
-				// TODO Auto-generated method stub
-				System.out.println('1');
-				return true;
-			}
-
-			@Override
-			public boolean acceptWebSocket(WebSocketCreator creator, HttpServletRequest request,
-					HttpServletResponse response) throws IOException {
-				// TODO Auto-generated method stub
-				System.out.println('2');
-				return true;
-			}
-
-			@Override
-			public WebSocketCreator getCreator() {
-				System.out.println('3');
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public ExtensionFactory getExtensionFactory() {
-				System.out.println('4');
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public WebSocketPolicy getPolicy() {
-				System.out.println('5');
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public boolean isUpgradeRequest(HttpServletRequest request, HttpServletResponse response) {
-				System.out.println('6');
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			@Override
-			public void register(Class<?> websocketPojo) {
-				System.out.println('7');
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void setCreator(WebSocketCreator creator) {
-				System.out.println('8');
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void start() throws Exception {
-				System.out.println('9');
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void stop() throws Exception {
-				System.out.println("10");
-				// TODO Auto-generated method stub
-
-			}
-
-		});
-
-//		BundleWiring bundleWiring = findHttpService().adapt(BundleWiring.class);
-//		ServletContextHandler handler = (ServletContextHandler)ServletContextHandler.getContextHandler();
-
-//		graphQLServletRegistration = bundleContext.registerService(
-//				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, subscriptionServlet,
-//				subscriptionServletProperties);
 
 		graphQLServlet.addListener(new GraphQLServletListener() {
 			@Override
@@ -251,16 +153,6 @@ public class CIBridgeServletActivator implements BundleActivator {
 	public Object getService(Class c) {
 		ServiceReference ref = bundleContext.getServiceReference(c.getName());
 		return ref != null ? bundleContext.getService(ref) : null;
-	}
-
-	private Bundle findJettyBundle() {
-		return Arrays.stream(bundleContext.getBundles())
-				.filter(b -> b.getSymbolicName().equals("org.apache.felix.http.jetty")).findAny().get();
-	}
-
-	private Bundle findHttpService() {
-		return Arrays.stream(bundleContext.getBundles())
-				.filter(b -> b.getSymbolicName().equals("org.osgi.service.http.HttpService")).findAny().get();
 	}
 
 	private class CIShellServicesTrackerCustomizer<S, T> implements ServiceTrackerCustomizer<S, T> {

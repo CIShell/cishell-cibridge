@@ -18,6 +18,10 @@ import org.osgi.service.http.NamespaceException;
 
 public class EchoServlet extends WebSocketServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public HttpService m_httpService;
 	public static CIBridge ciBridge;
 	public BundleContext m_bundleContext;
