@@ -2,21 +2,16 @@ package org.cishell.cibridge.cishell.graphql;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.cishell.cibridge.cishell.util.JsonKit;
 import org.cishell.cibridge.cishell.util.QueryParameters;
-import org.cishell.cibridge.graphql.scalars.Scalars;
-import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketAdapter;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
-
-import com.coxautodev.graphql.tools.SchemaParser;
 
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
@@ -25,7 +20,6 @@ import graphql.execution.SubscriptionExecutionStrategy;
 import graphql.execution.instrumentation.ChainedInstrumentation;
 import graphql.execution.instrumentation.Instrumentation;
 import graphql.execution.instrumentation.tracing.TracingInstrumentation;
-import graphql.schema.GraphQLSchema;
 
 public class CIBridgeWebSocket extends WebSocketAdapter {
 
@@ -80,13 +74,8 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 			Instrumentation instrumentation = new ChainedInstrumentation(
 					Collections.singletonList(new TracingInstrumentation()));
 
-			//
-			// In order to have subscriptions in graphql-java you MUST use the
-			// SubscriptionExecutionStrategy strategy.
-			//
-
 			CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(
-					EchoServlet.ciBridge);
+					CIBridgeSubscriptionServlet.ciBridge);
 
 			GraphQL graphQL = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema())
 					.subscriptionExecutionStrategy(new SubscriptionExecutionStrategy()).instrumentation(instrumentation)
@@ -157,50 +146,3 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		}
 	}
 }
-
-//import java.io.IOException;
-//
-//import org.eclipse.jetty.websocket.api.RemoteEndpoint;
-//import org.eclipse.jetty.websocket.api.Session;
-//import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-//import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-//import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-//import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-//
-//@WebSocket
-//public class CIBridgeWebSocket {
-//	private Session session;
-//	private RemoteEndpoint remote;
-//
-//	public RemoteEndpoint getRemote() {
-//		return remote;
-//	}
-//
-//	@OnWebSocketClose
-//	public void onClose(int statusCode, String reason) {
-//		this.session = null;
-//	}
-//
-//	@OnWebSocketConnect
-//	public void onConnect(Session session) {
-//		System.out.println("On connect");
-//		this.session = session;
-//		this.remote = session.getRemote();
-//	}
-//
-//	@OnWebSocketMessage
-//	public void onText(String message) {
-//		System.out.println("on text");
-//		if (session == null) {
-//			// no connection, do nothing.
-//			// this is possible due to async behavior
-//			return;
-//		}
-//
-//		try {
-//			remote.sendString(message);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
-//}

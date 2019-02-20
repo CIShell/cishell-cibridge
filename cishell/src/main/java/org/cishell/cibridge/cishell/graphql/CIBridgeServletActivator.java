@@ -119,7 +119,7 @@ public class CIBridgeServletActivator implements BundleActivator {
 				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, graphQLServlet,
 				graphQLServletProperties);
 
-		EchoServlet echoServlet = new EchoServlet(ciBridge);
+		CIBridgeSubscriptionServlet echoServlet = new CIBridgeSubscriptionServlet(ciBridge);
 		echoServlet.m_bundleContext = this.bundleContext;
 		System.out.println("Starting subscriptions");
 		echoServlet.m_httpService = (HttpService) this.getService(HttpService.class);

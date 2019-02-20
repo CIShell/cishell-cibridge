@@ -16,7 +16,7 @@ import org.osgi.framework.wiring.BundleWiring;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-public class EchoServlet extends WebSocketServlet {
+public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
 	/**
 	 * 
@@ -26,7 +26,7 @@ public class EchoServlet extends WebSocketServlet {
 	public static CIBridge ciBridge;
 	public BundleContext m_bundleContext;
 
-	public EchoServlet(CIBridge bridge) {
+	public CIBridgeSubscriptionServlet(CIBridge bridge) {
 		ciBridge = bridge;
 	}
 
