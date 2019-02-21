@@ -10,7 +10,6 @@ public class ParameterDefinition {
     protected final List<Property> options;
 
     public ParameterDefinition(String id, String name, String description, AttributeType type, List<Property> options) {
-        // TODO Auto-generated constructor stub
         this.id = id;
         this.name = name;
         this.description = description;
@@ -19,7 +18,6 @@ public class ParameterDefinition {
     }
 
     public ParameterDefinition(String name, String description, AttributeType type, List<Property> options) {
-        // TODO Auto-generated constructor stub
         this.id = null;
         this.name = name;
         this.description = description;

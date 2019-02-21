@@ -114,9 +114,9 @@ public abstract class CIBridge {
 		Boolean removeAlgorithm(String algorithmInstanceId);
 
 		// subscription
-		Boolean schedulerCleared();
+		Publisher<Boolean> schedulerCleared();
 
-		Boolean schedulerRunningChanged();
+		Publisher<Boolean> schedulerRunningChanged();
 	}
 
 	public interface LoggingFacade {

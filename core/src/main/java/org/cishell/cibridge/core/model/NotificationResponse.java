@@ -11,7 +11,6 @@ public class NotificationResponse {
 
     public NotificationResponse(List<PropertyInput> formResponse, Boolean questionResponse,
                                 Boolean confirmationResponse, Boolean closeNotification) {
-        // TODO Auto-generated constructor stub
         this.formResponse = formResponse;
         this.questionResponse = questionResponse;
         this.confirmationResponse = confirmationResponse;

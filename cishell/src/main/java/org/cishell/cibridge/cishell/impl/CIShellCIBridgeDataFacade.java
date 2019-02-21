@@ -253,29 +253,29 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	// TODO Update the Mock implementation with actual listener
 	@Override
-    public Publisher<Data> dataAdded() {
-        Data data = new Data("I am an ID");
-        List<Data> results = new ArrayList<>();
-        results.add(data);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
-    }
-	
+	public Publisher<Data> dataAdded() {
+		Data data = new Data("I am an ID");
+		List<Data> results = new ArrayList<>();
+		results.add(data);
+		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+	}
+
 	// TODO Update the Mock implementation with actual listener
 	@Override
 	public Publisher<Data> dataRemoved() {
 		Data data = new Data("I am an ID");
-        List<Data> results = new ArrayList<>();
-        results.add(data);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+		List<Data> results = new ArrayList<>();
+		results.add(data);
+		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 
 	// TODO Update the Mock implementation with actual listener
 	@Override
 	public Publisher<Data> dataUpdated() {
 		Data data = new Data("I am an ID");
-        List<Data> results = new ArrayList<>();
-        results.add(data);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+		List<Data> results = new ArrayList<>();
+		results.add(data);
+		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 
 	Map<String, CIShellCIBridgeData> getCIBridgeDataMap() {

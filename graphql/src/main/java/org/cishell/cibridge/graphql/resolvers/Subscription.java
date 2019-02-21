@@ -55,11 +55,11 @@ public class Subscription implements GraphQLSubscriptionResolver {
 		return this.cibridge.data.dataUpdated();
 	}
 
-	public Boolean schedulerCleared() {
+	public Publisher<Boolean> schedulerCleared() {
 		return this.cibridge.scheduler.schedulerCleared();
 	}
 
-	public Boolean schedulerRunningChanged() {
+	public Publisher<Boolean> schedulerRunningChanged() {
 		return this.cibridge.scheduler.schedulerRunningChanged();
 	}
 

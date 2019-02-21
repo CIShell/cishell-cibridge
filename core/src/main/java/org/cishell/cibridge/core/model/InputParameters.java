@@ -9,7 +9,6 @@ public class InputParameters {
     public final List<ParameterDefinition> parameters;
 
     public InputParameters(String id, String title, String description, List<ParameterDefinition> parameters) {
-        // TODO Auto-generated constructor stub
         this.id = id;
         this.title = title;
         this.description = description;

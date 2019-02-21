@@ -85,9 +85,9 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 			ExecutionResult executionResult = graphQL.execute(executionInput);
 
-			Publisher<ExecutionResult> stockPriceStream = executionResult.getData();
+			Publisher<ExecutionResult> resultsStream = executionResult.getData();
 
-			stockPriceStream.subscribe(new Subscriber<ExecutionResult>() {
+			resultsStream.subscribe(new Subscriber<ExecutionResult>() {
 
 				@Override
 				public void onSubscribe(Subscription s) {

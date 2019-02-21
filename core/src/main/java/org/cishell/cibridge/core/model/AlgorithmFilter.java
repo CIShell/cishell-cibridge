@@ -20,7 +20,6 @@ public class AlgorithmFilter {
     public AlgorithmFilter(List<String> algorithmDefinitionIds, List<String> algorithmInstanceIds,
                            List<AlgorithmState> states, List<String> inputDataIds, List<String> inputFormats, List<String> outputFormats,
                            List<PropertyInput> properties, int limit, int offset) {
-        // TODO Auto-generated constructor stub
         this.algorithmDefinitionIds = algorithmDefinitionIds;
         this.algorithmInstanceIds = algorithmInstanceIds;
         this.states = states;

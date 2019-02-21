@@ -18,7 +18,6 @@ public class Notification {
     public Notification(String id, NotificationType type, String title, String message, String detail,
                         List<String> stackTrace, List<ParameterDefinition> formParameters, Boolean isClosed,
                         List<Property> formResponse, Boolean questionResponse, Boolean confirmationResponse) {
-        // TODO Auto-generated constructor stub
         this.id = id;
         this.type = type;
         this.title = title;

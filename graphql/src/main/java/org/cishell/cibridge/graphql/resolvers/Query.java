@@ -31,7 +31,6 @@ public class Query implements GraphQLQueryResolver {
         return cibridge.algorithm.getAlgorithmInstances(filter);
     }
 
-    // TODO
     public String validateData(String algorithmDefinitionId, List<String> dataIds) {
         return cibridge.data.validateData(algorithmDefinitionId, dataIds);
     }
@@ -49,7 +48,6 @@ public class Query implements GraphQLQueryResolver {
     }
 
     // public File downloadData(String dataId) {
-    // // TODO Auto-generated method stub
     // return null;
     // }
     public String downloadData(String dataId) {
@@ -57,12 +55,10 @@ public class Query implements GraphQLQueryResolver {
     }
 
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public Boolean isClosed(String NotificationId) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -79,7 +75,6 @@ public class Query implements GraphQLQueryResolver {
     }
 
     public LogQueryResults getLogs(LogFilter filter) {
-        // TODO Auto-generated method stub
         return cibridge.logging.getLogs(filter);
     }
 
