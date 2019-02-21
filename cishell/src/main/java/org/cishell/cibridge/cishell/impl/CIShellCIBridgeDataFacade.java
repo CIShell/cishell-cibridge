@@ -117,7 +117,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     }
 
     /* Mutations */
-    //todo should the API user pass the data format or should we auto-detect it? that has bugged me for so long
+    //TODO should the API user pass the data format or should we auto-detect it? that has bugged me for so long
     @Override
     public Data uploadData(String filePath, DataProperties properties) {
         Preconditions.checkNotNull(filePath, "File path cannot be null");
@@ -151,7 +151,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     public Boolean removeData(String dataId) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
         if (!ciBridgeDataMap.containsKey(dataId)) {
-            //todo convert below statement into a log entry
+            //TODO  convert below statement into a log entry
             //System.out.println("Invalid dataId. No data present with dataId '" + dataId + "'");
             return false;
         }

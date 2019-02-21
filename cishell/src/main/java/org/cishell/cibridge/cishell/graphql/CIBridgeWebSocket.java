@@ -30,7 +30,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	public void onWebSocketConnect(Session session) {
 		System.out.println("session open");
 		super.onWebSocketConnect(session);
-		session.setIdleTimeout(10000);
+//		session.setIdleTimeout(10000);
 		System.out.println(session.isOpen());
 	}
 
@@ -62,9 +62,12 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 		QueryParameters parameters = QueryParameters.from(graphqlQuery);
 
-		if (parameters.getQuery() != null) {
+		if (parameters.getType().equals("stop")) {
+			System.out.println("Printing stopping");
+			getSession().close();
+		} else if (parameters.getQuery() != null) {
+			
 			String id = (String) parameters.getID();
-
 			System.out.println("*********************************************");
 			System.out.println(parameters.getQuery());
 
@@ -116,7 +119,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					getSession().close();
+
 				}
 
 				@Override
@@ -126,7 +129,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					getSession().close();
 				}
 			});
 		} else {

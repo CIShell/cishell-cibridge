@@ -24,7 +24,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 	// TODO Find a better way to pass CIBridge instance
 	private static CIBridge ciBridge;
 	private BundleContext bundleContext;
-	
+
 	public CIBridgeSubscriptionServlet(CIBridge ciBridge, BundleContext bundleContext, HttpService httpService) {
 		this.ciBridge = ciBridge;
 		this.bundleContext = bundleContext;
@@ -62,8 +62,8 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
 	@Override
 	public void configure(WebSocketServletFactory factory) {
-		factory.getPolicy().setMaxTextMessageBufferSize(1024 * 1024);
-		factory.getPolicy().setIdleTimeout(30 * 1000);
+//		factory.getPolicy().setMaxTextMessageBufferSize(1024 * 1024);
+//		factory.getPolicy().setIdleTimeout(30 * 1000);
 		factory.register(CIBridgeWebSocket.class);
 	}
 
@@ -86,5 +86,5 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 	public void setBundleContext(BundleContext bundleContext) {
 		this.bundleContext = bundleContext;
 	}
-	
+
 }

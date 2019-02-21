@@ -21,14 +21,19 @@ import java.util.Map;
 public class QueryParameters {
 
 	private String id;
+	private String type;
 	private String query;
 	private String operationName;
 	private Map<String, Object> variables = Collections.emptyMap();
+	
+	public String getType() {
+		return type;
+	}
 
 	public String getID() {
 		return id;
 	}
-	
+
 	public String getQuery() {
 		return query;
 	}
@@ -41,17 +46,19 @@ public class QueryParameters {
 		return variables;
 	}
 
+	
 	public static QueryParameters from(String queryMessage) {
 		System.out.println("Query:" + queryMessage);
 		QueryParameters parameters = new QueryParameters();
 		Map<String, Object> json = JsonKit.toMap(queryMessage);
-		System.out.println(((Map<String, Object>) json.get("payload")).get("query"));
-		System.out.println(json.get("operationName"));
-		System.out.println(json.get("variables"));
-		parameters.query = (String) ((Map<String, Object>) json.get("payload")).get("query");
+		if (json.containsKey("payload")) {
+			parameters.query = (String) ((Map<String, Object>) json.get("payload")).get("query");
+		}
 		parameters.operationName = (String) json.get("operationName");
 		parameters.variables = getVariables(json.get("variables"));
 		parameters.id = (String) json.get("id");
+		parameters.type = (String) json.get("type");
+		
 		return parameters;
 	}
 
