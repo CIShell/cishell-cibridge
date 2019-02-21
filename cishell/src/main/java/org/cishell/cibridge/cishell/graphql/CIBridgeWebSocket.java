@@ -63,10 +63,9 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		QueryParameters parameters = QueryParameters.from(graphqlQuery);
 
 		if (parameters.getType().equals("stop")) {
-			System.out.println("Printing stopping");
 			getSession().close();
 		} else if (parameters.getQuery() != null) {
-			
+
 			String id = (String) parameters.getID();
 			System.out.println("*********************************************");
 			System.out.println(parameters.getQuery());

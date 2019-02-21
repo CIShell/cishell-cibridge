@@ -96,24 +96,21 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 		return false;
 	}
 
-	// TODO Subscription methods below
+	// TODO Update the subscriptions with listener
 	public Publisher<Notification> notificationAdded() {
-		List<String> ids = new ArrayList<String>();
-		ids.add("org.cishell.algorithm.convertergraph.ConverterGraphAlgorithm");
-		NotificationFilter filter = new NotificationFilter(ids, true, 2, 10);
-		NotificationQueryResults res = getNotifications(filter);
-		System.out.println("******check this*********");
-		System.out.println(res.getResults().size());
-		List<Notification> results = res.getResults();
+		Notification notification = new Notification("1", NotificationType.INFORMATION, "Notification", "Test", null,
+				null, null, null, null, true, true);
+		List<Notification> results = new ArrayList<Notification>();
+		results.add(notification);
 		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 
+	// TODO Update the subscriptions with listener
 	public Publisher<Notification> notificationUpdated() {
-		List<String> ids = new ArrayList<String>();
-		ids.add("org.cishell.algorithm.convertergraph.ConverterGraphAlgorithm");
-		NotificationFilter filter = new NotificationFilter(ids, true, 2, 10);
-		NotificationQueryResults res = getNotifications(filter);
-		List<Notification> results = res.getResults();
+		Notification notification = new Notification("1", NotificationType.INFORMATION, "Notification", "Test", null,
+				null, null, null, null, true, true);
+		List<Notification> results = new ArrayList<Notification>();
+		results.add(notification);
 		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
 	}
 
