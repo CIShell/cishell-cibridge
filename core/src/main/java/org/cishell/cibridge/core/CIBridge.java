@@ -62,11 +62,11 @@ public abstract class CIBridge {
 		Boolean updateData(String dataId, DataProperties properties);
 
 		// subscription
-		Data dataAdded();
+		Publisher<Data> dataAdded();
 
-		Data dataRemoved();
+		Publisher<Data> dataRemoved();
 
-		Data dataUpdated();
+		Publisher<Data> dataUpdated();
 	}
 
 	public interface NotificationFacade {

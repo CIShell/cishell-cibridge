@@ -43,15 +43,15 @@ public class Subscription implements GraphQLSubscriptionResolver {
 		return this.cibridge.notification.notificationUpdated();
 	}
 
-	public Data dataAdded() {
+	public Publisher<Data> dataAdded() {
 		return this.cibridge.data.dataAdded();
 	}
 
-	public Data dataRemoved() {
+	public Publisher<Data> dataRemoved() {
 		return this.cibridge.data.dataRemoved();
 	}
 
-	public Data dataUpdated() {
+	public Publisher<Data> dataUpdated() {
 		return this.cibridge.data.dataUpdated();
 	}
 
