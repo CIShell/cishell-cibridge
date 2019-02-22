@@ -25,7 +25,7 @@ public class QueryParameters {
 	private String query;
 	private String operationName;
 	private Map<String, Object> variables = Collections.emptyMap();
-	
+
 	public String getType() {
 		return type;
 	}
@@ -46,25 +46,22 @@ public class QueryParameters {
 		return variables;
 	}
 
-	
 	public static QueryParameters from(String queryMessage) {
-		System.out.println("Query:" + queryMessage);
 		QueryParameters parameters = new QueryParameters();
 		Map<String, Object> json = JsonKit.toMap(queryMessage);
-		if (json.containsKey("payload")) {
-			parameters.query = (String) ((Map<String, Object>) json.get("payload")).get("query");
-		}
 		parameters.operationName = (String) json.get("operationName");
 		parameters.variables = getVariables(json.get("variables"));
 		parameters.id = (String) json.get("id");
 		parameters.type = (String) json.get("type");
-		
+		if (json.containsKey("payload")) {
+			parameters.query = (String) ((Map<String, Object>) json.get("payload")).get("query");
+		}
 		return parameters;
 	}
 
 	private static Map<String, Object> getVariables(Object variables) {
 		if (variables instanceof Map) {
-			Map<?, ?> inputVars = (Map) variables;
+			Map<?, ?> inputVars = (Map<?, ?>) variables;
 			Map<String, Object> vars = new HashMap<>();
 			inputVars.forEach((k, v) -> vars.put(String.valueOf(k), v));
 			return vars;

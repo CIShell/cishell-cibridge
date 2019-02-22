@@ -72,7 +72,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		switch (parameters.getType()) {
 		case GQL_CONNECTION_INIT:
 			try {
-
 				String response = generateResponseString(GQL_CONNECTION_ACK, null, null);
 				if (response != null) {
 					this.getRemote().sendString(response);
@@ -93,7 +92,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 			getSession().close();
 			break;
 		default:
-			System.out.println("Invalid Query Type");
+			System.out.println("Invalid Query Type: " + parameters.getType());
 		}
 	}
 
@@ -194,7 +193,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
 			}
 
 			@Override
