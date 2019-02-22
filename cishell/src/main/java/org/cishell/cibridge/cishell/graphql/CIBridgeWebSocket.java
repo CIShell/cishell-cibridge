@@ -47,7 +47,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		System.out.println("session open");
 		super.onWebSocketConnect(session);
 //		session.setIdleTimeout(10000);
-		System.out.println(session.isOpen());
 	}
 
 	@Override
@@ -70,16 +69,15 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	public void onWebSocketText(String graphqlQuery) {
 
 		QueryParameters parameters = QueryParameters.from(graphqlQuery);
-		System.out.println(graphqlQuery);
 		switch (parameters.getType()) {
 		case GQL_CONNECTION_INIT:
 			try {
 
-				String respone = generateResponseString(GQL_CONNECTION_ACK, null, null);
-				if (respone != null) {
-					this.getRemote().sendString(respone);
+				String response = generateResponseString(GQL_CONNECTION_ACK, null, null);
+				if (response != null) {
+					this.getRemote().sendString(response);
 				} else {
-					System.out.println("Invalid data given to generateResponseString() method");
+					System.out.println("Invalid data given to generateResponseString method");
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
