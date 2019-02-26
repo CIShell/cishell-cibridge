@@ -35,7 +35,7 @@ import graphql.servlet.SimpleGraphQLHttpServlet;
 
 public class CIBridgeServletActivator implements BundleActivator {
 	private BundleContext bundleContext;
-	private ServiceTracker ciShellServicesTracker;
+	private ServiceTracker<Object, Object> ciShellServicesTracker;
 	private CIShellCIBridge ciBridge;
 	private ServiceRegistration graphiqlServletRegistration;
 	private ServiceRegistration graphQLServletRegistration;
@@ -84,6 +84,7 @@ public class CIBridgeServletActivator implements BundleActivator {
 	}
 
 	private void startCIBridge() {
+
 		Hashtable<String, String> graphiqlServletProperties = new Hashtable<>();
 		graphiqlServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphiql");
 		graphiqlServletProperties.put("alias", "/graphiql");
@@ -113,9 +114,9 @@ public class CIBridgeServletActivator implements BundleActivator {
 				graphQLServletProperties);
 
 		HttpService httpservice = (HttpService) this.getService(HttpService.class);
-		CIBridgeSubscriptionServlet echoServlet = new CIBridgeSubscriptionServlet(ciBridge, bundleContext, httpservice);
+		CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridge, bundleContext, httpservice);
 		System.out.println("Starting subscriptions");
-		echoServlet.start();
+		subscriptionServlet.start();
 
 		graphQLServlet.addListener(new GraphQLServletListener() {
 			@Override
@@ -142,7 +143,7 @@ public class CIBridgeServletActivator implements BundleActivator {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public Object getService(Class c) {
+	public Object getService(Class<HttpService> c) {
 		ServiceReference ref = bundleContext.getServiceReference(c.getName());
 		return ref != null ? bundleContext.getService(ref) : null;
 	}

@@ -41,6 +41,8 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	private static final String GQL_ERROR = "error";
 	private static final String GQL_COMPLETE = "complete";
 
+	private static Publisher<ExecutionResult> resultsStream;
+	
 	@Override
 	@OnWebSocketConnect
 	public void onWebSocketConnect(Session session) {
@@ -62,6 +64,17 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	@Override
 	public void onWebSocketError(Throwable cause) {
 		System.out.println("Web Socket Error");
+		String response = generateResponseString(GQL_ERROR, cause, null);
+		if (response != null) {
+			try {
+				this.getRemote().sendString(response);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("Invalid data given to generateResponseString method");
+		}
 		cause.printStackTrace();
 	}
 
@@ -103,15 +116,20 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		case GQL_CONNECTION_ACK:
 		case GQL_CONNECTION_ERROR:
 		case GQL_CONNECTION_KEEP_ALIVE: // TODO might have to change this in future.
-		case GQL_ERROR:
 		case GQL_COMPLETE:
+			map.put("type", type);
+			if (id != null) {
+				map.put("id", id);
+			}
+			break;
+		case GQL_ERROR:
 			map.put("type", type);
 			if (id != null) {
 				map.put("id", id);
 			}
 			if (payload != null) {
 				Map<String, Object> dataMap = new HashMap<>();
-				dataMap.put("data", payload);
+				dataMap.put("error", payload);
 				map.put("payload", dataMap);
 			}
 			break;
@@ -134,6 +152,12 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		}
 
 	}
+	
+	
+
+	public static Publisher<ExecutionResult> getResultsStream() {
+		return resultsStream;
+	}
 
 	private void processSubscriptionQuery(QueryParameters parameters) {
 
@@ -154,7 +178,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 		ExecutionResult executionResult = graphQL.execute(executionInput);
 
-		Publisher<ExecutionResult> resultsStream = executionResult.getData();
+		resultsStream = executionResult.getData();
 
 		resultsStream.subscribe(new Subscriber<ExecutionResult>() {
 
