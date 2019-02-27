@@ -7,13 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.cibridge.cishell.graphql.CIBridgeWebSocket;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.Log;
@@ -26,6 +22,7 @@ import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
 import org.reactivestreams.Publisher;
+import org.springframework.boot.autoconfigure.data.neo4j.Neo4jProperties.Embedded;
 
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import com.google.common.base.Preconditions;
@@ -34,12 +31,14 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.functions.Consumer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.observables.ConnectableObservable;
-import io.reactivex.subjects.PublishSubject;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, GraphQLSubscriptionResolver {
 	private CIShellCIBridge cibridge;
+	private LogListener logListener;
+	private static Observable<Log> updateObservable;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
@@ -49,7 +48,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
 		cibridge.getLogService().log(2, "Get Logs Called");
-		
+
 		System.out.println("Get Logs Func call");
 		Preconditions.checkNotNull(filter, "filter can't be empty");
 
@@ -158,49 +157,55 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	}
 
 	// TODO use log service listener for subscriptions
-	@SuppressWarnings("unchecked")
 	@Override
 	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
 
 		Flowable<Log> publisher;
-		Observable<Log> stockPriceUpdateObservable = Observable.create(emitter -> {
-//			executorService.scheduleAtFixedRate(addLogListener(emitter), 0, 2, TimeUnit.SECONDS);
-			LogReaderService logReaderService = getLogReaderService();
-			logReaderService.addLogListener(new LogListener() {
-				@Override
-				public void logged(LogEntry arg0) {
-					System.out.println("Log Entry: " + arg0.getLevel());
-					Log log = logEntryToLog(arg0);
-					emitter.onNext(log);
-				}
+		if (updateObservable == null) {
+			updateObservable = Observable.create(emitter -> {
+				LogReaderService logReaderService = getLogReaderService();
+				logListener = createLogListener(emitter);
+				logReaderService.addLogListener(logListener);
 			});
+		}
 
-		});
-
-		ConnectableObservable<Log> connectableObservable = stockPriceUpdateObservable.share().publish();
+		ConnectableObservable<Log> connectableObservable = updateObservable.share().publish();
 		connectableObservable.connect();
-
 		publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-
-		cibridge.getLogService().log(1, "Test log");
-		cibridge.getLogService().log(2, "Test log2");
-
-		return publisher.delay(1, TimeUnit.SECONDS);
+		return publisher;
 
 	}
 
-//	public Runnable addLogListener(ObservableEmitter<Log> emitter) {
-//		return () -> {
-//			LogReaderService logReaderService = getLogReaderService();
-//			logReaderService.addLogListener(new LogListener() {
-//				@Override
-//				public void logged(LogEntry arg0) {
-//					System.out.println("Log Entry: " + arg0.getLevel());
-//					emitter.onNext(new Log());
-//				}
-//			});
-//		};
-//	}
+	private LogListener createLogListener(ObservableEmitter<Log> emitter) {
+		return new LogListener() {
+			@Override
+			public void logged(LogEntry arg0) {
+				System.out.println("Log Entry: " + arg0.getLevel());
+				Log log = logEntryToLog(arg0);
+				emitter.onNext(log);
+				emitter.setDisposable(createDisposable());
+			}
+
+		};
+	}
+
+	private Disposable createDisposable() {
+		Disposable disposable = new Disposable() {
+
+			@Override
+			public boolean isDisposed() {
+				return this.isDisposed();
+			}
+
+			@Override
+			public void dispose() {
+				LogReaderService service = getLogReaderService();
+				service.removeLogListener(logListener);
+			}
+		};
+
+		return disposable;
+	}
 
 	private LogReaderService getLogReaderService() {
 		ServiceReference<LogReaderService> ref = this.cibridge.getBundleContext()
@@ -214,5 +219,4 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 			return logReaderService;
 		}
 	}
-
 }

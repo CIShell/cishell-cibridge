@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeLoggingFacade;
 import org.cishell.cibridge.cishell.util.JsonKit;
 import org.cishell.cibridge.cishell.util.QueryParameters;
 import org.eclipse.jetty.websocket.api.Session;
@@ -41,7 +42,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	private static final String GQL_ERROR = "error";
 	private static final String GQL_COMPLETE = "complete";
 
-	private static Publisher<ExecutionResult> resultsStream;
+	private Publisher<ExecutionResult> resultsStream;
 	
 	@Override
 	@OnWebSocketConnect
@@ -155,7 +156,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	
 	
 
-	public static Publisher<ExecutionResult> getResultsStream() {
+	public Publisher<ExecutionResult> getResultsStream() {
 		return resultsStream;
 	}
 
@@ -182,6 +183,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 		resultsStream.subscribe(new Subscriber<ExecutionResult>() {
 
+			
 			@Override
 			public void onSubscribe(Subscription s) {
 				subscriptionRef.set(s);
@@ -221,6 +223,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
 			@Override
 			public void onComplete() {
+				System.out.println("On Complete called");
 				try {
 					String response = generateResponseString(GQL_COMPLETE, null, id);
 					if (response != null) {
