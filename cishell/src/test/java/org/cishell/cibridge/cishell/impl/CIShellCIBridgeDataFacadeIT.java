@@ -400,6 +400,19 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
 
     }
 
+    @Test
+    public void findConverters() {
+
+    }
+
+    @Test
+    public void findConvertersByFormat() {
+        String inputDataFormat = "file:text/A";
+        String outputDataFormat = "file:text/C";
+
+        cishellCIBridgeDataFacade.findConvertersByFormat(inputDataFormat, outputDataFormat);
+    }
+
     @After
     public void tearDown() {
         for (org.cishell.framework.data.Data data : getCIShellCIBridge().getDataManagerService().getAllData()) {

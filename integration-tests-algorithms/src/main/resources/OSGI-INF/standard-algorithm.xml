@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="org.cishell.algorithm.DummyAlgorithm.component" immediate="false">
-    <implementation class="org.cishell.algorithm.DummyAlgorithmFactory"/>
+<component name="org.cishell.tests.algorithm.StandardAlgorithmFactory.component" immediate="false">
+    <implementation class="org.cishell.tests.algorithm.StandardAlgorithmFactory"/>
     <properties entry="OSGI-INF/standard-algorithm.properties"/>
     <reference name="LOG" interface="org.osgi.service.log.LogService"/>
     <service>

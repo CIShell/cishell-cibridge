@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="org.cishell.algorithm.DummyValidatorAlgorithm.component" immediate="false">
-    <implementation class="org.cishell.algorithm.DummyValidatorAlgorithmFactory"/>
+<component name="org.cishell.tests.algorithm.ValidatorAlgorithm.component" immediate="false">
+    <implementation class="org.cishell.tests.algorithm.ValidatorAlgorithmFactory"/>
     <properties entry="OSGI-INF/validator-algorithm.properties"/>
     <reference name="LOG" interface="org.osgi.service.log.LogService"/>
     <service>

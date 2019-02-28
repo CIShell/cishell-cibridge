@@ -1,4 +1,10 @@
-Service-Component:OSGI-INF/standard-algorithm.xml,OSGI-INF/lossy-converter-algorithm.xml,OSGI-INF/lossless-converter-algorithm.xml,OSGI-INF/validator-algorithm.xml
+Service-Component: \
+    OSGI-INF/standard-algorithm.xml,\
+    OSGI-INF/lossy-converter-algorithm.xml,\
+    OSGI-INF/lossless-converter-algorithm.xml,\
+    OSGI-INF/validator-algorithm.xml,\
+    OSGI-INF/A2B-converter-algorithm.xml,\
+    OSGI-INF/B2C-converter-algorithm.xml
 Bundle-SymbolicName:${project.artifactId}
 Bundle-Name: ${project.artifactId}
 Bundle-Version:${project.version}
