@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeLoggingFacade;
 import org.cishell.cibridge.cishell.util.JsonKit;
 import org.cishell.cibridge.cishell.util.QueryParameters;
 import org.eclipse.jetty.websocket.api.Session;

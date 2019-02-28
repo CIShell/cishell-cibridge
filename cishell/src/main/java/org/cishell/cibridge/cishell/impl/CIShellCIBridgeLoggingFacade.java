@@ -22,7 +22,6 @@ import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
 import org.reactivestreams.Publisher;
-import org.springframework.boot.autoconfigure.data.neo4j.Neo4jProperties.Embedded;
 
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import com.google.common.base.Preconditions;
@@ -31,14 +30,12 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.observables.ConnectableObservable;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, GraphQLSubscriptionResolver {
+
 	private CIShellCIBridge cibridge;
 	private LogListener logListener;
-	private static Observable<Log> updateObservable;
+	private static Observable<Log> logAddedObservable;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
@@ -47,9 +44,12 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	@SuppressWarnings("unchecked")
 	@Override
 	public LogQueryResults getLogs(LogFilter filter) {
-		cibridge.getLogService().log(2, "Get Logs Called");
 
-		System.out.println("Get Logs Func call");
+		cibridge.getLogService().log(2, "Get Logs Called");
+		cibridge.getLogService().log(4, "Debug Log");
+		cibridge.getLogService().log(3, "Info Log");
+		cibridge.getLogService().log(1, "Error Log");
+
 		Preconditions.checkNotNull(filter, "filter can't be empty");
 
 		LogQueryResults results = null;
@@ -111,7 +111,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 				Log log = logEntryToLog(logEntry);
 				listOfLogs.add(log);
 			}
-
 			cibridge.getLogService().log(2, "Exiting Logs Called function");
 			return new LogQueryResults(listOfLogs, paginatedQueryResults.getPageInfo());
 
@@ -119,9 +118,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 			System.out.println("LogReader service returned null");
 			e.printStackTrace();
 		}
-
 		return results;
-
 	}
 
 	private Log logEntryToLog(LogEntry logEntry) {
@@ -161,17 +158,18 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
 
 		Flowable<Log> publisher;
-		if (updateObservable == null) {
-			updateObservable = Observable.create(emitter -> {
+		if (logAddedObservable == null) {
+			logAddedObservable = Observable.create(emitter -> {
 				LogReaderService logReaderService = getLogReaderService();
 				logListener = createLogListener(emitter);
 				logReaderService.addLogListener(logListener);
 			});
+			logAddedObservable = logAddedObservable.share();
 		}
-
-		ConnectableObservable<Log> connectableObservable = updateObservable.share().publish();
-		connectableObservable.connect();
-		publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+		publisher = logAddedObservable.toFlowable(BackpressureStrategy.BUFFER);
+		if (logLevels != null) {
+			publisher = publisher.filter(log -> logLevels.contains(log.getLogLevel()));
+		}
 		return publisher;
 
 	}
@@ -180,31 +178,10 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 		return new LogListener() {
 			@Override
 			public void logged(LogEntry arg0) {
-				System.out.println("Log Entry: " + arg0.getLevel());
 				Log log = logEntryToLog(arg0);
 				emitter.onNext(log);
-				emitter.setDisposable(createDisposable());
-			}
-
-		};
-	}
-
-	private Disposable createDisposable() {
-		Disposable disposable = new Disposable() {
-
-			@Override
-			public boolean isDisposed() {
-				return this.isDisposed();
-			}
-
-			@Override
-			public void dispose() {
-				LogReaderService service = getLogReaderService();
-				service.removeLogListener(logListener);
 			}
 		};
-
-		return disposable;
 	}
 
 	private LogReaderService getLogReaderService() {
