@@ -3,66 +3,67 @@ package org.cishell.cibridge.graphql.resolvers;
 import com.coxautodev.graphql.tools.GraphQLSubscriptionResolver;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
+import org.reactivestreams.Publisher;
 
 import java.util.List;
 
 public class Subscription implements GraphQLSubscriptionResolver {
-    private CIBridge cibridge;
+	private CIBridge cibridge;
 
-    public Subscription(CIBridge cibridge) {
-        this.cibridge = cibridge;
-        System.out.println("Subscription initialized");
-    }
+	public Subscription(CIBridge cibridge) {
+		this.cibridge = cibridge;
+		System.out.println("Subscription initialized");
+	}
 
-    public void setCIBridge(CIBridge cibridge) {
-        this.cibridge = cibridge;
-    }
+	public void setCIBridge(CIBridge cibridge) {
+		this.cibridge = cibridge;
+	}
 
-    public CIBridge getCIBridge() {
-        return this.cibridge;
-    }
+	public CIBridge getCIBridge() {
+		return this.cibridge;
+	}
 
-    public AlgorithmDefinition algorithmDefinitionAdded() {
-        return null;
-    }
+	public Publisher<AlgorithmDefinition> algorithmDefinitionAdded() {
+		return this.cibridge.algorithm.algorithmDefinitionAdded();
+	}
 
-    public AlgorithmDefinition algorithmDefinitionRemoved() {
-        return null;
-    }
+	public Publisher<AlgorithmDefinition> algorithmDefinitionRemoved() {
+		return this.cibridge.algorithm.algorithmDefinitionRemoved();
+	}
 
-    public AlgorithmInstance algorithmInstanceUpdated(AlgorithmFilter filter) {
-        return null;
-    }
+	public Publisher<AlgorithmInstance> algorithmInstanceUpdated(AlgorithmFilter filter) {
+		return this.cibridge.algorithm.algorithmInstanceUpdated(filter);
+	}
 
-    public Notification notificationAdded() {
-        return null;
-    }
+	public Publisher<Notification> notificationAdded() {
+		return this.cibridge.notification.notificationAdded();
+	}
 
-    public Notification notificationUpdated() {
-        return null;
-    }
+	public Publisher<Notification> notificationUpdated() {
+		return this.cibridge.notification.notificationUpdated();
+	}
 
-    public Data dataAdded() {
-        return null;
-    }
+	public Publisher<Data> dataAdded() {
+		return this.cibridge.data.dataAdded();
+	}
 
-    public Data dataRemoved() {
-        return null;
-    }
+	public Publisher<Data> dataRemoved() {
+		return this.cibridge.data.dataRemoved();
+	}
 
-    public Data dataUpdated() {
-        return null;
-    }
+	public Publisher<Data> dataUpdated() {
+		return this.cibridge.data.dataUpdated();
+	}
 
-    public Boolean schedulerCleared() {
-        return Boolean.TRUE;
-    }
+	public Publisher<Boolean> schedulerCleared() {
+		return this.cibridge.scheduler.schedulerCleared();
+	}
 
-    public Boolean schedulerRunningChanged() {
-        return Boolean.TRUE;
-    }
+	public Publisher<Boolean> schedulerRunningChanged() {
+		return this.cibridge.scheduler.schedulerRunningChanged();
+	}
 
-    public Log logAdded(List<LogLevel> logLevels) {
-        return null;
-    }
+	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
+		return this.cibridge.logging.logAdded(logLevels);
+	}
 }

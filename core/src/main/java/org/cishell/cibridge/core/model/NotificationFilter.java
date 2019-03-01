@@ -9,7 +9,6 @@ public class NotificationFilter {
     private int offset;
 
     public NotificationFilter(List<String> ids, Boolean isClosed, int limit, int offset) {
-        // TODO Auto-generated constructor stub
         this.ids = ids;
         this.isClosed = isClosed;
         this.limit = limit;

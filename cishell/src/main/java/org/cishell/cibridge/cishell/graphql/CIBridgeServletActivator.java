@@ -1,164 +1,193 @@
 package org.cishell.cibridge.cishell.graphql;
 
-import graphql.servlet.GraphQLServletListener;
-import graphql.servlet.SimpleGraphQLHttpServlet;
-import org.cishell.app.service.datamanager.DataManagerService;
-import org.cishell.app.service.scheduler.SchedulerService;
-import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.service.conversion.DataConversionService;
-import org.osgi.framework.*;
-import org.osgi.service.log.LogService;
-import org.osgi.service.metatype.MetaTypeService;
-import org.osgi.util.tracker.ServiceTracker;
-import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import static org.osgi.framework.Constants.OBJECTCLASS;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
-import java.util.stream.Collectors;
 
-import static org.osgi.framework.Constants.OBJECTCLASS;
+import org.cishell.app.service.datamanager.DataManagerService;
+import org.cishell.app.service.scheduler.SchedulerService;
+import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.service.conversion.DataConversionService;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.http.HttpService;
+import org.osgi.service.log.LogService;
+import org.osgi.service.metatype.MetaTypeService;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
+
+import graphql.servlet.GraphQLServletListener;
+import graphql.servlet.SimpleGraphQLHttpServlet;
 
 public class CIBridgeServletActivator implements BundleActivator {
-    private BundleContext bundleContext;
-    private ServiceTracker ciShellServicesTracker;
-    private CIShellCIBridge ciBridge;
-    private ServiceRegistration graphiqlServletRegistration;
-    private ServiceRegistration graphQLServletRegistration;
+	private BundleContext bundleContext;
+	private ServiceTracker<Object, Object> ciShellServicesTracker;
+	private CIShellCIBridge ciBridge;
+	private ServiceRegistration graphiqlServletRegistration;
+	private ServiceRegistration graphQLServletRegistration;
 
-    private static final Set<String> CISHELL_SERVICES = new HashSet<>(Arrays.asList(
-            DataManagerService.class.getName(),
-            SchedulerService.class.getName(),
-            DataConversionService.class.getName(),
-            LogService.class.getName(),
-            MetaTypeService.class.getName()
-    )
-    );
+	private static final Set<String> CISHELL_SERVICES = new HashSet<>(Arrays.asList(DataManagerService.class.getName(),
+			SchedulerService.class.getName(), DataConversionService.class.getName(), LogService.class.getName(),
+			MetaTypeService.class.getName(), HttpService.class.getName()));
 
-    @Override
-    public void start(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
+	@Override
+	public void start(BundleContext bundleContext) {
+		this.bundleContext = bundleContext;
 
-        //create filter criteria for the services the tracker will track
-        StringBuilder filterString = new StringBuilder("(|");
-        for (String svcName : CISHELL_SERVICES) {
-            filterString.append("(" + OBJECTCLASS + "=").append(svcName).append(")");
-        }
-        filterString.append(")");
+		// create filter criteria for the services the tracker will track
+		StringBuilder filterString = new StringBuilder("(|");
+		for (String svcName : CISHELL_SERVICES) {
+			filterString.append("(" + OBJECTCLASS + "=").append(svcName).append(")");
+		}
+		filterString.append(")");
 
-        Filter filter;
-        try {
-            //create filter with the filter string
-            filter = bundleContext.createFilter(filterString.toString());
+		Filter filter;
+		try {
+			// create filter with the filter string
+			filter = bundleContext.createFilter(filterString.toString());
 
-            //create the service tracker for the cishell service and mark it open
-            ciShellServicesTracker = new ServiceTracker<>(bundleContext, filter, new CIShellServicesTrackerCustomizer<>());
-            ciShellServicesTracker.open();
-        } catch (InvalidSyntaxException ignored) {
-        }
-    }
+			// create the service tracker for the cishell service and mark it open
+			ciShellServicesTracker = new ServiceTracker<>(bundleContext, filter,
+					new CIShellServicesTrackerCustomizer<>());
+			ciShellServicesTracker.open();
+		} catch (InvalidSyntaxException ignored) {
+		}
+	}
 
-    @Override
-    public void stop(BundleContext bundleContext) {
-        //close the tracker opened in the start method
-        if (ciShellServicesTracker != null) {
-            ciShellServicesTracker.close();
-        }
-        stopCIBridge();
-    }
+	@Override
+	public void stop(BundleContext bundleContext) {
+		// close the tracker opened in the start method
+		if (ciShellServicesTracker != null) {
+			ciShellServicesTracker.close();
+		}
+		stopCIBridge();
+	}
 
-    private void stopCIBridge() {
-        //unregister all the services registered by this bundle
-        graphiqlServletRegistration.unregister();
-        graphQLServletRegistration.unregister();
-    }
+	private void stopCIBridge() {
+		// unregister all the services registered by this bundle
+		graphiqlServletRegistration.unregister();
+		graphQLServletRegistration.unregister();
+	}
 
-    private void startCIBridge() {
-        Hashtable<String, String> graphiqlServletProperties = new Hashtable<>();
-        graphiqlServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphiql");
-        graphiqlServletProperties.put("alias", "/graphiql");
-        graphiqlServletProperties.put("osgi.http.whiteboard.servlet.name", "graphiql");
-        graphiqlServletRegistration = bundleContext.registerService(new String[]{HttpServlet.class.getName(), Servlet.class.getName()}, new GraphiqlServlet(), graphiqlServletProperties);
+	private void startCIBridge() {
 
-        Hashtable<String, String> graphQLServletProperties = new Hashtable<>();
-        graphQLServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphql");
-        graphQLServletProperties.put("alias", "/graphql");
-        graphQLServletProperties.put("osgi.http.whiteboard.servlet.name", "cibridge");
+		Hashtable<String, String> graphiqlServletProperties = new Hashtable<>();
+		graphiqlServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphiql");
+		graphiqlServletProperties.put("alias", "/graphiql");
+		graphiqlServletProperties.put("osgi.http.whiteboard.servlet.name", "graphiql");
+		graphiqlServletRegistration = bundleContext.registerService(
+				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, new GraphiqlServlet(),
+				graphiqlServletProperties);
 
-        this.ciBridge = new CIShellCIBridge(bundleContext);
-        CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(ciBridge);
-        SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider).build();
-        graphQLServletRegistration = bundleContext.registerService(new String[]{HttpServlet.class.getName(), Servlet.class.getName()}, graphQLServlet, graphQLServletProperties);
+		Hashtable<String, String> graphQLServletProperties = new Hashtable<>();
+		graphQLServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphql");
+		graphQLServletProperties.put("alias", "/graphql");
+		graphQLServletProperties.put("osgi.http.whiteboard.servlet.name", "cibridge");
 
-        graphQLServlet.addListener(new GraphQLServletListener() {
-            @Override
-            public GraphQLServletListener.RequestCallback onRequest(HttpServletRequest request, HttpServletResponse response) {
+		Hashtable<String, Object> subscriptionServletProperties = new Hashtable<>();
+		subscriptionServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/subscriptions");
+		subscriptionServletProperties.put("alias", "/subscriptions");
+		subscriptionServletProperties.put("osgi.http.whiteboard.servlet.name", "cibridgeSubscriptions");
+		subscriptionServletProperties.put("websocket.active", Boolean.TRUE);
 
-                return new GraphQLServletListener.RequestCallback() {
-                    @Override
-                    public void onSuccess(HttpServletRequest request, HttpServletResponse response) {
-                    }
+		this.ciBridge = new CIShellCIBridge(bundleContext);
+		CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(ciBridge);
+		SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider)
+				.build();
 
-                    @Override
-                    public void onError(HttpServletRequest request, HttpServletResponse response, Throwable throwable) {
-                        System.out.println("error");
-                        throwable.printStackTrace();
-                    }
+		graphQLServletRegistration = bundleContext.registerService(
+				new String[] { HttpServlet.class.getName(), Servlet.class.getName() }, graphQLServlet,
+				graphQLServletProperties);
 
-                    @Override
-                    public void onFinally(HttpServletRequest request, HttpServletResponse response) {
-                    }
-                };
-            }
-        });
-    }
+		HttpService httpservice = (HttpService) this.getService(HttpService.class);
+		CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider, bundleContext, httpservice);
+		System.out.println("Starting subscriptions");
+		subscriptionServlet.start();
 
+		graphQLServlet.addListener(new GraphQLServletListener() {
+			@Override
+			public GraphQLServletListener.RequestCallback onRequest(HttpServletRequest request,
+					HttpServletResponse response) {
 
-    private class CIShellServicesTrackerCustomizer<S, T> implements ServiceTrackerCustomizer<S, T> {
+				return new GraphQLServletListener.RequestCallback() {
+					@Override
+					public void onSuccess(HttpServletRequest request, HttpServletResponse response) {
+					}
 
-        private Set<String> unavailableServices = new HashSet<>(CISHELL_SERVICES);
+					@Override
+					public void onError(HttpServletRequest request, HttpServletResponse response, Throwable throwable) {
+						System.out.println("error");
+						throwable.printStackTrace();
+					}
 
-        @Override
-        public synchronized T addingService(ServiceReference<S> serviceReference) {
-            List<String> addedCIShellServices = Arrays.stream((String[]) serviceReference.getProperty(OBJECTCLASS))
-                    .filter(CISHELL_SERVICES::contains)
-                    .collect(Collectors.toList());
+					@Override
+					public void onFinally(HttpServletRequest request, HttpServletResponse response) {
+					}
+				};
+			}
+		});
+	}
 
-            unavailableServices.removeIf(addedCIShellServices::contains);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public Object getService(Class<HttpService> c) {
+		ServiceReference ref = bundleContext.getServiceReference(c.getName());
+		return ref != null ? bundleContext.getService(ref) : null;
+	}
 
-            if (ciBridge == null && unavailableServices.size() == 0) {
-                startCIBridge();
-            }
+	private class CIShellServicesTrackerCustomizer<S, T> implements ServiceTrackerCustomizer<S, T> {
 
-            return null;
-        }
+		private Set<String> unavailableServices = new HashSet<>(CISHELL_SERVICES);
 
-        @Override
-        public void modifiedService(ServiceReference<S> serviceReference, T t) {
-        }
+		@Override
+		public synchronized T addingService(ServiceReference<S> serviceReference) {
+			List<String> addedCIShellServices = Arrays.stream((String[]) serviceReference.getProperty(OBJECTCLASS))
+					.filter(CISHELL_SERVICES::contains).collect(Collectors.toList());
 
-        @Override
-        public void removedService(ServiceReference<S> serviceReference, T t) {
+			unavailableServices.removeIf(addedCIShellServices::contains);
 
-            System.out.println("Removed : " + serviceReference);
-            List<String> removedCIShellServices = Arrays.stream((String[]) serviceReference.getProperty(OBJECTCLASS))
-                    .filter(CISHELL_SERVICES::contains)
-                    .collect(Collectors.toList());
+			if (ciBridge == null && unavailableServices.size() == 0) {
+				startCIBridge();
+			}
 
+			return null;
+		}
 
-            System.out.println("Removed CIShell services: " + removedCIShellServices);
+		@Override
+		public void modifiedService(ServiceReference<S> serviceReference, T t) {
+		}
 
-            for (String service : removedCIShellServices) {
-                if (bundleContext.getServiceReference(service) == null) {
-                    unavailableServices.add(service);
-                }
-            }
+		@Override
+		public void removedService(ServiceReference<S> serviceReference, T t) {
 
-            if (unavailableServices.size() > 0) {
-                stopCIBridge();
-            }
-        }
-    }
+			System.out.println("Removed : " + serviceReference);
+			List<String> removedCIShellServices = Arrays.stream((String[]) serviceReference.getProperty(OBJECTCLASS))
+					.filter(CISHELL_SERVICES::contains).collect(Collectors.toList());
+
+			System.out.println("Removed CIShell services: " + removedCIShellServices);
+
+			for (String service : removedCIShellServices) {
+				if (bundleContext.getServiceReference(service) == null) {
+					unavailableServices.add(service);
+				}
+			}
+
+			if (unavailableServices.size() > 0) {
+				stopCIBridge();
+			}
+		}
+	}
 }

@@ -5,7 +5,7 @@ import org.cishell.cibridge.core.model.QueryResults;
 
 import java.util.List;
 
-//todo rename this class to something more useful
+//TODO rename this class to something more useful
 public class QueryResultsImpl<T> implements QueryResults<T> {
     private List<T> results;
     private PageInfo pageInfo;

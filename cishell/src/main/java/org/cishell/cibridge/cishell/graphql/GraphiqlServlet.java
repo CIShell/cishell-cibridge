@@ -1,10 +1,15 @@
 package org.cishell.cibridge.cishell.graphql;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.Reader;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
 
 
 public class GraphiqlServlet extends HttpServlet {
@@ -16,7 +21,7 @@ public class GraphiqlServlet extends HttpServlet {
         out.close();
     }
 
-    private static final String graphiqlHTML = GraphiqlServlet.entryToString("/graphiql.html");
+    private static final String graphiqlHTML = GraphiqlServlet.entryToString("/playground.html");
 
     private static String entryToString(String entryPath) {
         try {
