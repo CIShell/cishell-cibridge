@@ -30,7 +30,6 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.functions.Action;
 import io.reactivex.observables.ConnectableObservable;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, GraphQLSubscriptionResolver {
