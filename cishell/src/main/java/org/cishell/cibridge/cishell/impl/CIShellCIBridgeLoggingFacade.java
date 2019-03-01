@@ -30,12 +30,14 @@ import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
+import io.reactivex.functions.Action;
+import io.reactivex.observables.ConnectableObservable;
 
 public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, GraphQLSubscriptionResolver {
 
 	private CIShellCIBridge cibridge;
 	private LogListener logListener;
-	private static Observable<Log> logAddedObservable;
+	private ConnectableObservable<Log> logAddedObservable;
 
 	public void setCIBridge(CIShellCIBridge cibridge) {
 		this.cibridge = cibridge;
@@ -153,25 +155,23 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 		return log;
 	}
 
-	// TODO use log service listener for subscriptions
 	@Override
 	public Publisher<Log> logAdded(List<LogLevel> logLevels) {
-
 		Flowable<Log> publisher;
 		if (logAddedObservable == null) {
-			logAddedObservable = Observable.create(emitter -> {
+			Observable<Log> observable = Observable.create(emitter -> {
 				LogReaderService logReaderService = getLogReaderService();
 				logListener = createLogListener(emitter);
 				logReaderService.addLogListener(logListener);
 			});
-			logAddedObservable = logAddedObservable.share();
+			logAddedObservable = observable.share().publish();
+			logAddedObservable.connect();
 		}
 		publisher = logAddedObservable.toFlowable(BackpressureStrategy.BUFFER);
 		if (logLevels != null) {
 			publisher = publisher.filter(log -> logLevels.contains(log.getLogLevel()));
 		}
 		return publisher;
-
 	}
 
 	private LogListener createLogListener(ObservableEmitter<Log> emitter) {
@@ -196,4 +196,5 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 			return logReaderService;
 		}
 	}
+
 }

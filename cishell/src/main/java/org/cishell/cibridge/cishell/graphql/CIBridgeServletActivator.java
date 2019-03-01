@@ -114,7 +114,7 @@ public class CIBridgeServletActivator implements BundleActivator {
 				graphQLServletProperties);
 
 		HttpService httpservice = (HttpService) this.getService(HttpService.class);
-		CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridge, bundleContext, httpservice);
+		CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider, bundleContext, httpservice);
 		System.out.println("Starting subscriptions");
 		subscriptionServlet.start();
 

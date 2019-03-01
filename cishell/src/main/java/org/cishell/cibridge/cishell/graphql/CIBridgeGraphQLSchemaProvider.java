@@ -20,6 +20,7 @@ import graphql.servlet.GraphQLErrorHandler;
 import graphql.servlet.GraphQLSchemaProvider;
 
 public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, GraphQLErrorHandler {
+	
     private CIBridge cibridge;
     private final GraphQLSchema schema;
     private final GraphQLSchema readOnlySchema;

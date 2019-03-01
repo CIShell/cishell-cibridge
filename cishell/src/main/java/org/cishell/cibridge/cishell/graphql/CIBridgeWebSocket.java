@@ -1,7 +1,6 @@
 package org.cishell.cibridge.cishell.graphql;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,11 +16,6 @@ import org.reactivestreams.Subscription;
 
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
-import graphql.GraphQL;
-import graphql.execution.SubscriptionExecutionStrategy;
-import graphql.execution.instrumentation.ChainedInstrumentation;
-import graphql.execution.instrumentation.Instrumentation;
-import graphql.execution.instrumentation.tracing.TracingInstrumentation;
 
 public class CIBridgeWebSocket extends WebSocketAdapter {
 
@@ -42,7 +36,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 	private static final String GQL_COMPLETE = "complete";
 
 	private Publisher<ExecutionResult> resultsStream;
-	
+
 	@Override
 	@OnWebSocketConnect
 	public void onWebSocketConnect(Session session) {
@@ -152,8 +146,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		}
 
 	}
-	
-	
 
 	public Publisher<ExecutionResult> getResultsStream() {
 		return resultsStream;
@@ -166,23 +158,12 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		ExecutionInput executionInput = ExecutionInput.newExecutionInput().query(parameters.getQuery())
 				.variables(parameters.getVariables()).operationName(parameters.getOperationName()).build();
 
-		Instrumentation instrumentation = new ChainedInstrumentation(
-				Collections.singletonList(new TracingInstrumentation()));
-
-		CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(
-				CIBridgeSubscriptionServlet.getCiBridge());
-
-		GraphQL graphQL = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema())
-				.subscriptionExecutionStrategy(new SubscriptionExecutionStrategy()).instrumentation(instrumentation)
-				.build();
-
-		ExecutionResult executionResult = graphQL.execute(executionInput);
+		ExecutionResult executionResult = CIBridgeSubscriptionServlet.graphql.execute(executionInput);
 
 		resultsStream = executionResult.getData();
 
 		resultsStream.subscribe(new Subscriber<ExecutionResult>() {
 
-			
 			@Override
 			public void onSubscribe(Subscription s) {
 				subscriptionRef.set(s);
