@@ -98,12 +98,6 @@ public class CIBridgeServletActivator implements BundleActivator {
 		graphQLServletProperties.put("alias", "/graphql");
 		graphQLServletProperties.put("osgi.http.whiteboard.servlet.name", "cibridge");
 
-		Hashtable<String, Object> subscriptionServletProperties = new Hashtable<>();
-		subscriptionServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/subscriptions");
-		subscriptionServletProperties.put("alias", "/subscriptions");
-		subscriptionServletProperties.put("osgi.http.whiteboard.servlet.name", "cibridgeSubscriptions");
-		subscriptionServletProperties.put("websocket.active", Boolean.TRUE);
-
 		this.ciBridge = new CIShellCIBridge(bundleContext);
 		CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(ciBridge);
 		SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider)
@@ -114,7 +108,9 @@ public class CIBridgeServletActivator implements BundleActivator {
 				graphQLServletProperties);
 
 		HttpService httpservice = (HttpService) this.getService(HttpService.class);
-		CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider, bundleContext, httpservice);
+		
+		CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider,
+				bundleContext, httpservice);
 		System.out.println("Starting subscriptions");
 		subscriptionServlet.start();
 
@@ -172,7 +168,6 @@ public class CIBridgeServletActivator implements BundleActivator {
 
 		@Override
 		public void removedService(ServiceReference<S> serviceReference, T t) {
-
 			System.out.println("Removed : " + serviceReference);
 			List<String> removedCIShellServices = Arrays.stream((String[]) serviceReference.getProperty(OBJECTCLASS))
 					.filter(CISHELL_SERVICES::contains).collect(Collectors.toList());

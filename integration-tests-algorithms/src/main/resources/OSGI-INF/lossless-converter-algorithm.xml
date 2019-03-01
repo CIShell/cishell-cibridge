@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="org.cishell.algorithm.DummyLosslessConverterAlgorithm.component" immediate="false">
-    <implementation class="org.cishell.algorithm.DummyLosslessConverterAlgorithmFactory"/>
+<component name="org.cishell.tests.algorithm.LosslessConverterAlgorithm.component" immediate="false">
+    <implementation class="org.cishell.tests.algorithm.LosslessConverterAlgorithmFactory"/>
     <properties entry="OSGI-INF/lossless-converter-algorithm.properties"/>
     <reference name="LOG" interface="org.osgi.service.log.LogService"/>
     <service>

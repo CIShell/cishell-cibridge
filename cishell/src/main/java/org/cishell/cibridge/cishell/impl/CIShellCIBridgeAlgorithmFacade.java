@@ -26,7 +26,6 @@ import static org.osgi.framework.Constants.OBJECTCLASS;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
 	private CIShellCIBridge cibridge;
-	// TODO convert this into a lists since we are not using keys directly
 	private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceMap = new LinkedHashMap<>();
 	private final Map<Algorithm, CIShellCIBridgeAlgorithmInstance> cishellAlgorithmCIBridgeAlgorithmMap = new HashMap<>();
 	private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionMap = new LinkedHashMap<>();
@@ -69,7 +68,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 		}
 
 		// predicate on input data ids
-		// TODO need to clarify about how to filter based on input data ids
+		// todo need to clarify about how to filter based on input data ids
 		if (filter.getInputDataIds() != null) {
 			Set<String> supportedFormats = new HashSet<>();
 			for (String inputDataId : filter.getInputDataIds()) {
@@ -92,7 +91,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 			});
 		}
 
-		// TODO how to filter algorithm that have no input or output data format
+		// todo how to filter algorithm that have no input or output data format
 		// predicate on output data format
 		if (filter.getOutputFormats() != null) {
 			criteria.add(algorithmDefinition -> {

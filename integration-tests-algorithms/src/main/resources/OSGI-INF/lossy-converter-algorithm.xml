@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<component name="org.cishell.algorithm.DummyLossyConverterAlgorithm.component" immediate="false">
-    <implementation class="org.cishell.algorithm.DummyLossyConverterAlgorithmFactory"/>
+<component name="org.cishell.tests.algorithm.LossyConverterAlgorithm.component" immediate="false">
+    <implementation class="org.cishell.tests.algorithm.LossyConverterAlgorithmFactory"/>
     <properties entry="OSGI-INF/lossy-converter-algorithm.properties"/>
     <reference name="LOG" interface="org.osgi.service.log.LogService"/>
     <service>

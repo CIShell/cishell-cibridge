@@ -9,7 +9,9 @@ import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
+
 import org.reactivestreams.Publisher;
+import org.cishell.service.conversion.Converter;
 
 import java.io.File;
 import java.util.*;
@@ -20,9 +22,10 @@ import java.util.stream.Collectors;
 import static org.cishell.framework.data.DataProperty.*;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
+
 	private CIShellCIBridge cibridge;
 	private DataManagerListenerImpl dataManagerListener = new DataManagerListenerImpl();
-	private final Map<String, CIShellCIBridgeData> ciBridgeDataMap = new LinkedHashMap<>();
+	private final Map<String, CIShellCIBridgeData> cibridgeDataMap = new LinkedHashMap<>();
 	private final Map<org.cishell.framework.data.Data, CIShellCIBridgeData> cishellDataCIBridgeDataMap = new HashMap<>();
 
 	public void setCIBridge(CIShellCIBridge ciBridge) {
@@ -38,11 +41,26 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 	@Override
 	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
+		Preconditions.checkNotNull(dataId, "dataId cannot be null");
+		Preconditions.checkNotNull(outFormat, "output format cannot be null");
+		Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "data with given dataId was not found");
+
+		CIShellCIBridgeData cibridgeData = cibridgeDataMap.get(dataId);
+		Converter[] converters = cibridge.getDataConversionService().findConverters(cibridgeData.getCIShellData(),
+				outFormat);
+
+		// todo isn't the returned list should of algorithm definitions?
+
 		return null;
 	}
 
 	@Override
 	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
+		Preconditions.checkNotNull(inFormat, "input format cannot be null");
+		Preconditions.checkNotNull(outFormat, "output format cannot be null");
+
+		Converter[] converters = cibridge.getDataConversionService().findConverters(inFormat, outFormat);
+
 		return null;
 	}
 
@@ -116,7 +134,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		}
 
 		QueryResults<Data> paginatedQueryResults = PaginationUtil.getPaginatedResults(
-				new ArrayList<>(ciBridgeDataMap.values()), criteria, filter.getOffset(), filter.getLimit());
+				new ArrayList<>(cibridgeDataMap.values()), criteria, filter.getOffset(), filter.getLimit());
 
 		return new DataQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
 	}
@@ -124,13 +142,13 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	@Override
 	public String downloadData(String dataId) {
 		Preconditions.checkNotNull(dataId, "dataId cannot be null");
-		Preconditions.checkArgument(ciBridgeDataMap.containsKey(dataId),
+		Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId),
 				"Invalid dataId. No data object found with dataId '%s'", dataId);
-		return ciBridgeDataMap.get(dataId).getCIShellData().getData().toString();
+		return cibridgeDataMap.get(dataId).getCIShellData().getData().toString();
 	}
 
 	/* Mutations */
-	// TODO should the API user pass the data format or should we auto-detect it?
+	// todo should the API user pass the data format or should we auto-detect it?
 	// that has bugged me for so long
 	@Override
 	public Data uploadData(String filePath, DataProperties properties) {
@@ -167,14 +185,11 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	@Override
 	public Boolean removeData(String dataId) {
 		Preconditions.checkNotNull(dataId, "dataId cannot be null");
-		if (!ciBridgeDataMap.containsKey(dataId)) {
-			// TODO convert below statement into a log entry
-			// System.out.println("Invalid dataId. No data present with dataId '" + dataId +
-			// "'");
+		if (!cibridgeDataMap.containsKey(dataId)) {
 			return false;
 		}
 
-		cibridge.getDataManagerService().removeData(ciBridgeDataMap.get(dataId).getCIShellData());
+		cibridge.getDataManagerService().removeData(cibridgeDataMap.get(dataId).getCIShellData());
 		return true;
 	}
 
@@ -182,10 +197,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	public Boolean updateData(String dataId, DataProperties properties) {
 		Preconditions.checkNotNull(dataId, "dataId cannot be null");
 		Preconditions.checkNotNull(properties, "dataProperties cannot be null");
-		Preconditions.checkArgument(ciBridgeDataMap.containsKey(dataId),
+		Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId),
 				"Invalid dataId. No data object found with dataId '%s'", dataId);
 
-		CIShellCIBridgeData cishellCIBridgedata = ciBridgeDataMap.get(dataId);
+		CIShellCIBridgeData cishellCIBridgedata = cibridgeDataMap.get(dataId);
 
 		// update CIShellCIBridgeData properties
 		updateCIShellCIBridgeDataProperties(cishellCIBridgedata, properties);
@@ -242,7 +257,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
 		if (properties.getParent() != null) {
 			String parentDataId = properties.getParent();
-			data.getMetadata().put(PARENT, ciBridgeDataMap.get(parentDataId).getCIShellData());
+			data.getMetadata().put(PARENT, cibridgeDataMap.get(parentDataId).getCIShellData());
 		}
 
 		if (properties.getOtherProperties() != null) {
@@ -279,7 +294,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	}
 
 	Map<String, CIShellCIBridgeData> getCIBridgeDataMap() {
-		return ciBridgeDataMap;
+		return cibridgeDataMap;
 	}
 
 	Map<org.cishell.framework.data.Data, CIShellCIBridgeData> getCIShellDataCIBridgeDataMap() {
