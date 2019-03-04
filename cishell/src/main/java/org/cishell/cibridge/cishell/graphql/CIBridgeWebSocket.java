@@ -53,11 +53,14 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 		if (subscription != null) {
 			subscription.cancel();
 		}
+		
+		
 	}
 
 	@Override
 	public void onWebSocketError(Throwable cause) {
 		System.out.println("Web Socket Error");
+		System.out.println(cause.getCause());
 		String response = generateResponseString(GQL_ERROR, cause, null);
 		if (response != null) {
 			try {

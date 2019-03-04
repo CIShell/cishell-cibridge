@@ -2,7 +2,9 @@ package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.observables.ConnectableObservable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
@@ -18,6 +20,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 
 import static org.cishell.framework.data.DataProperty.*;
 
@@ -40,7 +43,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	}
 
 	@Override
-	public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
+	public List<AlgorithmDefinition> findConverters(String dataId, String outFormat) {
 		Preconditions.checkNotNull(dataId, "dataId cannot be null");
 		Preconditions.checkNotNull(outFormat, "output format cannot be null");
 		Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "data with given dataId was not found");
@@ -49,13 +52,13 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		Converter[] converters = cibridge.getDataConversionService().findConverters(cibridgeData.getCIShellData(),
 				outFormat);
 
-		// todo isn't the returned list should of algorithm definitions?
+		// TODO isn't the returned list should of algorithm definitions?
 
 		return null;
 	}
 
 	@Override
-	public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
+	public List<AlgorithmDefinition> findConvertersByFormat(String inFormat, String outFormat) {
 		Preconditions.checkNotNull(inFormat, "input format cannot be null");
 		Preconditions.checkNotNull(outFormat, "output format cannot be null");
 
@@ -269,10 +272,11 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	// TODO Update the Mock implementation with actual listener
 	@Override
 	public Publisher<Data> dataAdded() {
-		Data data = new Data("I am an ID");
-		List<Data> results = new ArrayList<>();
-		results.add(data);
-		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+		ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataAddedObservable();
+		Flowable<Data> publisher;
+		publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+		
+		return publisher;
 	}
 
 	// TODO Update the Mock implementation with actual listener

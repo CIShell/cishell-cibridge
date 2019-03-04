@@ -68,7 +68,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 		}
 
 		// predicate on input data ids
-		// todo need to clarify about how to filter based on input data ids
+		// TODO need to clarify about how to filter based on input data ids
 		if (filter.getInputDataIds() != null) {
 			Set<String> supportedFormats = new HashSet<>();
 			for (String inputDataId : filter.getInputDataIds()) {
@@ -91,7 +91,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 			});
 		}
 
-		// todo how to filter algorithm that have no input or output data format
+		// TODO how to filter algorithm that have no input or output data format
 		// predicate on output data format
 		if (filter.getOutputFormats() != null) {
 			criteria.add(algorithmDefinition -> {
@@ -221,6 +221,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 	// TODO Update the implementation of subscription with listener
 	@Override
 	public Publisher<AlgorithmDefinition> algorithmDefinitionAdded() {
+		
+		System.out.println("Algo added");
 		List<AlgorithmDefinition> results = new ArrayList<AlgorithmDefinition>();
 		AlgorithmDefinition algorithmDefinition = new AlgorithmDefinition("123");
 		algorithmDefinition.setAuthors("Aravind");
@@ -232,6 +234,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 		AlgorithmDefinitionQueryResults queryResults = getAlgorithmDefinitions(filter);
 		results.addAll(queryResults.getResults());
 		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+	
 	}
 
 	// TODO Update the implementation of subscription with listener
