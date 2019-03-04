@@ -4,6 +4,8 @@ import com.google.common.base.Preconditions;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 
 import org.apache.commons.io.FilenameUtils;
@@ -21,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-
 import static org.cishell.framework.data.DataProperty.*;
 
 public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
@@ -30,11 +31,22 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	private DataManagerListenerImpl dataManagerListener = new DataManagerListenerImpl();
 	private final Map<String, CIShellCIBridgeData> cibridgeDataMap = new LinkedHashMap<>();
 	private final Map<org.cishell.framework.data.Data, CIShellCIBridgeData> cishellDataCIBridgeDataMap = new HashMap<>();
+	private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataUpdatedObservable;
+	private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataUpdatedObservableEmitter;
 
 	public void setCIBridge(CIShellCIBridge ciBridge) {
 		Preconditions.checkNotNull(ciBridge, "CIBridge cannot be null");
 		this.cibridge = ciBridge;
 		this.dataManagerListener.setCIBridge(ciBridge);
+	}
+
+	public CIShellCIBridgeDataFacade() {
+		Observable<org.cishell.cibridge.core.model.Data> dataupdatedobservable = Observable.create(emitter -> {
+			dataUpdatedObservableEmitter = emitter;
+
+		});
+		dataUpdatedObservable = dataupdatedobservable.share().publish();
+		dataUpdatedObservable.connect();
 	}
 
 	@Override
@@ -211,6 +223,9 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 		// also update properties of CIShellData object wrapped inside
 		// CIShellCIBridgeData object
 		updateCIShellDataProperties(cishellCIBridgedata.getCIShellData(), properties);
+
+		dataUpdatedObservableEmitter.onNext(cishellCIBridgedata);
+
 		return true;
 	}
 
@@ -272,29 +287,27 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 	// TODO Update the Mock implementation with actual listener
 	@Override
 	public Publisher<Data> dataAdded() {
-		ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataAddedObservable();
 		Flowable<Data> publisher;
+		ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataAddedObservable();
 		publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-		
 		return publisher;
 	}
 
 	// TODO Update the Mock implementation with actual listener
 	@Override
 	public Publisher<Data> dataRemoved() {
-		Data data = new Data("I am an ID");
-		List<Data> results = new ArrayList<>();
-		results.add(data);
-		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+		Flowable<Data> publisher;
+		ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataRemovedObservable();
+		publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+		return publisher;
 	}
 
 	// TODO Update the Mock implementation with actual listener
 	@Override
 	public Publisher<Data> dataUpdated() {
-		Data data = new Data("I am an ID");
-		List<Data> results = new ArrayList<>();
-		results.add(data);
-		return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+		Flowable<Data> publisher;
+		publisher = dataUpdatedObservable.toFlowable(BackpressureStrategy.BUFFER);
+		return publisher;
 	}
 
 	Map<String, CIShellCIBridgeData> getCIBridgeDataMap() {

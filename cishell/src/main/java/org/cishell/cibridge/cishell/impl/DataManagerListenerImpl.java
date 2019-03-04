@@ -22,15 +22,24 @@ public class DataManagerListenerImpl implements DataManagerListener {
 	private CIShellCIBridge cibridge;
 	private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataAddedObservable;
 	private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataAddedObservableEmitter;
+	private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataRemovedObservable;
+	private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataRemovedObservableEmitter;
 
+	
 	public DataManagerListenerImpl() {
-		Observable<org.cishell.cibridge.core.model.Data> observable = Observable.create(emitter -> {
+		Observable<org.cishell.cibridge.core.model.Data> dataaddedobservable = Observable.create(emitter -> {
 			dataAddedObservableEmitter = emitter;
 
 		});
-		dataAddedObservable = observable.share().publish();
+		dataAddedObservable = dataaddedobservable.share().publish();
 		dataAddedObservable.connect();
+		
+		Observable<org.cishell.cibridge.core.model.Data> dataremovedobservable = Observable.create(emitter -> {
+			dataRemovedObservableEmitter = emitter;
 
+		});
+		dataRemovedObservable = dataremovedobservable.share().publish();
+		dataRemovedObservable.connect();
 	}
 
 	public void setCIBridge(CIShellCIBridge ciBridge) {
@@ -91,6 +100,10 @@ public class DataManagerListenerImpl implements DataManagerListener {
 	public ConnectableObservable<org.cishell.cibridge.core.model.Data> getDataAddedObservable() {
 		return dataAddedObservable;
 	}
+	
+	public ConnectableObservable<org.cishell.cibridge.core.model.Data> getDataRemovedObservable() {
+		return dataRemovedObservable;
+	}
 
 	@Override
 	public void dataLabelChanged(Data data, String label) {
@@ -108,7 +121,8 @@ public class DataManagerListenerImpl implements DataManagerListener {
 			cibridge.cishellData.getCIBridgeDataMap().remove(cishellCIBridgeData.getId());
 		}
 		cibridge.cishellData.getCIShellDataCIBridgeDataMap().remove(data);
-
+		
+		dataRemovedObservableEmitter.onNext(cishellCIBridgeData);
 	}
 
 	@Override
