@@ -35,11 +35,11 @@ public class Query implements GraphQLQueryResolver {
         return cibridge.data.validateData(algorithmDefinitionId, dataIds);
     }
 
-    public List<AlgorithmInstance> findConverters(String dataId, String outFormat) {
+    public List<AlgorithmDefinition> findConverters(String dataId, String outFormat) {
         return cibridge.data.findConverters(dataId, outFormat);
     }
 
-    public List<AlgorithmInstance> findConvertersByFormat(String inFormat, String outFormat) {
+    public List<AlgorithmDefinition> findConvertersByFormat(String inFormat, String outFormat) {
         return cibridge.data.findConvertersByFormat(inFormat, outFormat);
     }
 

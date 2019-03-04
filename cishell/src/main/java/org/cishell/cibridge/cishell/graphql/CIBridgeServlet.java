@@ -1,19 +1,17 @@
 package org.cishell.cibridge.cishell.graphql;
 
-import java.io.IOException;
+import graphql.servlet.SimpleGraphQLHttpServlet;
+import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.core.CIBridge;
+import org.cishell.container.CIShellContainer;
+import org.osgi.framework.BundleContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.cibridge.core.CIBridge;
-import org.cishell.container.CIShellContainer;
-import org.osgi.framework.BundleContext;
-
-import graphql.servlet.SimpleGraphQLHttpServlet;
+import java.io.IOException;
 
 @WebServlet(urlPatterns = "/graphql")
 public class CIBridgeServlet extends HttpServlet {
