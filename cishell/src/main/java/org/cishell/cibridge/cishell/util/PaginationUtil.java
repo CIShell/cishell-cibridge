@@ -12,6 +12,7 @@ import java.util.function.Predicate;
 //todo rename the class
 public class PaginationUtil {
     public static <T> QueryResults<T> getPaginatedResults(List<T> items, List<Predicate<T>> criteria, int offset, int limit) {
+
         Preconditions.checkNotNull(items, "list of items to be paginated cannot be null");
         Preconditions.checkNotNull(criteria, "list of criteria for filtering cannot be null");
 
