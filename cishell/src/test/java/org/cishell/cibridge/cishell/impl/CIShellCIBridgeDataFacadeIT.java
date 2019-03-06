@@ -538,6 +538,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         testSubscriber.assertNoErrors();
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
+
         assertTrue(resultData.size() == 1);
 
         // Assert the log messages with the expected results

@@ -208,6 +208,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
         //also update properties of CIShellData object wrapped inside CIShellCIBridgeData object
         updateCIShellDataProperties(cishellCIBridgedata.getCIShellData(), properties);
+
+        dataUpdatedObservableEmitter.onNext(cishellCIBridgedata);
         return true;
     }
 
