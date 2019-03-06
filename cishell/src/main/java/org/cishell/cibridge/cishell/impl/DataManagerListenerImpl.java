@@ -45,7 +45,7 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
     @Override
     public void dataAdded(Data data, String s) {
-        System.out.println("Data Added listener called");
+
         // create cibridge data object which is a wrapper for cishell data object
         CIShellCIBridgeData cishellCIBridgeData = new CIShellCIBridgeData(data);
 
