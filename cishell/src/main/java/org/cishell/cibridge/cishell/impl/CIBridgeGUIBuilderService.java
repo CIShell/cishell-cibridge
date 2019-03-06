@@ -8,6 +8,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 import java.util.Dictionary;
 
 public class CIBridgeGUIBuilderService implements GUIBuilderService {
+
     private CIShellCIBridge cibridge;
 
     public CIBridgeGUIBuilderService() {

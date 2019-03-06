@@ -63,15 +63,9 @@ public abstract class CIBridge {
         // query
         String validateData(String algorithmDefinitionId, List<String> dataIds);
 
-<<<<<<< HEAD
-		List<AlgorithmDefinition> findConverters(String dataId, String outFormat);
-
-		List<AlgorithmDefinition> findConvertersByFormat(String inFormat, String outFormat);
-=======
         List<AlgorithmDefinition> findConverters(String dataId, String outFormat);
 
         List<AlgorithmDefinition> findConvertersByFormat(String inFormat, String outFormat);
->>>>>>> cf4cb760258891b01c861c1526be86dc6720c35d
 
         DataQueryResults getData(DataFilter filter);
 
