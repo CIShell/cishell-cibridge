@@ -1,6 +1,9 @@
 package org.cishell.cibridge.cishell.impl;
 
+<<<<<<< HEAD
 import io.reactivex.subscribers.TestSubscriber;
+=======
+>>>>>>> cf4cb760258891b01c861c1526be86dc6720c35d
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
@@ -169,6 +172,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 
     }
 
+<<<<<<< HEAD
     @Test
     public void validateLogAddedTestsWithFilter() {
 
@@ -239,4 +243,6 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
             assertTrue(expectedLogMessages.contains(l.getMessage()));
         }
     }
+=======
+>>>>>>> cf4cb760258891b01c861c1526be86dc6720c35d
 }

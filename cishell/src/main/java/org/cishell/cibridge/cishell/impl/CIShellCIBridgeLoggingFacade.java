@@ -150,7 +150,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 
     @Override
     public Publisher<Log> logAdded(List<LogLevel> logLevels) {
-
         Flowable<Log> publisher;
         if (logAddedObservable == null) {
             Observable<Log> observable = Observable.create(emitter -> {

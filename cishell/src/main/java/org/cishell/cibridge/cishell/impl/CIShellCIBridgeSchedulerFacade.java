@@ -39,15 +39,16 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         return cibridge.getSchedulerService().isRunning();
     }
 
+
+    //todo what is the definition of queue waiting?
     @Override
     public Integer getSchedulerQueueWaiting() {
         int count = 0;
-        for (Map.Entry<String, CIShellCIBridgeAlgorithmInstance> entry : cibridge.cishellAlgorithm
-                .getAlgorithmInstanceMap().entrySet()) {
-
-            AlgorithmInstance algorithmInstance = entry.getValue();
-            if (algorithmInstance.getState() == IDLE || algorithmInstance.getState() == PAUSED
-                    || algorithmInstance.getState() == RUNNING || algorithmInstance.getState() == WAITING) {
+        for (AlgorithmInstance algorithmInstance : getAlgorithmInstanceMap().values()) {
+            if (algorithmInstance.getState() == IDLE ||
+                    algorithmInstance.getState() == PAUSED ||
+                    algorithmInstance.getState() == RUNNING ||
+                    algorithmInstance.getState() == WAITING) {
                 count++;
             }
         }
@@ -56,9 +57,9 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     /* Mutations */
 
-    // TODO what do we return here?? was the operation success or not?
     @Override
     public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstanceMap().get(algorithmInstanceId);
         return false;
     }
 
@@ -69,27 +70,19 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean removeAlgorithm(String algorithmInstanceId) {
-        AlgorithmInstance algoData = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().remove(algorithmInstanceId);
-        if (algoData == null) {
-            System.out.println("Algorithm not present");
-            return false;
-        }
-
-        // TODO no way of removing algorithms from CIShell??
-        return true;
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstanceMap().remove(algorithmInstanceId);
+        return algorithmInstance != null;
     }
 
     @Override
     public Boolean runAlgorithmNow(String algorithmInstanceId) {
-        cibridge.getSchedulerService().runNow(getAlgorithm(algorithmInstanceId),
-                getServiceReference(algorithmInstanceId));
+        cibridge.getSchedulerService().runNow(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId));
         return true;
     }
 
     @Override
     public Boolean scheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        cibridge.getSchedulerService().schedule(getAlgorithm(algorithmInstanceId),
-                getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
+        cibridge.getSchedulerService().schedule(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
         algorithmInstance.setScheduledRunTime(date);
         algorithmInstance.setState(SCHEDULED);
@@ -98,10 +91,8 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean rescheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        boolean isAlreadyScheduled = cibridge.getSchedulerService().reschedule(getAlgorithm(algorithmInstanceId),
-                GregorianCalendar.from(date));
+        boolean isAlreadyScheduled = cibridge.getSchedulerService().reschedule(getAlgorithm(algorithmInstanceId), GregorianCalendar.from(date));
         if (!isAlreadyScheduled) {
-            System.out.println("algorithm not scheduled before");
             return false;
         }
 
@@ -113,12 +104,13 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean unscheduleAlgorithm(String algorithmInstanceId) {
-        boolean isUnscheduled = cibridge.getSchedulerService().unschedule(getAlgorithm(algorithmInstanceId));
-        if (isUnscheduled) {
-            getAlgorithmInstance(algorithmInstanceId).setState(IDLE);
-            return true;
+        boolean unscheduled = cibridge.getSchedulerService().unschedule(getAlgorithm(algorithmInstanceId));
+        if (!unscheduled) {
+            return false;
         }
-        return false;
+
+        getAlgorithmInstance(algorithmInstanceId).setState(IDLE);
+        return true;
     }
 
     @Override
@@ -151,6 +143,10 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         results.add(boolean1);
         return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
         // return Flowable.just(boolean1).;
+    }
+
+    private Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceMap() {
+        return cibridge.cishellAlgorithm.getAlgorithmInstanceMap();
     }
 
     private Algorithm getAlgorithm(String algorithmInstanceId) {

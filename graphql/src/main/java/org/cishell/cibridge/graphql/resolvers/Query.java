@@ -47,9 +47,6 @@ public class Query implements GraphQLQueryResolver {
         return cibridge.data.getData(filter);
     }
 
-    // public File downloadData(String dataId) {
-    // return null;
-    // }
     public String downloadData(String dataId) {
         return cibridge.data.downloadData(dataId);
     }

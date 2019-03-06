@@ -24,123 +24,129 @@ import org.cishell.cibridge.core.model.PropertyInput;
 import org.reactivestreams.Publisher;
 
 public abstract class CIBridge {
-	public final AlgorithmFacade algorithm;
-	public final DataFacade data;
-	public final NotificationFacade notification;
-	public final SchedulerFacade scheduler;
-	public final LoggingFacade logging;
+    public final AlgorithmFacade algorithm;
+    public final DataFacade data;
+    public final NotificationFacade notification;
+    public final SchedulerFacade scheduler;
+    public final LoggingFacade logging;
 
-	public CIBridge(CIBridge.AlgorithmFacade algorithm, CIBridge.DataFacade data,
-			CIBridge.NotificationFacade notification, CIBridge.SchedulerFacade scheduler,
-			CIBridge.LoggingFacade logging) {
-		this.algorithm = algorithm;
-		this.data = data;
-		this.notification = notification;
-		this.scheduler = scheduler;
-		this.logging = logging;
-	}
+    public CIBridge(CIBridge.AlgorithmFacade algorithm, CIBridge.DataFacade data,
+                    CIBridge.NotificationFacade notification, CIBridge.SchedulerFacade scheduler,
+                    CIBridge.LoggingFacade logging) {
+        this.algorithm = algorithm;
+        this.data = data;
+        this.notification = notification;
+        this.scheduler = scheduler;
+        this.logging = logging;
+    }
 
-	public interface AlgorithmFacade {
-		// query
-		AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
+    public interface AlgorithmFacade {
+        // query
+        AlgorithmDefinitionQueryResults getAlgorithmDefinitions(AlgorithmFilter filter);
 
-		AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
+        AlgorithmInstanceQueryResults getAlgorithmInstances(AlgorithmFilter filter);
 
-		// mutation
-		AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds,
-				List<PropertyInput> parameters);
+        // mutation
+        AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds,
+                                          List<PropertyInput> parameters);
 
-		// subscription
-		Publisher<AlgorithmDefinition> algorithmDefinitionAdded();
+        // subscription
+        Publisher<AlgorithmDefinition> algorithmDefinitionAdded();
 
-		Publisher<AlgorithmDefinition> algorithmDefinitionRemoved();
+        Publisher<AlgorithmDefinition> algorithmDefinitionRemoved();
 
-		Publisher<AlgorithmInstance> algorithmInstanceUpdated(AlgorithmFilter filter);
+        Publisher<AlgorithmInstance> algorithmInstanceUpdated(AlgorithmFilter filter);
 
-	}
+    }
 
-	public interface DataFacade {
-		// query
-		String validateData(String algorithmDefinitionId, List<String> dataIds);
+    public interface DataFacade {
+        // query
+        String validateData(String algorithmDefinitionId, List<String> dataIds);
 
+<<<<<<< HEAD
 		List<AlgorithmDefinition> findConverters(String dataId, String outFormat);
 
 		List<AlgorithmDefinition> findConvertersByFormat(String inFormat, String outFormat);
+=======
+        List<AlgorithmDefinition> findConverters(String dataId, String outFormat);
 
-		DataQueryResults getData(DataFilter filter);
+        List<AlgorithmDefinition> findConvertersByFormat(String inFormat, String outFormat);
+>>>>>>> cf4cb760258891b01c861c1526be86dc6720c35d
 
-		String downloadData(String dataId);
+        DataQueryResults getData(DataFilter filter);
 
-		// mutation
-		Data uploadData(String file, DataProperties properties);
+        String downloadData(String dataId);
 
-		Boolean removeData(String dataId);
+        // mutation
+        Data uploadData(String file, DataProperties properties);
 
-		Boolean updateData(String dataId, DataProperties properties);
+        Boolean removeData(String dataId);
 
-		// subscription
-		Publisher<Data> dataAdded();
+        Boolean updateData(String dataId, DataProperties properties);
 
-		Publisher<Data> dataRemoved();
+        // subscription
+        Publisher<Data> dataAdded();
 
-		Publisher<Data> dataUpdated();
-	}
+        Publisher<Data> dataRemoved();
 
-	public interface NotificationFacade {
-		// query
-		NotificationQueryResults getNotifications(NotificationFilter filter);
+        Publisher<Data> dataUpdated();
+    }
 
-		Boolean isClosed(String NotificationId);
+    public interface NotificationFacade {
+        // query
+        NotificationQueryResults getNotifications(NotificationFilter filter);
 
-		// mutation
-		Boolean setNotificationResponse(String notificationId, NotificationResponse response);
+        Boolean isClosed(String NotificationId);
 
-		Boolean closeNotification(String notificationId);
+        // mutation
+        Boolean setNotificationResponse(String notificationId, NotificationResponse response);
 
-		// subscription
-		Publisher<Notification> notificationAdded();
+        Boolean closeNotification(String notificationId);
 
-		Publisher<Notification> notificationUpdated();
-	}
+        // subscription
+        Publisher<Notification> notificationAdded();
 
-	public interface SchedulerFacade {
-		// query
-		Boolean isSchedulerEmpty();
+        Publisher<Notification> notificationUpdated();
+    }
 
-		Boolean isSchedulerRunning();
+    public interface SchedulerFacade {
+        // query
+        Boolean isSchedulerEmpty();
 
-		Integer getSchedulerQueueWaiting();
+        Boolean isSchedulerRunning();
 
-		// mutation
-		Boolean runAlgorithmNow(String algorithmInstanceId);
+        Integer getSchedulerQueueWaiting();
 
-		Boolean scheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date);
+        // mutation
+        Boolean runAlgorithmNow(String algorithmInstanceId);
 
-		Boolean rescheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date);
+        Boolean scheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date);
 
-		Boolean unscheduleAlgorithm(String algorithmInstanceId);
+        Boolean rescheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date);
 
-		Integer clearScheduler();
+        Boolean unscheduleAlgorithm(String algorithmInstanceId);
 
-		Boolean setSchedulerRunning(Boolean running);
+        Integer clearScheduler();
 
-		Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled);
+        Boolean setSchedulerRunning(Boolean running);
 
-		Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused);
+        Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled);
 
-		Boolean removeAlgorithm(String algorithmInstanceId);
+        Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused);
 
-		// subscription
-		Publisher<Boolean> schedulerCleared();
+        Boolean removeAlgorithm(String algorithmInstanceId);
 
-		Publisher<Boolean> schedulerRunningChanged();
-	}
+        // subscription
+        Publisher<Boolean> schedulerCleared();
 
-	public interface LoggingFacade {
-		// query
-		LogQueryResults getLogs(LogFilter filter);
+        Publisher<Boolean> schedulerRunningChanged();
+    }
 
-		// subscription
-		Publisher<Log> logAdded(List<LogLevel> logLevels);
-	}
+    public interface LoggingFacade {
+        // query
+        LogQueryResults getLogs(LogFilter filter);
+
+        // subscription
+        Publisher<Log> logAdded(List<LogLevel> logLevels);
+    }
 }
