@@ -1,6 +1,5 @@
 package org.cishell.cibridge.cishell.impl;
 
-import io.reactivex.functions.Action;
 import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.Log;
@@ -171,7 +170,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void validateLogAddedTests() {
+    public void validateLogAddedTestsWithFilter() {
 
         // Log filter
         List<LogLevel> logLevelList = new ArrayList<>();
@@ -200,12 +199,44 @@ public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
 
         // Getting values from subscriber
         List<Log> resultLogs = testSubscriber.values();
-        assertTrue(resultLogs.size()==3);
+        assertTrue(resultLogs.size() == 3);
 
         // Assert the log messages with the expected results
-        for (Log l: resultLogs) {
+        for (Log l : resultLogs) {
             assertTrue(expectedLogMessages.contains(l.getMessage()));
         }
     }
 
+    @Test
+    public void validateLogAddedTestsWithOutFilter() {
+
+        //Setting up a mock Subscriber
+        TestSubscriber<Log> testSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeLoggingFacade.logAdded(null).subscribe(testSubscriber);
+        testSubscriber.assertNoErrors();
+
+        // Adding Logs for testing
+        getLogService().log(1, "Error Log"); // Expected since present in filter
+        getLogService().log(2, "Warning Log"); // Expected since present in filter
+        getLogService().log(3, "Info Log"); // Expected since present in filter
+        getLogService().log(4, "Debug Log"); // Expected since present in filter
+
+        List<String> expectedLogMessages = new ArrayList<>();
+        expectedLogMessages.add("Error Log");
+        expectedLogMessages.add("Info Log");
+        expectedLogMessages.add("Debug Log");
+        expectedLogMessages.add("Warning Log");
+
+        // Wait till the subscriber collects 3 onNext values
+        testSubscriber.awaitCount(4);
+
+        // Getting values from subscriber
+        List<Log> resultLogs = testSubscriber.values();
+        assertTrue(resultLogs.size() == 4);
+
+        // Assert the log messages with the expected results
+        for (Log l : resultLogs) {
+            assertTrue(expectedLogMessages.contains(l.getMessage()));
+        }
+    }
 }

@@ -283,6 +283,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     @Override
     public Publisher<Data> dataAdded() {
         Flowable<Data> publisher;
+        System.out.println("Data Added function");
         ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataAddedObservable();
         publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
         return publisher;

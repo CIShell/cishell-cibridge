@@ -1,5 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
+import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.junit.After;
@@ -8,8 +9,10 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.cishell.framework.data.DataProperty.*;
 import static org.junit.Assert.*;
@@ -94,7 +97,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
             assertEquals(((CIShellCIBridgeData) parentData).getCIShellData(), ciShellData.getMetadata().get(PARENT));
             assertEquals("SomeValue", ciShellData.getMetadata().get("CustomProperty"));
         }
-
     }
 
     @Test
@@ -413,8 +415,147 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         cishellCIBridgeDataFacade.findConvertersByFormat(inputDataFormat, outputDataFormat);
     }
 
+    @Test
+    public void dataAddedSubscriptionTests() {
+        //Setting up a mock Subscriber
+        TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeDataFacade.dataAdded().subscribe(testSubscriber);
+
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        String label = "Research papers";
+        String name = "Research papers by Laszlo Barabasi";
+        DataType dataType = DataType.DATABASE;
+        PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
+        DataProperties dataProperties = new DataProperties();
+        dataProperties.setLabel(label);
+        dataProperties.setName(name);
+        dataProperties.setType(dataType);
+        dataProperties.setOtherProperties(Collections.singletonList(customProperty));
+
+        Data expectedData = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+
+        // Wait till the subscriber collects 1 onNext values
+        testSubscriber.awaitCount(1);
+
+        testSubscriber.assertNoErrors();
+        // Getting values from subscriber
+        List<Data> resultData = testSubscriber.values();
+        assertTrue(resultData.size() == 1);
+
+        // Assert the log messages with the expected results
+        Data actualData = resultData.get(0);
+
+        assertSame(expectedData.getId(), actualData.getId());
+        assertSame(expectedData.getFormat(), actualData.getFormat());
+        assertSame(expectedData.getLabel(), actualData.getLabel());
+        assertSame(expectedData.getModified(), actualData.getModified());
+        assertSame(expectedData.getType(), actualData.getType());
+        assertSame(expectedData.getOtherProperties().get(0).getKey(), actualData.getOtherProperties().get(0).getKey());
+        assertSame(expectedData.getOtherProperties().get(0).getValue(), actualData.getOtherProperties().get(0).getValue());
+
+    }
+
+    @Test
+    public void dataRemovedSubscriptionTests() {
+        //Setting up a mock Subscriber
+        TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeDataFacade.dataRemoved().subscribe(testSubscriber);
+
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        String label = "Research papers";
+        String name = "Research papers by Laszlo Barabasi";
+        DataType dataType = DataType.DATABASE;
+        PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
+        DataProperties dataProperties = new DataProperties();
+        dataProperties.setLabel(label);
+        dataProperties.setName(name);
+        dataProperties.setType(dataType);
+        dataProperties.setOtherProperties(Collections.singletonList(customProperty));
+
+        Data uploadedData = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+
+        // Removing the data that is added
+        cishellCIBridgeDataFacade.removeData(uploadedData.getId());
+
+        // Wait till the subscriber collects 1 onNext values
+        testSubscriber.awaitCount(1);
+
+        testSubscriber.assertNoErrors();
+        // Getting values from subscriber
+        List<Data> resultData = testSubscriber.values();
+        assertTrue(resultData.size() == 1);
+
+        // Assert the log messages with the expected results
+        Data actualData = resultData.get(0);
+
+        assertSame(uploadedData.getId(), actualData.getId());
+        assertSame(uploadedData.getFormat(), actualData.getFormat());
+        assertSame(uploadedData.getLabel(), actualData.getLabel());
+        assertSame(uploadedData.getModified(), actualData.getModified());
+        assertSame(uploadedData.getType(), actualData.getType());
+        assertSame(uploadedData.getOtherProperties().get(0).getKey(), actualData.getOtherProperties().get(0).getKey());
+        assertSame(uploadedData.getOtherProperties().get(0).getValue(), actualData.getOtherProperties().get(0).getValue());
+    }
+
+    @Test
+    public void dataUpdatedSubscriptionTests() {
+
+        //Setting up a mock Subscriber
+        TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeDataFacade.dataUpdated().subscribe(testSubscriber);
+
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
+        assertNotNull(dataFileUrl);
+
+        String label = "Research papers";
+        String name = "Research papers by Laszlo Barabasi";
+        DataType dataType = DataType.DATABASE;
+        PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
+        DataProperties dataProperties = new DataProperties();
+        dataProperties.setLabel(label);
+        dataProperties.setName(name);
+        dataProperties.setType(dataType);
+        dataProperties.setOtherProperties(Collections.singletonList(customProperty));
+
+        Data uploadedData = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+
+        // Updating the data properties that is added
+        dataProperties.setLabel("New Research Papers");
+        dataProperties.setType(DataType.MODEL);
+        dataProperties.setName("Aravind Bharatha");
+
+        Boolean statusOfUpdate = cishellCIBridgeDataFacade.updateData(uploadedData.getId(), dataProperties);
+
+        assertTrue(statusOfUpdate);
+
+        // Wait till the subscriber collects 1 onNext values
+        testSubscriber.awaitCount(1);
+
+        testSubscriber.assertNoErrors();
+        // Getting values from subscriber
+        List<Data> resultData = testSubscriber.values();
+        assertTrue(resultData.size() == 1);
+
+        // Assert the log messages with the expected results
+        Data actualData = resultData.get(0);
+
+        assertSame(uploadedData.getId(), actualData.getId());
+        assertSame(uploadedData.getFormat(), actualData.getFormat());
+        assertSame(uploadedData.getLabel(), actualData.getLabel());
+        assertSame(uploadedData.getModified(), actualData.getModified());
+        assertSame(uploadedData.getType(), actualData.getType());
+        assertSame(uploadedData.getOtherProperties().get(0).getKey(), actualData.getOtherProperties().get(0).getKey());
+        assertSame(uploadedData.getOtherProperties().get(0).getValue(), actualData.getOtherProperties().get(0).getValue());
+
+    }
+
     @After
     public void tearDown() {
+
         for (org.cishell.framework.data.Data data : getCIShellCIBridge().getDataManagerService().getAllData()) {
             getCIShellCIBridge().getDataManagerService().removeData(data);
         }
