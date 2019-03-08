@@ -262,7 +262,6 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    //todo need to clarify more on this
     public void getAlgorithmDefinitionsForInputDataIDs() {
         DataProperties dataProperties = new DataProperties();
         dataProperties.setFormat("file:text/xml");

@@ -39,15 +39,11 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         return cibridge.getSchedulerService().isRunning();
     }
 
-    //todo what is the definition of queue waiting?
     @Override
     public Integer getSchedulerQueueWaiting() {
         int count = 0;
         for (AlgorithmInstance algorithmInstance : getAlgorithmInstanceMap().values()) {
-            if (algorithmInstance.getState() == IDLE ||
-                    algorithmInstance.getState() == PAUSED ||
-                    algorithmInstance.getState() == RUNNING ||
-                    algorithmInstance.getState() == WAITING) {
+            if (algorithmInstance.getState() == IDLE || algorithmInstance.getState() == PAUSED || algorithmInstance.getState() == WAITING) {
                 count++;
             }
         }
@@ -58,7 +54,6 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
-        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstanceMap().get(algorithmInstanceId);
 
         return false;
     }

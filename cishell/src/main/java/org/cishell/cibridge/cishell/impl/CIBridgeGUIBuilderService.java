@@ -7,6 +7,7 @@ import org.osgi.service.metatype.MetaTypeProvider;
 
 import java.util.Dictionary;
 
+//TODO all methods implementation
 public class CIBridgeGUIBuilderService implements GUIBuilderService {
     private CIShellCIBridge cibridge;
 
@@ -19,7 +20,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     }
 
-    //TODO all methods implementation
     @Override
     public GUI createGUI(String id, MetaTypeProvider params) {
         return null;

@@ -1,5 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
+import com.google.common.base.Preconditions;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmType;
 import org.cishell.cibridge.core.model.ConversionType;
@@ -37,26 +38,22 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
                                               AlgorithmFactory algorithmFactory) {
         super(reference.getProperty(SERVICE_PID).toString());
 
-        // TODO check why we are getting so many null values for algorithm factory
-        // service
-        // Preconditions.checkNotNull(algorithmFactory, "algorithmFactory cannot be null
-        // for service: " + getId());
+        // TODO check why we are getting so many null values for algorithm factory service
+         Preconditions.checkNotNull(algorithmFactory, "algorithmFactory cannot be null for service: " + getId());
         this.algorithmFactory = algorithmFactory;
 
-        // TODO parameters
+        // TODO parameters. should be read from metatype service
 
         if (reference.getProperty(IN_DATA) != null) {
             Arrays.stream(reference.getProperty(IN_DATA).toString().split(",")).sequential().map(String::trim)
                     .forEachOrdered(getInData()::add);
         } else {
-            // todo should we set the default value of a singleton list with a null value??
             getInData().add("null");
         }
         if (reference.getProperty(OUT_DATA) != null) {
             Arrays.stream(reference.getProperty(OUT_DATA).toString().split(",")).sequential().map(String::trim)
                     .forEachOrdered(getOutData()::add);
         } else {
-            // TODO should we set the default value of a singleton list with a null value??
             getOutData().add("null");
         }
         if (reference.getProperty(LABEL) != null) {
@@ -66,7 +63,7 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
             setDescription(reference.getProperty(DESCRIPTION).toString());
         }
 
-        // TODO parentOutputData
+        // TODO parentOutputData. check if the parentage property is set to default. page 10 of cishell spec pdf
 
         if (reference.getProperty(ALGORITHM_TYPE) != null) {
             setType(AlgorithmType.valueOf(reference.getProperty(ALGORITHM_TYPE).toString().toUpperCase()));

@@ -181,8 +181,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
         ServiceReference<LogReaderService> ref = this.cibridge.getBundleContext()
                 .getServiceReference(LogReaderService.class);
         if (ref == null) {
-            // TODO why are we throwing a runtime exception here? it could break the
-            // application.
             throw new RuntimeException("The required OSGi LogService is not installed.");
         } else {
             LogReaderService logReaderService = (LogReaderService) this.cibridge.getBundleContext().getService(ref);

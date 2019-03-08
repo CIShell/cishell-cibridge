@@ -8,7 +8,7 @@ public class AlgorithmInstance {
     private List<Data> inData;
     private List<Property> parameters;
     private final AlgorithmDefinition algorithmDefinition;
-    private AlgorithmState state;
+    private AlgorithmState state = AlgorithmState.IDLE;
     private ZonedDateTime scheduledRunTime;
     private int progress;
     private List<Data> outData;

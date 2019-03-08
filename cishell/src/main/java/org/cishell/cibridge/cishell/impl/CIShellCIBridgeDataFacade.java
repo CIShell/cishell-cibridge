@@ -138,7 +138,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     }
 
     /* Mutations */
-    //todo should the API user pass the data format or should we auto-detect it? that has bugged me for so long
     @Override
     public Data uploadData(String filePath, DataProperties properties) {
         Preconditions.checkNotNull(filePath, "File path cannot be null");
@@ -152,7 +151,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         if (properties != null && properties.getFormat() != null) {
             format = properties.getFormat();
         } else {
-            //todo is this the correct way of setting the format?
             format = "file-ext:" + FilenameUtils.getExtension(filePath);
         }
 

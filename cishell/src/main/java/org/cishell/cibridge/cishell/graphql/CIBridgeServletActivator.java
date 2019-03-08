@@ -8,6 +8,7 @@ import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.service.conversion.DataConversionService;
 import org.osgi.framework.*;
 import org.osgi.service.http.HttpService;
+import org.osgi.service.log.LogReaderService;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.util.tracker.ServiceTracker;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.osgi.framework.Constants.OBJECTCLASS;
 
+//todo refactor this class
 public class CIBridgeServletActivator implements BundleActivator {
     private BundleContext bundleContext;
     private ServiceTracker<Object, Object> ciShellServicesTracker;
@@ -31,7 +33,7 @@ public class CIBridgeServletActivator implements BundleActivator {
 
     private static final Set<String> CISHELL_SERVICES = new HashSet<>(Arrays.asList(DataManagerService.class.getName(),
             SchedulerService.class.getName(), DataConversionService.class.getName(), LogService.class.getName(),
-            MetaTypeService.class.getName(), HttpService.class.getName()));
+            LogReaderService.class.getName(), MetaTypeService.class.getName(), HttpService.class.getName()));
 
     @Override
     public void start(BundleContext bundleContext) {

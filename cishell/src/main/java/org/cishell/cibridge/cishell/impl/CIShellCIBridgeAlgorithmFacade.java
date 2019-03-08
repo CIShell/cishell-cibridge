@@ -8,7 +8,6 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.algorithm.ProgressTrackable;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
@@ -67,6 +66,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
         //predicate on input data ids
         //todo need to clarify about how to filter based on input data ids
+        // filter by matching on either (OR)
         if (filter.getInputDataIds() != null) {
             Set<String> supportedFormats = new HashSet<>();
             for (String inputDataId : filter.getInputDataIds()) {
@@ -87,7 +87,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             });
         }
 
-        //todo how to filter algorithm that have no input or output data format
         //predicate on output data format
         if (filter.getOutputFormats() != null) {
             criteria.add(algorithmDefinition -> {
@@ -196,16 +195,18 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             }
         }
 
-        Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext());
-        if (algorithm instanceof ProgressTrackable) {
-            ProgressTrackable progressTrackable = (ProgressTrackable) algorithm;
-            System.out.println("progress monitor: " + progressTrackable.getProgressMonitor());
-        }
+        ProgressTrackableAlgorithmImpl progressTrackableAlgorithm = new ProgressTrackableAlgorithmImpl(
+                algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext())
+        );
 
-        CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, progressTrackableAlgorithm);
         algorithmInstance.setParameters(paramList);
 
+        progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
+
         algorithmInstanceMap.put(algorithmInstance.getId(), algorithmInstance);
+        cishellAlgorithmCIBridgeAlgorithmMap.put(progressTrackableAlgorithm, algorithmInstance);
+
         return algorithmInstance;
     }
 

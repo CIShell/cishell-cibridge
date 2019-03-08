@@ -85,7 +85,7 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
     @Override
     public void dataSelected(Data[] data) {
-        //todo this method should be deprecated now that there is no Eclipse UI
+        //not relevant for this implementation
     }
 
 }

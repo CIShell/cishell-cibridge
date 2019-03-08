@@ -29,37 +29,42 @@ public class SchedulerListenerImpl implements SchedulerListener {
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
         algorithmInstance.setState(SCHEDULED);
         setScheduledRunTime(algorithmInstance, calendar);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmRescheduled(Algorithm algorithm, Calendar calendar) {
         System.out.println("Algorithm Re-scheduled");
         algorithmScheduled(algorithm, calendar);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmUnscheduled(Algorithm algorithm) {
         getAlgorithmInstance(algorithm).setState(IDLE);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmStarted(Algorithm algorithm) {
         getAlgorithmInstance(algorithm).setState(RUNNING);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmFinished(Algorithm algorithm, Data[] data) {
         getAlgorithmInstance(algorithm).setState(FINISHED);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmError(Algorithm algorithm, Throwable throwable) {
         getAlgorithmInstance(algorithm).setState(ERRORED);
+        //todo call subscription method
     }
 
     @Override
     public void schedulerRunStateChanged(boolean b) {
-        //TODO nothing to update on cibridge side
     }
 
     @Override
