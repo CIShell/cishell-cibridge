@@ -123,6 +123,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
                 NotificationResponse notificationResponse = new NotificationResponse(formResponse, false, false, false);
                 notificationFacade.setNotificationResponse(id, notificationResponse);
+
             }
 
             @Override
@@ -257,17 +258,20 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         return new GUI() {
             @Override
             public Dictionary openAndWait() {
-                // TODO open and wait
+                // TODO Implement a publisher to push Notification Responses as Dictionary
+                // TODO  Call Notification added subscriber
                 return null;
             }
 
             @Override
             public void open() {
+                // TODO  Call Notification added subscriber
                 map.put(id, notification);
             }
 
             @Override
             public void close() {
+                // TODO  Call Notification updated subscriber
                 notification.setClosed(true);
             }
 

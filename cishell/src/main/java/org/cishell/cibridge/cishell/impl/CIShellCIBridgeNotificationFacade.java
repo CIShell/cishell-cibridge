@@ -64,6 +64,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
+
         if (notificationMap.containsKey(notificationId)) {
             Notification notification = notificationMap.get(notificationId);
             notification.setClosed(response.getCloseNotification());
