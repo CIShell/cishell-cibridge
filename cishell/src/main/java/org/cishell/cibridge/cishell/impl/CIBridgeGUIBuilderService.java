@@ -1,11 +1,11 @@
 package org.cishell.cibridge.cishell.impl;
 
+import io.reactivex.disposables.Disposable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.cishell.service.guibuilder.SelectionListener;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
@@ -19,6 +19,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     private static final HashMap<Integer, AttributeType> attributeTypeMap = new HashMap<>();
     private static UUID counter;
 
+
     public CIBridgeGUIBuilderService(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
         notificationFacade = cibridge.cishellNotification;
@@ -31,6 +32,28 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         attributeTypeMap.put(6, AttributeType.BYTE);
         attributeTypeMap.put(7, AttributeType.DOUBLE);
         attributeTypeMap.put(8, AttributeType.FLOAT);
+
+        notificationFacade.getNotificationUpdatedObservable().subscribe(new io.reactivex.Observer<Notification>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(Notification notification) {
+                System.out.println("client subscriber");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
     }
 
     @Override
@@ -51,7 +74,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             notificationParams.add(parameterDefinition);
         }
 
-        Notification notification = new Notification(objectClassDefinition.getID(), NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
+        Notification notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                 objectClassDefinition.getDescription(), null, notificationParams, false,
                 null, false, false);
 
@@ -64,7 +87,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 List<PropertyInput> formResponse = new ArrayList<>();
                 Enumeration<String> dictionaryKeys = dictionary.keys();
 
-                while(dictionaryKeys.hasMoreElements()){
+                while (dictionaryKeys.hasMoreElements()) {
                     String key = dictionaryKeys.nextElement();
                     PropertyInput propertyInput = new PropertyInput(key, dictionary.get(key).toString());
                     formResponse.add(propertyInput);
@@ -102,7 +125,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             notificationParams.add(parameterDefinition);
         }
 
-        Notification notification = new Notification(objectClassDefinition.getID(), NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
+        Notification notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                 objectClassDefinition.getDescription(), null, notificationParams, false,
                 null, false, false);
 
@@ -115,7 +138,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 List<PropertyInput> formResponse = new ArrayList<>();
                 Enumeration<String> dictionaryKeys = dictionary.keys();
 
-                while(dictionaryKeys.hasMoreElements()){
+                while (dictionaryKeys.hasMoreElements()) {
                     String key = dictionaryKeys.nextElement();
                     PropertyInput propertyInput = new PropertyInput(key, dictionary.get(key).toString());
                     formResponse.add(propertyInput);
@@ -176,7 +199,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 null, false, false);
 
         map.put(UUID, notification);
-
+        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
     }
 
     @Override
@@ -195,6 +218,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 null, false, false);
 
         map.put(UUID, notification);
+        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
 
     }
 
@@ -209,7 +233,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 null, false, false);
 
         map.put(UUID, notification);
-
+        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
     }
 
     @Override
@@ -236,6 +260,8 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             }
         });
 
+        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
+
         return notification.getQuestionResponse();
     }
 
@@ -250,7 +276,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 null, false, false);
 
         map.put(UUID, notification);
-
+        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
     }
 
     private GUI createAndGetGui(String id, HashMap<String, Notification> map, Notification notification) {
@@ -260,6 +286,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             public Dictionary openAndWait() {
                 // TODO Implement a publisher to push Notification Responses as Dictionary
                 // TODO  Call Notification added subscriber
+                notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
                 return null;
             }
 
@@ -267,12 +294,12 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             public void open() {
                 // TODO  Call Notification added subscriber
                 map.put(id, notification);
+                notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
             }
 
             @Override
             public void close() {
-                // TODO  Call Notification updated subscriber
-                notification.setClosed(true);
+                notificationFacade.closeNotification(id);
             }
 
             @Override

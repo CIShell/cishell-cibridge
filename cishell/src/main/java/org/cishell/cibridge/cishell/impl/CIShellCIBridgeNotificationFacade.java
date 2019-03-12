@@ -1,7 +1,11 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
@@ -10,12 +14,31 @@ import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
 
     private CIShellCIBridge cibridge;
     private HashMap<String, Notification> notificationMap = new LinkedHashMap<>();
+    private ConnectableObservable<Notification> notificationAddedObservable;
+    private ObservableEmitter<Notification> notificationAddedObservableEmitter;
+    private ConnectableObservable<Notification> notificationUpdatedObservable;
+    private ObservableEmitter<Notification> notificationUpdatedObservableEmitter;
+
+    public CIShellCIBridgeNotificationFacade() {
+        Observable<Notification> notificationAddedObservable = Observable.create(emitter -> {
+            notificationAddedObservableEmitter = emitter;
+
+        });
+        this.notificationAddedObservable = notificationAddedObservable.share().publish();
+        this.notificationAddedObservable.connect();
+
+        Observable<Notification> notificationUpdatedObservable = Observable.create(emitter -> {
+            notificationUpdatedObservableEmitter = emitter;
+
+        });
+        this.notificationUpdatedObservable = notificationUpdatedObservable.share().publish();
+        this.notificationUpdatedObservable.connect();
+    }
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
@@ -27,8 +50,8 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 
     @Override
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
+
         List<Notification> notifications = new ArrayList<>();
-//      BundleContext context = cibridge.getBundleContext();
         PageInfo pageInfo = new PageInfo(false, false);
         NotificationQueryResults queryResults = null;
         try {
@@ -77,6 +100,9 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             notification.setFormResponse(formResponse);
             notification.setQuestionResponse(response.getQuestionResponse());
             notificationMap.put(notificationId, notification);
+
+            notificationUpdatedObservableEmitter.onNext(notification);
+
             return true;
         }
         return false;
@@ -86,6 +112,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         if (notificationMap.containsKey(notificationId)) {
             Notification notification = notificationMap.get(notificationId);
             notification.setClosed(true);
+            notificationUpdatedObservableEmitter.onNext(notification);
             return true;
         }
         return false;
@@ -95,23 +122,36 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         return notificationMap;
     }
 
-
-    // TODO Update the subscriptions with listener
-    public Publisher<Notification> notificationAdded() {
-        Notification notification = new Notification("1", NotificationType.INFORMATION, "Notification", "Test", null,
-                null, null, null, null, true, true);
-        List<Notification> results = new ArrayList<Notification>();
-        results.add(notification);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+    public ObservableEmitter<Notification> getNotificationAddedObservableEmitter() {
+        return notificationAddedObservableEmitter;
     }
 
-    // TODO Update the subscriptions with listener
+    public ObservableEmitter<Notification> getNotificationUpdatedObservableEmitter() {
+        return notificationUpdatedObservableEmitter;
+    }
+
+    public ConnectableObservable<Notification> getNotificationAddedObservable() {
+        return notificationAddedObservable;
+    }
+
+    public ConnectableObservable<Notification> getNotificationUpdatedObservable() {
+        return notificationUpdatedObservable;
+    }
+
+    // TODO Test Pending
+    public Publisher<Notification> notificationAdded() {
+        Flowable<Notification> publisher;
+        ConnectableObservable<Notification> connectableObservable = notificationAddedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
+    }
+
+    // TODO Test Pending
     public Publisher<Notification> notificationUpdated() {
-        Notification notification = new Notification("1", NotificationType.INFORMATION, "Notification", "Test", null,
-                null, null, null, null, true, true);
-        List<Notification> results = new ArrayList<>();
-        results.add(notification);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+        Flowable<Notification> publisher;
+        ConnectableObservable<Notification> connectableObservable = notificationUpdatedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
 }
