@@ -94,8 +94,10 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             notification.setConfirmationResponse(response.getConfirmationResponse());
 
             List<Property> formResponse = new ArrayList<>();
-            for (PropertyInput inputProperty : response.getFormResponse()) {
-                formResponse.add(new Property(inputProperty.getKey(), inputProperty.getValue()));
+            if (response.getFormResponse() != null) {
+                for (PropertyInput inputProperty : response.getFormResponse()) {
+                    formResponse.add(new Property(inputProperty.getKey(), inputProperty.getValue()));
+                }
             }
             notification.setFormResponse(formResponse);
             notification.setQuestionResponse(response.getQuestionResponse());

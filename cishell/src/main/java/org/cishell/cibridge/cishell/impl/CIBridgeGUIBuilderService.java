@@ -9,6 +9,8 @@ import org.cishell.service.guibuilder.SelectionListener;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
 
 import java.util.*;
 
@@ -33,7 +35,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         attributeTypeMap.put(7, AttributeType.DOUBLE);
         attributeTypeMap.put(8, AttributeType.FLOAT);
 
-        notificationFacade.getNotificationUpdatedObservable().subscribe(new io.reactivex.Observer<Notification>() {
+        notificationFacade.getNotificationUpdatedObservable().filter(notification -> notification.getId()=="").subscribe(new io.reactivex.Observer<Notification>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -54,10 +56,14 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
             }
         });
+
+        Disposable subscriber = notificationFacade.getNotificationUpdatedObservable().filter(notification -> notification.getId()=="").subscribe(notification -> System.out.println(notification));
+        subscriber.dispose();
     }
 
     @Override
-    public GUI createGUI(String id, MetaTypeProvider params) {
+    public synchronized GUI createGUI(String id, MetaTypeProvider params) {
+
 
         HashMap<String, Notification> map = notificationFacade.getNotificationMap();
 
@@ -170,20 +176,22 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 detail, null, null, false,
                 null, false, false);
 
-        GUI gui = createAndGetGui(UUID, map, notification);
+        createAndGetGui(UUID, map, notification);
 
-        gui.setSelectionListener(new SelectionListener() {
-            @Override
-            public void hitOk(Dictionary<String, Object> dictionary) {
-                notification.setConfirmationResponse(true);
-            }
+        // TODO Implement busy wait or mutation and a Subscriber to Notification Updated Observable to check for the reponse on the current Notification UUID
+//        gui.setSelectionListener(new SelectionListener() {
+//            @Override
+//            public void hitOk(Dictionary<String, Object> dictionary) {
+//                notification.setConfirmationResponse(true);
+//            }
+//
+//            @Override
+//            public void cancelled() {
+//                notification.setConfirmationResponse(false);
+//            }
+//        });
 
-            @Override
-            public void cancelled() {
-                notification.setConfirmationResponse(false);
-            }
-        });
-
+        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
         return notification.getConfirmationResponse();
     }
 

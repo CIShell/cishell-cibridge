@@ -3,6 +3,7 @@ package org.cishell.cibridge.cishell;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeAlgorithmFacadeIT;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeDataFacadeIT;
 import org.cishell.cibridge.cishell.impl.CIShellCIBridgeLoggingFacadeIT;
+import org.cishell.cibridge.cishell.impl.CIBridgeGUIBuilderServiceIT;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,6 +13,7 @@ import org.junit.runners.Suite;
         CIShellCIBridgeLoggingFacadeIT.class,
         CIShellCIBridgeDataFacadeIT.class,
         CIShellCIBridgeAlgorithmFacadeIT.class,
+        CIBridgeGUIBuilderServiceIT.class
 })
 
 public class IntegrationTestSuite {
