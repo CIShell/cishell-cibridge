@@ -91,4 +91,20 @@ public class Notification {
         this.confirmationResponse = confirmationResponse;
     }
 
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "id='" + id + '\'' +
+                ", type=" + type +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", detail='" + detail + '\'' +
+                ", stackTrace=" + stackTrace +
+                ", formParameters=" + formParameters +
+                ", isClosed=" + isClosed +
+                ", formResponse=" + formResponse +
+                ", questionResponse=" + questionResponse +
+                ", confirmationResponse=" + confirmationResponse +
+                '}';
+    }
 }
