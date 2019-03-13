@@ -4,12 +4,12 @@ import java.util.List;
 
 public class Notification {
     private final String id;
-    private final NotificationType type;
-    private final String title;
-    private final String message;
-    private final String detail;
-    private final List<String> stackTrace;
-    private final List<ParameterDefinition> formParameters;
+    private NotificationType type;
+    private String title;
+    private String message;
+    private String detail;
+    private List<String> stackTrace;
+    private List<ParameterDefinition> formParameters;
     private Boolean isClosed;
     private List<Property> formResponse;
     private Boolean questionResponse;

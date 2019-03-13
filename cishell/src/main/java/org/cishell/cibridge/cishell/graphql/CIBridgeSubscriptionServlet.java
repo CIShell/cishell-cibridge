@@ -73,8 +73,10 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
     }
 
     private void createGraphQLInstance() {
+
         Instrumentation instrumentation = new ChainedInstrumentation(
                 Collections.singletonList(new TracingInstrumentation()));
+
         graphql = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema())
                 .subscriptionExecutionStrategy(new SubscriptionExecutionStrategy()).instrumentation(instrumentation)
                 .build();

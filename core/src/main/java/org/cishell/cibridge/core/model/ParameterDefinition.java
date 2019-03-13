@@ -4,25 +4,15 @@ import java.util.List;
 
 public class ParameterDefinition {
     private final String id;
-    private final String name;
-    private final String description;
-    private final AttributeType type;
-    protected final List<Property> options;
+    private String name;
+    private String description;
+    private AttributeType type;
+    private int cardinality = 0;
+    private List<String> defaultValues;
+    private List<Property> options;
 
-    public ParameterDefinition(String id, String name, String description, AttributeType type, List<Property> options) {
+    public ParameterDefinition(String id) {
         this.id = id;
-        this.name = name;
-        this.description = description;
-        this.type = type;
-        this.options = options;
-    }
-
-    public ParameterDefinition(String name, String description, AttributeType type, List<Property> options) {
-        this.id = null;
-        this.name = name;
-        this.description = description;
-        this.type = type;
-        this.options = options;
     }
 
     public String getId() {
@@ -33,16 +23,60 @@ public class ParameterDefinition {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public AttributeType getType() {
         return type;
     }
 
+    public void setType(AttributeType type) {
+        this.type = type;
+    }
+
+    public int getCardinality() {
+        return cardinality;
+    }
+
+    public void setCardinality(int cardinality) {
+        this.cardinality = cardinality;
+    }
+
+    public List<String> getDefaultValues() {
+        return defaultValues;
+    }
+
+    public void setDefaultValues(List<String> defaultValues) {
+        this.defaultValues = defaultValues;
+    }
+
     public List<Property> getOptions() {
         return options;
     }
 
+    public void setOptions(List<Property> options) {
+        this.options = options;
+    }
+
+    @Override
+    public String toString() {
+        return "ParameterDefinition{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", type=" + type +
+                ", cardinality=" + cardinality +
+                ", defaultValues=" + defaultValues +
+                ", options=" + options +
+                '}';
+    }
 }

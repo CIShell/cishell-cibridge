@@ -25,6 +25,9 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     private ObservableEmitter<Notification> notificationUpdatedObservableEmitter;
 
     public CIShellCIBridgeNotificationFacade() {
+
+        System.out.println("Notification Facade constructor");
+
         Observable<Notification> notificationAddedObservable = Observable.create(emitter -> {
             notificationAddedObservableEmitter = emitter;
 
@@ -45,12 +48,16 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         this.cibridge = cibridge;
         this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(),
                 new CIBridgeGUIBuilderService(cibridge), new Hashtable<String, String>());
+
     }
 
 
     @Override
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
 
+        //TODO remove later not necessary
+        System.out.println("GET Notification called");
+        this.cibridge.getGUIBuilderService().createGUI("1234546", null);
         List<Notification> notifications = new ArrayList<>();
         PageInfo pageInfo = new PageInfo(false, false);
         NotificationQueryResults queryResults = null;
@@ -80,9 +87,11 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 
     @Override
     public Boolean isClosed(String NotificationId) {
+
         if (notificationMap.containsKey(NotificationId)) {
             return notificationMap.get(NotificationId).getIsClosed();
         }
+
         return false;
     }
 
@@ -104,7 +113,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             notificationMap.put(notificationId, notification);
 
             notificationUpdatedObservableEmitter.onNext(notification);
-
             return true;
         }
         return false;
