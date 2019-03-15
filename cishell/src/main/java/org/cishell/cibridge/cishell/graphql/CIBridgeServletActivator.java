@@ -1,5 +1,6 @@
 package org.cishell.cibridge.cishell.graphql;
 
+import graphql.servlet.GraphQLObjectMapper;
 import graphql.servlet.GraphQLServletListener;
 import graphql.servlet.SimpleGraphQLHttpServlet;
 import org.cishell.app.service.datamanager.DataManagerService;
@@ -89,7 +90,10 @@ public class CIBridgeServletActivator implements BundleActivator {
 
         this.ciBridge = new CIShellCIBridge(bundleContext);
         CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(ciBridge);
-        SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider)
+
+        // Maps errors
+        GraphQLObjectMapper graphQLObjectMapper = GraphQLObjectMapper.newBuilder().withGraphQLErrorHandler(ciBridgeGraphQLSchemaProvider).build();
+        SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider).withObjectMapper(graphQLObjectMapper)
                 .build();
 
         graphQLServletRegistration = bundleContext.registerService(
