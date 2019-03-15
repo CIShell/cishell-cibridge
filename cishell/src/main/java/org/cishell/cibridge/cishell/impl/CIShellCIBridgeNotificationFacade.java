@@ -13,7 +13,6 @@ import org.cishell.service.guibuilder.GUIBuilderService;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
 
@@ -25,8 +24,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     private ObservableEmitter<Notification> notificationUpdatedObservableEmitter;
 
     public CIShellCIBridgeNotificationFacade() {
-
-        System.out.println("Notification Facade constructor");
 
         Observable<Notification> notificationAddedObservable = Observable.create(emitter -> {
             notificationAddedObservableEmitter = emitter;
@@ -44,6 +41,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public void setCIBridge(CIShellCIBridge cibridge) {
+
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
         this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(),
@@ -55,15 +53,11 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     @Override
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
 
-        //TODO remove later not necessary
-        System.out.println("GET Notification called");
-        this.cibridge.getGUIBuilderService().createGUI("1234546", null);
         List<Notification> notifications = new ArrayList<>();
         PageInfo pageInfo = new PageInfo(false, false);
         NotificationQueryResults queryResults = null;
         try {
             if (filter != null) {
-                System.out.println("Filter :" + filter);
                 if (filter.getID() != null) {
                     for (String pids : filter.getID()) {
                         if (notificationMap.containsKey(pids)) {
@@ -74,10 +68,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             } else {
                 System.out.println("Filter is empty!");
             }
-            for (Entry<String, Notification> entry : notificationMap.entrySet()) {
-                System.out.println("inside for e");
-                System.out.println(entry.getKey());
-            }
             queryResults = new NotificationQueryResults(notifications, pageInfo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,16 +76,16 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     @Override
-    public Boolean isClosed(String NotificationId) {
+    public Boolean isClosed(String notificationId) {
 
-        if (notificationMap.containsKey(NotificationId)) {
-            return notificationMap.get(NotificationId).getIsClosed();
+        if (notificationMap.containsKey(notificationId)) {
+            return notificationMap.get(notificationId).getIsClosed();
         }
-
         return false;
     }
 
     public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
+
 
         if (notificationMap.containsKey(notificationId)) {
             Notification notification = notificationMap.get(notificationId);
@@ -111,7 +101,9 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             notification.setFormResponse(formResponse);
             notification.setQuestionResponse(response.getQuestionResponse());
             notificationMap.put(notificationId, notification);
-
+            synchronized (notification) {
+                notification.notify();
+            }
             notificationUpdatedObservableEmitter.onNext(notification);
             return true;
         }
@@ -119,11 +111,20 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public Boolean closeNotification(String notificationId) {
-        if (notificationMap.containsKey(notificationId)) {
-            Notification notification = notificationMap.get(notificationId);
-            notification.setClosed(true);
-            notificationUpdatedObservableEmitter.onNext(notification);
-            return true;
+
+        try {
+            if (notificationMap.containsKey(notificationId)) {
+                Notification notification = notificationMap.get(notificationId);
+                notification.setClosed(true);
+                synchronized (notification) {
+                    notification.notify();
+                }
+                notificationUpdatedObservableEmitter.onNext(notification);
+                return true;
+            }
+            return false;
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return false;
     }
@@ -148,7 +149,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         return notificationUpdatedObservable;
     }
 
-    // TODO Test Pending
     public Publisher<Notification> notificationAdded() {
         Flowable<Notification> publisher;
         ConnectableObservable<Notification> connectableObservable = notificationAddedObservable;
@@ -156,7 +156,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         return publisher;
     }
 
-    // TODO Test Pending
     public Publisher<Notification> notificationUpdated() {
         Flowable<Notification> publisher;
         ConnectableObservable<Notification> connectableObservable = notificationUpdatedObservable;
