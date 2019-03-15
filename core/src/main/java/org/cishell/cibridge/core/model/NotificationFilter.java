@@ -9,7 +9,6 @@ public class NotificationFilter {
     private int offset;
 
     public NotificationFilter(){
-
     }
 
     public NotificationFilter(List<String> ids, Boolean isClosed, int limit, int offset) {

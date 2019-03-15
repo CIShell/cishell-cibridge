@@ -53,8 +53,9 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                         Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                         properties.add(property);
                     }
-                    ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
                     //TODO Fill Parameter definition using setters
+                    ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
+
                     notificationParams.add(parameterDefinition);
                 }
                 notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
@@ -89,8 +90,8 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                 properties.add(property);
             }
-            ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
             //TODO fill parameter definition fields using setters
+            ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
             notificationParams.add(parameterDefinition);
         }
 

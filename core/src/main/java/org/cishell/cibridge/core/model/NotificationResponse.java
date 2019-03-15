@@ -10,7 +10,6 @@ public class NotificationResponse {
     private Boolean closeNotification;
 
     public NotificationResponse(){
-        
     }
 
     public NotificationResponse(List<PropertyInput> formResponse, Boolean questionResponse,
