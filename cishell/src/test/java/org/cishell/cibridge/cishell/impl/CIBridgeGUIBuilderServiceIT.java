@@ -25,6 +25,8 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     private CIShellCIBridgeNotificationFacade ciShellCIBridgeNotificationFacade = getCIShellCIBridge().cishellNotification;
     private CIBridgeGUIBuilderService ciBridgeGUIBuilderService = (CIBridgeGUIBuilderService) getCIShellCIBridge().getGUIBuilderService();
 
+    //TODO add more tests for checking mutation
+
     @Test
     public void validateNotifictaionAddedforAddingConfirmMessage() {
 
@@ -65,7 +67,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
         List<Notification> notificationList = testNotiAddedSubscriber.values();
         System.out.println(notificationList.size());
-        for (Notification notification: notificationList) {
+        for (Notification notification : notificationList) {
             System.out.println(notification);
         }
 
@@ -78,45 +80,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         testNotiUpdatedSubscriber.awaitCount(1);
         testNotiUpdatedSubscriber.assertNoErrors();
 
-//        List<Notification> notificationUpdatedList = testNotiUpdatedSubscriber.values();
-//        System.out.println(notificationUpdatedList.size());
-//        for (Notification notification: notificationUpdatedList) {
-//            System.out.println(notification);
-//        }
-//
-//        try {
-//            Thread.sleep(5000);
-//        }
-//        catch (Exception e){
-//
-//        }
-//
-//        ciShellCIBridgeNotificationFacade.getNotificationUpdatedObservable().subscribe(new io.reactivex.Observer<Notification>() {
-//            @Override
-//            public void onSubscribe(Disposable d) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(Notification notification) {
-//                System.out.println("jfsfjsk");
-//                System.out.println(notification);
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//
-//            }
-//
-//            @Override
-//            public void onComplete() {
-//
-//            }
-//        });
-//
-//
-//        Disposable subscriber2 = ciShellCIBridgeNotificationFacade.getNotificationUpdatedObservable().subscribe(notification -> System.out.println("gsabgchs" + notification));
-//        subscriber2.dispose();
     }
 
     @Test
