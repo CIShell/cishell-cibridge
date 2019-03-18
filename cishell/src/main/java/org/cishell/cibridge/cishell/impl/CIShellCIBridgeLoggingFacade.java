@@ -40,11 +40,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
     @Override
     public LogQueryResults getLogs(LogFilter filter) {
 
-        cibridge.getLogService().log(2, "Get Logs Called");
-        cibridge.getLogService().log(4, "Debug Log");
-        cibridge.getLogService().log(3, "Info Log");
-        cibridge.getLogService().log(1, "Error Log");
-
         Preconditions.checkNotNull(filter, "filter can't be empty");
 
         LogQueryResults results = null;
@@ -106,7 +101,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
                 Log log = logEntryToLog(logEntry);
                 listOfLogs.add(log);
             }
-            cibridge.getLogService().log(2, "Exiting Logs Called function");
+
             return new LogQueryResults(listOfLogs, paginatedQueryResults.getPageInfo());
 
         } catch (Exception e) {
