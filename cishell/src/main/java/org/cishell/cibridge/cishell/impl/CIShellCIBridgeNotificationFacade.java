@@ -92,8 +92,9 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             notification.setClosed(response.getCloseNotification());
             notification.setConfirmationResponse(response.getConfirmationResponse());
 
-            List<Property> formResponse = new ArrayList<>();
+            List<Property> formResponse = null;
             if (response.getFormResponse() != null) {
+                formResponse = new ArrayList<>();
                 for (PropertyInput inputProperty : response.getFormResponse()) {
                     formResponse.add(new Property(inputProperty.getKey(), inputProperty.getValue()));
                 }

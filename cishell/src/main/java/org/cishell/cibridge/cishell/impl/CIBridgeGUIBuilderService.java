@@ -1,6 +1,5 @@
 package org.cishell.cibridge.cishell.impl;
 
-import io.reactivex.disposables.Disposable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
@@ -61,15 +60,14 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                         objectClassDefinition.getDescription(), null, notificationParams, false,
                         null, false, false);
-            } else{
+            } else {
                 notification = new Notification(id, NotificationType.FORM, null, null,
                         null, null, null, false,
                         null, false, false);
             }
 
             gui = createAndGetGui(id, map, notification);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -211,17 +209,21 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                     synchronized (notification) {
                         notification.wait();
                     }
-                } catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                List<Property> formResponse = notification.getFormResponse();
-                Dictionary<String, String> dictionary = new Hashtable<>();
-                for(Property property: formResponse){
-                    dictionary.put(property.getKey(), property.getValue());
+                if (notification.getFormResponse() != null) {
+                    List<Property> formResponse = notification.getFormResponse();
+                    Dictionary<String, String> dictionary = new Hashtable<>();
+                    for (Property property : formResponse) {
+                        dictionary.put(property.getKey(), property.getValue());
+                    }
+
+                    return dictionary;
                 }
 
-                return dictionary;
+                return null;
             }
 
             @Override
