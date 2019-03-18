@@ -202,6 +202,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     private GUI createAndGetGui(String id, HashMap<String, Notification> map, Notification notification) {
 
         return new GUI() {
+
             @Override
             public Dictionary openAndWait() {
                 map.put(id, notification);
@@ -246,18 +247,21 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             // TODO Tests Pending
             @Override
             public void setSelectionListener(SelectionListener selectionListener) {
+
                 if (selectionListener != null) {
                     notificationFacade.getNotificationUpdatedObservable().filter(notification1 -> notification1.getId().equals(notification.getId())).subscribe(new io.reactivex.Observer<Notification>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-
                         }
 
                         @Override
                         public void onNext(Notification notification) {
                             if ((notification.getType().equals(NotificationType.FORM) && notification.getFormResponse() != null)) {
-                                Dictionary<String, Object> dictionary = new Hashtable<>();
+                                Dictionary<String, Object> dictionary = null;
                                 List<Property> responses = notification.getFormResponse();
+                                if (responses != null) {
+                                    dictionary = new Hashtable<>();
+                                }
                                 for (Property response : responses) {
                                     dictionary.put(response.getKey(), response.getValue());
                                 }
@@ -269,12 +273,10 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
                         @Override
                         public void onError(Throwable e) {
-
                         }
 
                         @Override
                         public void onComplete() {
-
                         }
                     });
                 }
