@@ -23,7 +23,7 @@ public class NotificationFilter {
     }
 
     public void setID(List<String> ids) {
-        ids = ids;
+        this.ids = ids;
     }
 
     public Boolean getIsClosed() {
