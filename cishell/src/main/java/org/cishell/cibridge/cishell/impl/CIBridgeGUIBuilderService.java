@@ -1,5 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
+import io.reactivex.disposables.Disposable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
@@ -242,9 +243,41 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 return notification.getIsClosed();
             }
 
+            // TODO Tests Pending
             @Override
             public void setSelectionListener(SelectionListener selectionListener) {
-                //TODO Not sure about the implemenation yet
+                if (selectionListener != null) {
+                    notificationFacade.getNotificationUpdatedObservable().filter(notification1 -> notification1.getId().equals(notification.getId())).subscribe(new io.reactivex.Observer<Notification>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(Notification notification) {
+                            if ((notification.getType().equals(NotificationType.FORM) && notification.getFormResponse() != null)) {
+                                Dictionary<String, Object> dictionary = new Hashtable<>();
+                                List<Property> responses = notification.getFormResponse();
+                                for (Property response : responses) {
+                                    dictionary.put(response.getKey(), response.getValue());
+                                }
+                                selectionListener.hitOk(dictionary);
+                            } else {
+                                selectionListener.cancelled();
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+                }
             }
         };
 
