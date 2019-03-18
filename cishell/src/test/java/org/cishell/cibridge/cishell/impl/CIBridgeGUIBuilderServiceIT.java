@@ -365,10 +365,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         assertEquals(expectedDetail, actualNotification.getDetail());
         assertNull(actualNotification.getFormParameters());
         assertFalse(actualNotification.getConfirmationResponse());
+
     }
 
     @Test
     public void validateshowQuestionGUI() {
+
         Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
