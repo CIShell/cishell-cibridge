@@ -7,12 +7,14 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
 
@@ -49,30 +51,42 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 
     }
 
-
     @Override
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
 
-        List<Notification> notifications = new ArrayList<>();
-        PageInfo pageInfo = new PageInfo(false, false);
-        NotificationQueryResults queryResults = null;
-        try {
-            if (filter != null) {
-                if (filter.getID() != null) {
-                    for (String pids : filter.getID()) {
-                        if (notificationMap.containsKey(pids)) {
-                            notifications.add(notificationMap.get(pids));
-                        }
-                    }
-                }
-            } else {
-                System.out.println("Filter is empty!");
+        List<Predicate<Notification>> criteria = new ArrayList<>();
+
+        criteria.add(data -> {
+            if (data == null)
+                return false;
+            if (filter.getID() == null) {
+                return true;
             }
-            queryResults = new NotificationQueryResults(notifications, pageInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return queryResults;
+            else {
+                return filter.getID().contains(data.getId());
+            }
+
+        });
+
+        criteria.add(data -> {
+            if (data == null)
+                return true;
+            if (filter.getIsClosed() == null) {
+                return true;
+            }
+            else {
+                return filter.getIsClosed() == data.getIsClosed();
+            }
+
+        });
+
+        List<Notification> notificationList = new ArrayList(notificationMap.values());
+
+        QueryResults<Notification> paginatedQueryResults = PaginationUtil.getPaginatedResults(notificationList,
+                criteria, filter.getOffset(), filter.getLimit());
+
+        return new NotificationQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
+
     }
 
     @Override
@@ -124,7 +138,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
                 return true;
             }
             return false;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
