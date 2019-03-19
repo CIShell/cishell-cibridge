@@ -40,7 +40,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     public synchronized GUI createGUI(String id, MetaTypeProvider params) {
 
         GUI gui = null;
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
         Notification notification = null;
         try {
             if (params != null) {
@@ -67,7 +66,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                         null, false, false);
             }
 
-            gui = createAndGetGui(id, map, notification);
+            gui = createAndGetGui(notification);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,8 +76,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
-
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
 
         ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
         List<ParameterDefinition> notificationParams = new ArrayList<>();
@@ -98,7 +95,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 objectClassDefinition.getDescription(), null, notificationParams, false,
                 null, false, false);
 
-        GUI gui = createAndGetGui(id, map, notification);
+        GUI gui = createAndGetGui(notification);
 
         return gui.openAndWait();
     }
@@ -106,15 +103,13 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public boolean showConfirm(String title, String message, String detail) {
 
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
-
         String UUID = counter.randomUUID().toString();
 
         Notification notification = new Notification(UUID, NotificationType.CONFIRM, title, message,
                 detail, null, null, false,
                 null, false, false);
 
-        GUI gui = createAndGetGui(UUID, map, notification);
+        GUI gui = createAndGetGui(notification);
         gui.openAndWait();
 
         return notification.getConfirmationResponse();
@@ -123,22 +118,17 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showError(String title, String message, String detail) {
 
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
-
         String UUID = counter.randomUUID().toString();
 
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 detail, null, null, false,
                 null, false, false);
 
-        map.put(UUID, notification);
-        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
+        notificationFacade.addNotification(notification);
     }
 
     @Override
     public void showError(String title, String message, Throwable error) {
-
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
 
         List<String> stackTrace = new ArrayList<>();
         for (StackTraceElement element : error.getStackTrace()) {
@@ -150,36 +140,29 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 null, stackTrace, null, false,
                 null, false, false);
 
-        map.put(UUID, notification);
-        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
-
+        notificationFacade.addNotification(notification);
     }
 
     @Override
     public void showInformation(String title, String message, String detail) {
-
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
 
         String UUID = counter.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.INFORMATION, title, message,
                 detail, null, null, false,
                 null, false, false);
 
-        map.put(UUID, notification);
-        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
+        notificationFacade.addNotification(notification);
     }
 
     @Override
     public boolean showQuestion(String title, String message, String detail) {
-
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
 
         String UUID = counter.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.QUESTION, title, message,
                 detail, null, null, false,
                 null, false, false);
 
-        GUI gui = createAndGetGui(UUID, map, notification);
+        GUI gui = createAndGetGui(notification);
         gui.openAndWait();
 
         return notification.getQuestionResponse();
@@ -188,25 +171,21 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showWarning(String title, String message, String detail) {
 
-        HashMap<String, Notification> map = notificationFacade.getNotificationMap();
-
         String UUID = counter.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.WARNING, title, message,
                 detail, null, null, false,
                 null, false, false);
 
-        map.put(UUID, notification);
-        notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
+        notificationFacade.addNotification(notification);
     }
 
-    private GUI createAndGetGui(String id, HashMap<String, Notification> map, Notification notification) {
+    private GUI createAndGetGui(Notification notification) {
 
         return new GUI() {
 
             @Override
             public Dictionary openAndWait() {
-                map.put(id, notification);
-                notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
+                notificationFacade.addNotification(notification);
                 try {
                     synchronized (notification) {
                         notification.wait();
@@ -230,13 +209,14 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
             @Override
             public void open() {
-                map.put(id, notification);
-                notificationFacade.getNotificationAddedObservableEmitter().onNext(notification);
+                notificationFacade.addNotification(notification);
             }
 
             @Override
             public void close() {
-                notificationFacade.closeNotification(id);
+                notificationFacade.closeNotification(notification.getId());
+                //Removing the notification as the algorithm has decided to close
+                notificationFacade.removeNotification(notification.getId());
             }
 
             @Override

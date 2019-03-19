@@ -61,8 +61,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
                 return false;
             if (filter.getID() == null) {
                 return true;
-            }
-            else {
+            } else {
                 return filter.getID().contains(data.getId());
             }
 
@@ -73,8 +72,7 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
                 return true;
             if (filter.getIsClosed() == null) {
                 return true;
-            }
-            else {
+            } else {
                 return filter.getIsClosed() == data.getIsClosed();
             }
 
@@ -141,23 +139,18 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
         return false;
     }
 
-    public HashMap<String, Notification> getNotificationMap() {
-        return notificationMap;
+    public void addNotification(Notification notification) {
+        notificationMap.put(notification.getId(), notification);
+        notificationAddedObservableEmitter.onNext(notification);
     }
 
-    public ObservableEmitter<Notification> getNotificationAddedObservableEmitter() {
-        return notificationAddedObservableEmitter;
-    }
-
-    public ObservableEmitter<Notification> getNotificationUpdatedObservableEmitter() {
-        return notificationUpdatedObservableEmitter;
-    }
-
-    public ConnectableObservable<Notification> getNotificationAddedObservable() {
-        return notificationAddedObservable;
+    public void removeNotification(String notificationId) {
+        notificationMap.remove(notificationId);
     }
 
     public ConnectableObservable<Notification> getNotificationUpdatedObservable() {
