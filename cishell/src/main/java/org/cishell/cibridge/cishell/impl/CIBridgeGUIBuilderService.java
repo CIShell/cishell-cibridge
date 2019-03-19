@@ -36,6 +36,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     }
 
+    // TODO Check the spec if the id being passed is a uniquely generated id
     @Override
     public synchronized GUI createGUI(String id, MetaTypeProvider params) {
 
@@ -74,6 +75,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         return gui;
     }
 
+    // TODO Check the spec if the id being passed is a uniquely generated id
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
 
@@ -86,7 +88,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                 properties.add(property);
             }
-            //TODO fill parameter definition fields using setters
+            // TODO fill parameter definition fields using setters
             ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
             notificationParams.add(parameterDefinition);
         }
