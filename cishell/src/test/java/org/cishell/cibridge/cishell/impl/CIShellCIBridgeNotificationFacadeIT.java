@@ -33,14 +33,20 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         GUI gui3 = ciBridgeGUIBuilderService.createGUI(id3, null);
         gui3.open();
 
+        List<String> listOfIds = new ArrayList<>(Arrays.asList(id1, id2, id3));
+
         NotificationQueryResults actualResults = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter);
         List<Notification> actualNotifications = actualResults.getResults();
 
-        assertEquals(3, actualResults.getResults().size());
+        assertEquals(3, actualNotifications.size());
 
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id1);
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id2);
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id3);
+        for (Notification notification : actualNotifications) {
+            assertTrue(listOfIds.contains(notification.getId()));
+        }
+
+        ciShellCIBridgeNotificationFacade.removeNotification(id1);
+        ciShellCIBridgeNotificationFacade.removeNotification(id2);
+        ciShellCIBridgeNotificationFacade.removeNotification(id3);
     }
 
     @Test
@@ -61,7 +67,7 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         gui3.open();
 
         //Closing the id1 notification
-        ciShellCIBridgeNotificationFacade.getNotificationMap().get(id1).setClosed(true);
+        ciShellCIBridgeNotificationFacade.closeNotification(id1);
 
         //Setting the notification filter to return only closed notifications
         notificationFilter.setIsClosed(true);
@@ -75,7 +81,7 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         assertEquals(true, actualNotifications.get(0).getIsClosed());
 
         // Closing the notification of id2
-        ciShellCIBridgeNotificationFacade.getNotificationMap().get(id2).setClosed(true);
+        ciShellCIBridgeNotificationFacade.closeNotification(id2);
 
         // Adding ID's of notification id1 and id3 to the filter
         notificationFilter.setID(Arrays.asList(id1, id3));
@@ -87,11 +93,11 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         assertEquals(1, actualResults.getResults().size());
 
         assertEquals(id1, actualNotifications.get(0).getId());
-        // Removing notifications
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id1);
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id2);
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id3);
 
+        // Removing notifications
+        ciShellCIBridgeNotificationFacade.removeNotification(id1);
+        ciShellCIBridgeNotificationFacade.removeNotification(id2);
+        ciShellCIBridgeNotificationFacade.removeNotification(id3);
     }
 
     @Test
@@ -104,13 +110,17 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
-        Notification exNotification = ciShellCIBridgeNotificationFacade.getNotificationMap().get(id);
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        notificationFilter.setID(notificationId);
+
+        Notification exNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
         assertFalse(exNotification.getIsClosed());
 
         ciShellCIBridgeNotificationFacade.closeNotification(id);
         assertTrue(exNotification.getIsClosed());
 
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id);
+        ciShellCIBridgeNotificationFacade.removeNotification(id);
     }
 
     @Test
@@ -123,7 +133,11 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
-        Notification exNotification = ciShellCIBridgeNotificationFacade.getNotificationMap().get(id);
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        notificationFilter.setID(notificationId);
+
+        Notification exNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
         assertFalse(exNotification.getIsClosed());
 
         HashSet<String> propertyKeys = new HashSet<>();
@@ -150,7 +164,7 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
             assertTrue(propertyValues.contains(p.getValue()));
         }
 
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id);
+        ciShellCIBridgeNotificationFacade.removeNotification(id);
 
     }
 
@@ -164,19 +178,22 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
-        Notification exNotification = ciShellCIBridgeNotificationFacade.getNotificationMap().get(id);
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        notificationFilter.setID(notificationId);
+
+        Notification exNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
         assertFalse(exNotification.getIsClosed());
 
         ciShellCIBridgeNotificationFacade.closeNotification(id);
         assertTrue(exNotification.getIsClosed());
 
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(id);
+        ciShellCIBridgeNotificationFacade.removeNotification(id);
     }
 
     @Test
     public void validateNotificationAddedSubscriber() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -191,8 +208,13 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
 
         List<Notification> notificationList = testSubscriber.values();
         Notification expectedNotification = notificationList.get(0);
-        assertTrue(map.containsKey(expectedNotification.getId()));
-        Notification actualNotification = map.get(expectedNotification.getId());
+
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
+
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
@@ -206,13 +228,12 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         assertNull(actualNotification.getFormParameters());
         assertFalse(actualNotification.getConfirmationResponse());
 
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(expectedNotification.getId());
+        ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
     }
 
     @Test
     public void validateNotificationUpdatedSubscriber() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testNotiAddedSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testNotiAddedSubscriber);
 
@@ -228,7 +249,13 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
 
         List<Notification> notificationList = testNotiAddedSubscriber.values();
         Notification expectedNotification = notificationList.get(0);
-        Notification actualNotification = map.get(expectedNotification.getId());
+
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
+
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         NotificationResponse notificationResponse = new NotificationResponse(null, false, false, expectedCloseNotification);
 
@@ -253,8 +280,7 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         // Expected True because we closed the notification
         assertEquals(expectedCloseNotification, actualNotification.getIsClosed());
 
-        ciShellCIBridgeNotificationFacade.getNotificationMap().remove(expectedNotification.getId());
-
+        ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
     }
 
 }

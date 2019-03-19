@@ -1,13 +1,11 @@
 package org.cishell.cibridge.cishell.impl;
 
-import io.reactivex.observers.BaseTestConsumer;
 import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
 import org.junit.Test;
 
-import java.security.acl.NotOwnerException;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -20,14 +18,18 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateCreateGUIOpenWithoutParams() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
+
         String id = "NotificationOpenWithoutParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
         // Should create a notification and add it to map.
         gui.open();
-        assertTrue(map.containsKey(id));
 
-        Notification notification = map.get(id);
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        notificationFilter.setID(notificationId);
+
+        Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(notification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(id, notification.getId());
@@ -46,14 +48,17 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     public void validateCreateGUIOpenWithParams() {
 
         // FIXME Not sure how to pass params. Pass params and assert the values of params passed are being filled in the notification form
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
+
         String id = "NotificationOpenWithParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
         // Should create a notification and add it to map.
         gui.open();
-        assertTrue(map.containsKey(id));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        notificationFilter.setID(notificationId);
 
-        Notification notification = map.get(id);
+        Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(notification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(id, notification.getId());
@@ -68,13 +73,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
         //TODO Fetch Form parameters and compare parameters of each entry
 
-
     }
 
     @Test
     public void validateCreateGUIOpenAndWaitWithoutParams() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
+
         String id = "NotificationOpenAndWaitWithoutParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
 
@@ -93,8 +97,13 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
                 // Should create a notification and add it to map and wait for response.
                 gui.openAndWait();
 
-                assertTrue(map.containsKey(id));
-                Notification notification = map.get(id);
+                NotificationFilter notificationFilter = new NotificationFilter();
+                List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+                notificationFilter.setID(notificationId);
+
+                Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+                assertNotNull(notification);
+
                 // Verify if the notification object getting created is having desired values in the fields
                 assertEquals(id, notification.getId());
                 assertEquals(NotificationType.FORM, notification.getType());
@@ -134,7 +143,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateCreateGUIOpenAndWaitWithParams() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         String id = "NotificationOpenAndWaitWithoutParamsID";
 
         // FIXME Not sure how to pass params. Pass params and assert the values of params passed are being filled in the notification form
@@ -179,8 +187,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
             e.printStackTrace();
         }
 
-        assertTrue(map.containsKey(id));
-        Notification notification = map.get(id);
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        notificationFilter.setID(notificationId);
+
+        Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(notification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(id, notification.getId());
@@ -207,7 +219,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateshowConfirmGUI() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -238,9 +249,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         NotificationResponse notificationResponse = new NotificationResponse(null, false, expectedConfirmationRespone, false);
         ciShellCIBridgeNotificationFacade.setNotificationResponse(expectedNotification.getId(), notificationResponse);
 
-        assertTrue(map.containsKey(expectedNotification.getId()));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
 
-        Notification actualNotification = map.get(expectedNotification.getId());
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
@@ -261,7 +275,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateshowErrorGUI() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -275,9 +288,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         List<Notification> notificationList = testSubscriber.values();
         Notification expectedNotification = notificationList.get(0);
 
-        assertTrue(map.containsKey(expectedNotification.getId()));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
 
-        Notification actualNotification = map.get(expectedNotification.getId());
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
@@ -296,7 +312,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateshowErrorWithThrowableGUI() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -310,9 +325,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         List<Notification> notificationList = testSubscriber.values();
         Notification expectedNotification = notificationList.get(0);
 
-        assertTrue(map.containsKey(expectedNotification.getId()));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
 
-        Notification actualNotification = map.get(expectedNotification.getId());
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
@@ -336,7 +354,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateshowInformationGUI() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -350,9 +367,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         List<Notification> notificationList = testSubscriber.values();
         Notification expectedNotification = notificationList.get(0);
 
-        assertTrue(map.containsKey(expectedNotification.getId()));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
 
-        Notification actualNotification = map.get(expectedNotification.getId());
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
@@ -371,7 +391,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateshowQuestionGUI() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -402,9 +421,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         NotificationResponse notificationResponse = new NotificationResponse(null, expectedQuestionRespone, false, false);
         ciShellCIBridgeNotificationFacade.setNotificationResponse(expectedNotification.getId(), notificationResponse);
 
-        assertTrue(map.containsKey(expectedNotification.getId()));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
 
-        Notification actualNotification = map.get(expectedNotification.getId());
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
@@ -424,7 +446,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateshowWarningGUI() {
 
-        Map<String, Notification> map = ciShellCIBridgeNotificationFacade.getNotificationMap();
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -438,9 +459,12 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         List<Notification> notificationList = testSubscriber.values();
         Notification expectedNotification = notificationList.get(0);
 
-        assertTrue(map.containsKey(expectedNotification.getId()));
+        NotificationFilter notificationFilter = new NotificationFilter();
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
+        notificationFilter.setID(notificationId);
 
-        Notification actualNotification = map.get(expectedNotification.getId());
+        Notification actualNotification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
+        assertNotNull(actualNotification);
 
         // Verify if the notification object getting created is having desired values in the fields
         assertEquals(expectedNotification.getId(), actualNotification.getId());
