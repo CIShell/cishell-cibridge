@@ -40,7 +40,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
         createGraphQLInstance();
     }
 
-    public void start() {
+    public void register() {
         try {
             // Store the current CCL
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
