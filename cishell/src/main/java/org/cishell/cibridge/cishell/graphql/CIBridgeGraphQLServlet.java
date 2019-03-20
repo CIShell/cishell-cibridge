@@ -10,9 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import java.util.Arrays;
 
-public class CIBridgeGraphQLServlet extends HttpServlet {
+public class CIBridgeGraphQLServlet {
 
     private static final long serialVersionUID = 1L;
+    
     private HttpService httpService;
     private BundleContext bundleContext;
     private HttpServlet simpleGraphQLHttpServlet;
