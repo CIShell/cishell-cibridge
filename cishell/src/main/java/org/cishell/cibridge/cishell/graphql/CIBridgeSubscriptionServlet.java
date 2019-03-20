@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
+
 public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
     private static final long serialVersionUID = 1L;
@@ -37,7 +38,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
         createGraphQLInstance();
     }
 
-    public void start() {
+    public void start(String endpoint) {
         try {
             // Store the current CCL
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -45,7 +46,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
             BundleWiring bundleWiring = findJettyBundle().adapt(BundleWiring.class);
             ClassLoader classLoader = bundleWiring.getClassLoader();
             Thread.currentThread().setContextClassLoader(classLoader);
-            httpService.registerServlet("/subscriptions", this, null, null);
+            httpService.registerServlet(endpoint, this, null, null);
             // Restore the CCL
             Thread.currentThread().setContextClassLoader(ccl);
 
