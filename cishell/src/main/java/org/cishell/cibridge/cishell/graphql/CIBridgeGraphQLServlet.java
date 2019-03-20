@@ -13,18 +13,20 @@ import java.util.Arrays;
 public class CIBridgeGraphQLServlet {
 
     private static final long serialVersionUID = 1L;
-    
+
     private HttpService httpService;
     private BundleContext bundleContext;
     private HttpServlet simpleGraphQLHttpServlet;
+    private String endpoint;
 
-    public CIBridgeGraphQLServlet(BundleContext bundleContext, HttpServlet simpleGraphQLHttpServlet, HttpService httpService) {
+    public CIBridgeGraphQLServlet(BundleContext bundleContext, HttpServlet simpleGraphQLHttpServlet, HttpService httpService, String endpoint) {
         this.bundleContext = bundleContext;
         this.simpleGraphQLHttpServlet = simpleGraphQLHttpServlet;
         this.httpService = httpService;
+        this.endpoint = endpoint;
     }
 
-    public void start(String endpoint) {
+    public void start() {
         try {
             // Store the current CCL
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -48,4 +50,7 @@ public class CIBridgeGraphQLServlet {
                 .filter(b -> b.getSymbolicName().equals("org.apache.felix.http.jetty")).findAny().get();
     }
 
+    public void unregister() {
+        httpService.unregister(endpoint);
+    }
 }

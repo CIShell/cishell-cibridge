@@ -22,11 +22,13 @@ import java.util.stream.Collectors;
 import static org.osgi.framework.Constants.OBJECTCLASS;
 
 public class CIBridgeServletActivator implements BundleActivator {
+
     private BundleContext bundleContext;
     private ServiceTracker<Object, Object> ciShellServicesTracker;
     private CIShellCIBridge ciBridge;
-    private ServiceRegistration graphiqlServletRegistration;
-    private ServiceRegistration graphQLServletRegistration;
+    private CIBridgeSubscriptionServlet subscriptionServlet;
+    private CIBridgeGraphQLServlet ciBridgeGraphiQLServlet;
+    private CIBridgeGraphQLServlet ciBridgeGraphQLServlet;
 
     private static final Set<String> CISHELL_SERVICES = new HashSet<>(Arrays.asList(DataManagerService.class.getName(),
             SchedulerService.class.getName(), DataConversionService.class.getName(), LogService.class.getName(),
@@ -47,7 +49,6 @@ public class CIBridgeServletActivator implements BundleActivator {
         try {
             // create filter with the filter string
             filter = bundleContext.createFilter(filterString.toString());
-
             // create the service tracker for the cishell service and mark it open
             ciShellServicesTracker = new ServiceTracker<>(bundleContext, filter,
                     new CIShellServicesTrackerCustomizer<>());
@@ -67,16 +68,17 @@ public class CIBridgeServletActivator implements BundleActivator {
 
     private void stopCIBridge() {
         // unregister all the services registered by this bundle
-        graphiqlServletRegistration.unregister();
-        graphQLServletRegistration.unregister();
+        ciBridgeGraphQLServlet.unregister();
+        ciBridgeGraphiQLServlet.unregister();
+        subscriptionServlet.unregister();
     }
 
     private void startCIBridge() {
 
         HttpService httpservice = (HttpService) this.getService(HttpService.class);
 
-        CIBridgeGraphQLServlet ciBridgeGraphiQLServlet = new CIBridgeGraphQLServlet(bundleContext, new GraphiqlServlet(), httpservice);
-        ciBridgeGraphiQLServlet.start("/graphiql");
+        ciBridgeGraphiQLServlet = new CIBridgeGraphQLServlet(bundleContext, new GraphiqlServlet(), httpservice, "/graphiql");
+        ciBridgeGraphiQLServlet.start();
 
         this.ciBridge = new CIShellCIBridge(bundleContext);
         CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(ciBridge);
@@ -86,12 +88,12 @@ public class CIBridgeServletActivator implements BundleActivator {
         SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider).withObjectMapper(graphQLObjectMapper)
                 .build();
 
-        CIBridgeGraphQLServlet ciBridgeGraphQLServlet = new CIBridgeGraphQLServlet(bundleContext, graphQLServlet, httpservice);
-        ciBridgeGraphQLServlet.start("/graphql");
+        ciBridgeGraphQLServlet = new CIBridgeGraphQLServlet(bundleContext, graphQLServlet, httpservice, "/graphql");
+        ciBridgeGraphQLServlet.start();
 
-        CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider,
-                bundleContext, httpservice);
-        subscriptionServlet.start("/subscriptions");
+        subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider,
+                bundleContext, httpservice, "/subscriptions");
+        subscriptionServlet.start();
 
     }
 

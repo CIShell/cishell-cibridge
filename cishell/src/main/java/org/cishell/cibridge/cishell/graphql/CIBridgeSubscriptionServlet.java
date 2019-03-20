@@ -29,16 +29,18 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
     private CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider;
     private BundleContext bundleContext;
     public static GraphQL graphql;
+    private String endpoint;
 
     public CIBridgeSubscriptionServlet(CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider,
-                                       BundleContext bundleContext, HttpService httpService) {
+                                       BundleContext bundleContext, HttpService httpService, String endpoint) {
         this.ciBridgeGraphQLSchemaProvider = ciBridgeGraphQLSchemaProvider;
         this.bundleContext = bundleContext;
         this.httpService = httpService;
+        this.endpoint = endpoint;
         createGraphQLInstance();
     }
 
-    public void start(String endpoint) {
+    public void start() {
         try {
             // Store the current CCL
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -99,4 +101,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
         this.bundleContext = bundleContext;
     }
 
+    public void unregister() {
+        httpService.unregister(endpoint);
+    }
 }
