@@ -9,6 +9,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.osgi.framework.ServiceReference;
@@ -46,13 +47,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
         ArrayList<LogEntry> listOfLogEntries;
         List<Predicate<LogEntry>> criteria = new ArrayList<>();
 
-        // Maps integers with LogLevel
-        HashMap<Integer, LogLevel> logLevelMap = new HashMap<>();
-        logLevelMap.put(1, LogLevel.ERROR);
-        logLevelMap.put(2, LogLevel.WARNING);
-        logLevelMap.put(3, LogLevel.INFO);
-        logLevelMap.put(4, LogLevel.DEBUG);
-
         try {
 
             LogReaderService logReaderService = getLogReaderService();
@@ -65,7 +59,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
                     return false;
                 if (filter.getLogLevel() == null)
                     return true;
-                return filter.getLogLevel().contains(logLevelMap.get(data.getLevel()));
+                return filter.getLogLevel().contains(Util.getLogLevelFromInteger(data.getLevel()));
             });
 
             // Adding LogsBefore timestamp to the criteria
@@ -176,8 +170,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
         ServiceReference<LogReaderService> ref = this.cibridge.getBundleContext()
                 .getServiceReference(LogReaderService.class);
         if (ref == null) {
-            // TODO why are we throwing a runtime exception here? it could break the
-            // application.
             throw new RuntimeException("The required OSGi LogService is not installed.");
         } else {
             LogReaderService logReaderService = (LogReaderService) this.cibridge.getBundleContext().getService(ref);

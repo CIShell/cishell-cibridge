@@ -42,7 +42,6 @@ public class CIShellCIBridge extends CIBridge {
         cishellScheduler.setCIBridge(this);
         cishellLogging.setCIBridge(this);
 
-        this.cishellAlgorithm.cacheAlgorithmDefinitions();
     }
 
     public GUIBuilderService getGUIBuilderService() {

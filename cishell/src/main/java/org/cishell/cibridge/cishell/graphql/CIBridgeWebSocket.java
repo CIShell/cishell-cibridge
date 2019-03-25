@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+//todo check if the class is redundant, if not make sure its spec compliant
 public class CIBridgeWebSocket extends WebSocketAdapter {
 
     private final AtomicReference<Subscription> subscriptionRef = new AtomicReference<>();

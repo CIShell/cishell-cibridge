@@ -17,6 +17,10 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     private CIShellCIBridge cibridge;
 
+    public SchedulerListenerImpl() {
+        System.out.println("Listener created");
+    }
+
     public void setCIBridge(CIShellCIBridge cibridge) {
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
@@ -25,41 +29,44 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     @Override
     public void algorithmScheduled(Algorithm algorithm, Calendar calendar) {
-        System.out.println("Algorithm Scheduled");
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
         algorithmInstance.setState(SCHEDULED);
         setScheduledRunTime(algorithmInstance, calendar);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmRescheduled(Algorithm algorithm, Calendar calendar) {
-        System.out.println("Algorithm Re-scheduled");
         algorithmScheduled(algorithm, calendar);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmUnscheduled(Algorithm algorithm) {
         getAlgorithmInstance(algorithm).setState(IDLE);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmStarted(Algorithm algorithm) {
         getAlgorithmInstance(algorithm).setState(RUNNING);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmFinished(Algorithm algorithm, Data[] data) {
         getAlgorithmInstance(algorithm).setState(FINISHED);
+        //todo call subscription method
     }
 
     @Override
     public void algorithmError(Algorithm algorithm, Throwable throwable) {
         getAlgorithmInstance(algorithm).setState(ERRORED);
+        //todo call subscription method
     }
 
     @Override
     public void schedulerRunStateChanged(boolean b) {
-        //TODO nothing to update on cibridge side
     }
 
     @Override
@@ -68,7 +75,7 @@ public class SchedulerListenerImpl implements SchedulerListener {
     }
 
     private AlgorithmInstance getAlgorithmInstance(Algorithm algorithm) {
-        return cibridge.cishellAlgorithm.getCishellAlgorithmCIBridgeAlgorithmMap().get(algorithm);
+        return cibridge.cishellAlgorithm.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm);
 
     }
 

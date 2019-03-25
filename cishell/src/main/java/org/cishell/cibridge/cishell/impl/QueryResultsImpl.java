@@ -5,7 +5,7 @@ import org.cishell.cibridge.core.model.QueryResults;
 
 import java.util.List;
 
-//TODO rename this class to something more useful
+//TODO this should be inner class inside pagination
 public class QueryResultsImpl<T> implements QueryResults<T> {
     private List<T> results;
     private PageInfo pageInfo;

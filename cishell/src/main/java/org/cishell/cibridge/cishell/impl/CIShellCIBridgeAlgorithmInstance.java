@@ -19,6 +19,10 @@ public class CIShellCIBridgeAlgorithmInstance extends AlgorithmInstance {
         return algorithm;
     }
 
+    public void setAlgorithm(Algorithm algorithm) {
+        this.algorithm = algorithm;
+    }
+
     private static String generateId(AlgorithmDefinition algorithmDefinition) {
         String algorithmDefinitionId = algorithmDefinition.getId();
         long newCount;

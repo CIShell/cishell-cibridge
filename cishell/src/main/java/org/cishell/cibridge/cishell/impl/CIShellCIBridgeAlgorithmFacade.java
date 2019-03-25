@@ -8,8 +8,6 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.algorithm.ProgressTrackable;
-import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
@@ -21,17 +19,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.osgi.framework.Constants.OBJECTCLASS;
+import static org.osgi.framework.Constants.SERVICE_PID;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
     private CIShellCIBridge cibridge;
-    private SchedulerListenerImpl schedulerListener = new SchedulerListenerImpl();
     private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceMap = new LinkedHashMap<>();
     private final Map<Algorithm, CIShellCIBridgeAlgorithmInstance> cishellAlgorithmCIBridgeAlgorithmMap = new HashMap<>();
     private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionMap = new LinkedHashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
-        this.schedulerListener.setCIBridge(cibridge);
         cacheAlgorithmDefinitions();
     }
 
@@ -70,6 +67,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
         //predicate on input data ids
         //todo need to clarify about how to filter based on input data ids
+        // filter by matching on either (OR)
         if (filter.getInputDataIds() != null) {
             Set<String> supportedFormats = new HashSet<>();
             for (String inputDataId : filter.getInputDataIds()) {
@@ -92,8 +90,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             });
         }
 
-
-        //todo how to filter algorithm that have no input or output data format
         //predicate on output data format
         if (filter.getOutputFormats() != null) {
             criteria.add(algorithmDefinition -> {
@@ -214,16 +210,14 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
         Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext());
 
-        if (algorithm instanceof ProgressTrackable) {
-            ProgressTrackable progressTrackable = (ProgressTrackable) algorithm;
-            System.out.println("progress monitor: " + progressTrackable.getProgressMonitor());
-        }
-
+        //create cibridge's algorithm object(algorithmInstance) containing cishell's algorithm object
         CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
 
         algorithmInstance.setParameters(paramList);
 
         algorithmInstanceMap.put(algorithmInstance.getId(), algorithmInstance);
+        cishellAlgorithmCIBridgeAlgorithmMap.put(algorithm, algorithmInstance);
+
         return algorithmInstance;
     }
 
@@ -277,23 +271,24 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return Flowable.fromIterable(results.getResults()).delay(2, TimeUnit.SECONDS);
     }
 
-    private void uncacheAlgorithmDefinition
-            (ServiceReference<AlgorithmFactory> reference) {
-        if (reference.getProperty(Constants.SERVICE_PID) != null) {
-            String pid = reference.getProperty(Constants.SERVICE_PID).toString();
+
+    private void uncacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
+        if (reference.getProperty(SERVICE_PID) != null) {
+            String pid = reference.getProperty(SERVICE_PID).toString();
+
             if (pid != null) {
                 algorithmDefinitionMap.remove(pid);
             }
         }
     }
 
-    private void cacheAlgorithmDefinition
-            (ServiceReference<AlgorithmFactory> reference) {
-        if (reference != null && reference.getProperty(Constants.SERVICE_PID) != null) {
-            String pid = reference.getProperty(Constants.SERVICE_PID).toString();
-
-            CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(reference, cibridge.getBundleContext().getService(reference));
-            algorithmDefinitionMap.put(pid, algorithmDefinition);
+    private void cacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
+        if (reference != null && reference.getProperty(SERVICE_PID) != null) {
+            String pid = reference.getProperty(SERVICE_PID).toString();
+            if (pid != null) {
+                CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(cibridge, reference);
+                algorithmDefinitionMap.put(pid, algorithmDefinition);
+            }
         }
 
     }
@@ -339,8 +334,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return algorithmDefinitionMap;
     }
 
-    Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCishellAlgorithmCIBridgeAlgorithmMap
-            () {
+    Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCIShellAlgorithmCIBridgeAlgorithmMap() {
         return cishellAlgorithmCIBridgeAlgorithmMap;
     }
 }

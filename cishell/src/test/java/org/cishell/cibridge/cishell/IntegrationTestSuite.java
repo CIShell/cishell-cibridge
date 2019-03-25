@@ -10,6 +10,7 @@ import org.junit.runners.Suite;
         CIShellCIBridgeLoggingFacadeIT.class,
         CIShellCIBridgeDataFacadeIT.class,
         CIShellCIBridgeAlgorithmFacadeIT.class,
+        CIShellCIBridgeSchedulerFacadeIT.class,
         CIBridgeGUIBuilderServiceIT.class,
         CIShellCIBridgeNotificationFacadeIT.class
 })
