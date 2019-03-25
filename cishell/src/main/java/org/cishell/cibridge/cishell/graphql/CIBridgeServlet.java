@@ -1,3 +1,4 @@
+/*
 package org.cishell.cibridge.cishell.graphql;
 
 import graphql.servlet.SimpleGraphQLHttpServlet;
@@ -65,4 +66,4 @@ public class CIBridgeServlet extends HttpServlet {
     public CIBridge getCIBridge() {
         return this.cibridgeSchemaProvider.getCIBridge();
     }
-}
+}*/

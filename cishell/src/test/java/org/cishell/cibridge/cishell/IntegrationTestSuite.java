@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         CIShellContainerLauncher.class,
+        //todo some tests in logging facade are still failing
 //        CIShellCIBridgeLoggingFacadeIT.class,
         CIShellCIBridgeDataFacadeIT.class,
         CIShellCIBridgeAlgorithmFacadeIT.class,

@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
+import org.cishell.framework.algorithm.Algorithm;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,8 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
             System.err.println("Interrupted before caching algorithm definition with pid: " + pid);
             return null;
         }
+
+        System.out.println("Algorithm factory for pid: '" + pid + "' was not cached");
         return null;
     }
 
@@ -297,6 +300,12 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         assertEquals(2, queryResults.getResults().size());
     }
 
+    //todo write tests for filtering algorithm instances
+    @Test
+    public void getAlgorithmInstances() {
+
+    }
+
     @Test
     public void createAlgorithm() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
@@ -304,7 +313,17 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
         assertNotNull(algorithmInstance);
         assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
+
+        if (algorithmInstance instanceof CIShellCIBridgeAlgorithmInstance) {
+            Algorithm algorithm = ((CIShellCIBridgeAlgorithmInstance) algorithmInstance).getAlgorithm();
+            assertTrue(cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().containsKey(algorithm));
+            assertEquals(algorithmInstance, cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm));
+        }
     }
+
+    //todo write detailed integration test for creating algorithm eg with parameters
+
+    //todo write integration tests from metatype information
 
     @Test
     public void uncacheAlgorithmDefinition() {
@@ -322,7 +341,12 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
 
         List<String> algorithmInstanceIdList = new LinkedList<>(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().keySet());
         for (String algorithmInstanceId : algorithmInstanceIdList) {
-            getCIShellCIBridge().cishellAlgorithm.getAlgorithmDefinitionMap().remove(algorithmInstanceId);
+            cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().remove(algorithmInstanceId);
+        }
+
+        List<Algorithm> algorithmList = new LinkedList<>(cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().keySet());
+        for (Algorithm algorithm : algorithmList) {
+            cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().remove(algorithm);
         }
     }
 }

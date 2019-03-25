@@ -10,7 +10,7 @@ public class AlgorithmInstance {
     private final AlgorithmDefinition algorithmDefinition;
     private AlgorithmState state = AlgorithmState.IDLE;
     private ZonedDateTime scheduledRunTime;
-    private int progress;
+    private int progress = 0;
     private List<Data> outData;
 
     public AlgorithmInstance(String id, AlgorithmDefinition algorithmDefinition) {

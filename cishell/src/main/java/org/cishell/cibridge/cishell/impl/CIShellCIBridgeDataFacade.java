@@ -40,7 +40,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     public List<AlgorithmDefinition> findConverters(String dataId, String outFormat) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
         Preconditions.checkNotNull(outFormat, "output format cannot be null");
-        Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "data with given dataId was not found");
+        Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "No data found with id '%s'", dataId);
 
         CIShellCIBridgeData cibridgeData = cibridgeDataMap.get(dataId);
         Converter[] converters = cibridge.getDataConversionService().findConverters(cibridgeData.getCIShellData(), outFormat);
@@ -133,7 +133,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     @Override
     public String downloadData(String dataId) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
-        Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
+        Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "Invalid dataId. No data found with id '%s'", dataId);
         return cibridgeDataMap.get(dataId).getCIShellData().getData().toString();
     }
 
@@ -181,7 +181,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     public Boolean updateData(String dataId, DataProperties properties) {
         Preconditions.checkNotNull(dataId, "dataId cannot be null");
         Preconditions.checkNotNull(properties, "dataProperties cannot be null");
-        Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "Invalid dataId. No data object found with dataId '%s'", dataId);
+        Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "Invalid dataId. No data found with id '%s'", dataId);
 
         CIShellCIBridgeData cishellCIBridgedata = cibridgeDataMap.get(dataId);
 

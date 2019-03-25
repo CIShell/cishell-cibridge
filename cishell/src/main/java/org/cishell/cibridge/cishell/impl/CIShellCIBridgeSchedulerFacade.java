@@ -6,6 +6,7 @@ import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;
+import org.cishell.framework.algorithm.ProgressTrackable;
 import org.osgi.framework.ServiceReference;
 import org.reactivestreams.Publisher;
 
@@ -13,7 +14,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.cishell.cibridge.core.model.AlgorithmState.*;
@@ -42,8 +42,10 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     @Override
     public Integer getSchedulerQueueWaiting() {
         int count = 0;
-        for (AlgorithmInstance algorithmInstance : getAlgorithmInstanceMap().values()) {
-            if (algorithmInstance.getState() == IDLE || algorithmInstance.getState() == PAUSED || algorithmInstance.getState() == WAITING) {
+        for (AlgorithmInstance algorithmInstance : cibridge.cishellAlgorithm.getAlgorithmInstanceMap().values()) {
+            if (algorithmInstance.getState() == IDLE ||
+                    algorithmInstance.getState() == PAUSED ||
+                    algorithmInstance.getState() == WAITING) {
                 count++;
             }
         }
@@ -53,32 +55,82 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     /* Mutations */
 
     @Override
-    public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {
+    public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean cancelled) {
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+
+        if (setProgressMonitorImpl(algorithmInstance)) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            progressTrackableAlgorithm.getProgressMonitor().setCanceled(cancelled);
+            //return true if the operation succeeded
+            System.out.println(algorithmInstance.getState().equals(CANCELLED) == cancelled);
+            return algorithmInstance.getState().equals(CANCELLED) == cancelled;
+        }
 
         return false;
     }
 
+
     @Override
-    public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean isPaused) {
+    public Boolean setAlgorithmPaused(String algorithmInstanceId, Boolean paused) {
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+
+        if (setProgressMonitorImpl(algorithmInstance)) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            progressTrackableAlgorithm.getProgressMonitor().setPaused(paused);
+            //return true if the operation succeeded
+            return algorithmInstance.getState().equals(PAUSED) == paused;
+        }
+
         return false;
     }
 
     @Override
     public Boolean removeAlgorithm(String algorithmInstanceId) {
-        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstanceMap().remove(algorithmInstanceId);
-        return algorithmInstance != null;
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        Algorithm algorithm = algorithmInstance.getAlgorithm();
+
+        //unschedule the algorithm
+        cibridge.getSchedulerService().unschedule(algorithm);
+
+        if (setProgressMonitorImpl(algorithmInstance)) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
+            //also mark the algorithm canceled
+            progressTrackableAlgorithm.getProgressMonitor().setCanceled(true);
+        }
+
+        //remove the algorithm from cibridge
+        cibridge.cishellAlgorithm.getCIShellAlgorithmCIBridgeAlgorithmMap().remove(algorithm);
+        cibridge.cishellAlgorithm.getAlgorithmInstanceMap().remove(algorithmInstanceId);
+
+        return true;
     }
 
     @Override
     public Boolean runAlgorithmNow(String algorithmInstanceId) {
-        cibridge.getSchedulerService().runNow(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId));
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        Algorithm algorithm = algorithmInstance.getAlgorithm();
+
+        if (setProgressMonitorImpl(algorithmInstance)) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
+        }
+
+        cibridge.getSchedulerService().runNow(algorithm, getServiceReference(algorithmInstanceId));
         return true;
     }
 
     @Override
     public Boolean scheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        cibridge.getSchedulerService().schedule(getAlgorithm(algorithmInstanceId), getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
-        AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        Algorithm algorithm = algorithmInstance.getAlgorithm();
+
+        if (setProgressMonitorImpl(algorithmInstance)) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
+        }
+
+        cibridge.getSchedulerService().schedule(algorithm, getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
         algorithmInstance.setScheduledRunTime(date);
         algorithmInstance.setState(SCHEDULED);
         return true;
@@ -86,12 +138,18 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean rescheduleAlgorithm(String algorithmInstanceId, ZonedDateTime date) {
-        boolean isAlreadyScheduled = cibridge.getSchedulerService().reschedule(getAlgorithm(algorithmInstanceId), GregorianCalendar.from(date));
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        Algorithm algorithm = algorithmInstance.getAlgorithm();
+
+        if (setProgressMonitorImpl(algorithmInstance)) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
+        }
+
+        boolean isAlreadyScheduled = cibridge.getSchedulerService().reschedule(algorithm, GregorianCalendar.from(date));
         if (!isAlreadyScheduled) {
             return false;
         }
-
-        AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
         algorithmInstance.setScheduledRunTime(date);
         algorithmInstance.setState(SCHEDULED);
         return true;
@@ -99,12 +157,15 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Boolean unscheduleAlgorithm(String algorithmInstanceId) {
-        boolean unscheduled = cibridge.getSchedulerService().unschedule(getAlgorithm(algorithmInstanceId));
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
+        Algorithm algorithm = algorithmInstance.getAlgorithm();
+
+        boolean unscheduled = cibridge.getSchedulerService().unschedule(algorithm);
         if (!unscheduled) {
             return false;
         }
 
-        getAlgorithmInstance(algorithmInstanceId).setState(IDLE);
+        algorithmInstance.setState(IDLE);
         return true;
     }
 
@@ -140,20 +201,25 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         // return Flowable.just(boolean1).;
     }
 
-    private Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceMap() {
-        return cibridge.cishellAlgorithm.getAlgorithmInstanceMap();
-    }
-
-    private Algorithm getAlgorithm(String algorithmInstanceId) {
-        return cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId).getAlgorithm();
-    }
-
-    private AlgorithmInstance getAlgorithmInstance(String algorithmInstanceId) {
+    private CIShellCIBridgeAlgorithmInstance getAlgorithmInstance(String algorithmInstanceId) {
+        Preconditions.checkArgument(cibridge.cishellAlgorithm.getAlgorithmInstanceMap().containsKey(algorithmInstanceId), "No algorithm found with id '%s'", algorithmInstanceId);
         return cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId);
     }
 
     private ServiceReference getServiceReference(String algorithmInstanceId) {
-        return cibridge.getSchedulerService().getServiceReference(getAlgorithm(algorithmInstanceId));
+        return cibridge.getSchedulerService().getServiceReference(getAlgorithmInstance(algorithmInstanceId).getAlgorithm());
     }
 
+    private boolean setProgressMonitorImpl(CIShellCIBridgeAlgorithmInstance algorithmInstance) {
+        //if ProgressTrackable, supply cibridge implementation of progress monitor
+        if (algorithmInstance.getAlgorithm() instanceof ProgressTrackable) {
+            ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
+            if (!(progressTrackableAlgorithm.getProgressMonitor() instanceof ProgressMonitorImpl)) {
+                progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

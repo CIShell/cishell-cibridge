@@ -8,7 +8,6 @@ import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
@@ -20,17 +19,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.osgi.framework.Constants.OBJECTCLASS;
+import static org.osgi.framework.Constants.SERVICE_PID;
 
 public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade {
     private CIShellCIBridge cibridge;
-    private SchedulerListenerImpl schedulerListener = new SchedulerListenerImpl();
     private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceMap = new LinkedHashMap<>();
     private final Map<Algorithm, CIShellCIBridgeAlgorithmInstance> cishellAlgorithmCIBridgeAlgorithmMap = new HashMap<>();
     private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionMap = new LinkedHashMap<>();
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
-        this.schedulerListener.setCIBridge(cibridge);
         cacheAlgorithmDefinitions();
     }
 
@@ -195,17 +193,14 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             }
         }
 
-        ProgressTrackableAlgorithmImpl progressTrackableAlgorithm = new ProgressTrackableAlgorithmImpl(
-                algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext())
-        );
+        Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext());
 
-        CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, progressTrackableAlgorithm);
+        //create cibridge's algorithm object(algorithmInstance) containing cishell's algorithm object
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
         algorithmInstance.setParameters(paramList);
 
-        progressTrackableAlgorithm.setProgressMonitor(new ProgressMonitorImpl(cibridge, algorithmInstance));
-
         algorithmInstanceMap.put(algorithmInstance.getId(), algorithmInstance);
-        cishellAlgorithmCIBridgeAlgorithmMap.put(progressTrackableAlgorithm, algorithmInstance);
+        cishellAlgorithmCIBridgeAlgorithmMap.put(algorithm, algorithmInstance);
 
         return algorithmInstance;
     }
@@ -258,8 +253,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     }
 
     private void uncacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
-        if (reference.getProperty(Constants.SERVICE_PID) != null) {
-            String pid = reference.getProperty(Constants.SERVICE_PID).toString();
+        if (reference.getProperty(SERVICE_PID) != null) {
+            String pid = reference.getProperty(SERVICE_PID).toString();
             if (pid != null) {
                 algorithmDefinitionMap.remove(pid);
             }
@@ -267,10 +262,10 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     }
 
     private void cacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
-        if (reference != null && reference.getProperty(Constants.SERVICE_PID) != null) {
-            String pid = reference.getProperty(Constants.SERVICE_PID).toString();
+        if (reference != null && reference.getProperty(SERVICE_PID) != null) {
+            String pid = reference.getProperty(SERVICE_PID).toString();
             if (pid != null) {
-                CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(reference, cibridge.getBundleContext().getService(reference));
+                CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(cibridge, reference);
                 algorithmDefinitionMap.put(pid, algorithmDefinition);
             }
         }
@@ -313,7 +308,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return algorithmDefinitionMap;
     }
 
-    Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCishellAlgorithmCIBridgeAlgorithmMap() {
+    Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCIShellAlgorithmCIBridgeAlgorithmMap() {
         return cishellAlgorithmCIBridgeAlgorithmMap;
     }
 }
