@@ -9,6 +9,9 @@ public class NotificationResponse {
     private Boolean confirmationResponse;
     private Boolean closeNotification;
 
+    public NotificationResponse(){
+    }
+
     public NotificationResponse(List<PropertyInput> formResponse, Boolean questionResponse,
                                 Boolean confirmationResponse, Boolean closeNotification) {
         this.formResponse = formResponse;

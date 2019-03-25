@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
+
 public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
     private static final long serialVersionUID = 1L;
@@ -28,16 +29,18 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
     private CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider;
     private BundleContext bundleContext;
     public static GraphQL graphql;
+    private String endpoint;
 
     public CIBridgeSubscriptionServlet(CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider,
-                                       BundleContext bundleContext, HttpService httpService) {
+                                       BundleContext bundleContext, HttpService httpService, String endpoint) {
         this.ciBridgeGraphQLSchemaProvider = ciBridgeGraphQLSchemaProvider;
         this.bundleContext = bundleContext;
         this.httpService = httpService;
+        this.endpoint = endpoint;
         createGraphQLInstance();
     }
 
-    public void start() {
+    public void register() {
         try {
             // Store the current CCL
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -45,7 +48,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
             BundleWiring bundleWiring = findJettyBundle().adapt(BundleWiring.class);
             ClassLoader classLoader = bundleWiring.getClassLoader();
             Thread.currentThread().setContextClassLoader(classLoader);
-            httpService.registerServlet("/subscriptions", this, null, null);
+            httpService.registerServlet(endpoint, this, null, null);
             // Restore the CCL
             Thread.currentThread().setContextClassLoader(ccl);
 
@@ -73,8 +76,10 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
     }
 
     private void createGraphQLInstance() {
+
         Instrumentation instrumentation = new ChainedInstrumentation(
                 Collections.singletonList(new TracingInstrumentation()));
+
         graphql = GraphQL.newGraphQL(ciBridgeGraphQLSchemaProvider.getSchema())
                 .subscriptionExecutionStrategy(new SubscriptionExecutionStrategy()).instrumentation(instrumentation)
                 .build();
@@ -96,4 +101,7 @@ public class CIBridgeSubscriptionServlet extends WebSocketServlet {
         this.bundleContext = bundleContext;
     }
 
+    public void unregister() {
+        httpService.unregister(endpoint);
+    }
 }

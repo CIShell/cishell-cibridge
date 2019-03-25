@@ -1,6 +1,6 @@
 package org.cishell.cibridge.cishell.graphql;
 
-import graphql.servlet.GraphQLServletListener;
+import graphql.servlet.GraphQLObjectMapper;
 import graphql.servlet.SimpleGraphQLHttpServlet;
 import org.cishell.app.service.datamanager.DataManagerService;
 import org.cishell.app.service.scheduler.SchedulerService;
@@ -14,22 +14,23 @@ import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
-import javax.servlet.Servlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.osgi.framework.Constants.OBJECTCLASS;
 
 //todo refactor this class
 public class CIBridgeServletActivator implements BundleActivator {
+
     private BundleContext bundleContext;
     private ServiceTracker<Object, Object> ciShellServicesTracker;
     private CIShellCIBridge ciBridge;
-    private ServiceRegistration graphiqlServletRegistration;
-    private ServiceRegistration graphQLServletRegistration;
+    private CIBridgeSubscriptionServlet subscriptionServlet;
+    private CIBridgeGraphQLServlet ciBridgeGraphiQLServlet;
+    private CIBridgeGraphQLServlet ciBridgeGraphQLServlet;
 
     private static final Set<String> CISHELL_SERVICES = new HashSet<>(Arrays.asList(DataManagerService.class.getName(),
             SchedulerService.class.getName(), DataConversionService.class.getName(), LogService.class.getName(),
@@ -50,7 +51,6 @@ public class CIBridgeServletActivator implements BundleActivator {
         try {
             // create filter with the filter string
             filter = bundleContext.createFilter(filterString.toString());
-
             // create the service tracker for the cishell service and mark it open
             ciShellServicesTracker = new ServiceTracker<>(bundleContext, filter,
                     new CIShellServicesTrackerCustomizer<>());
@@ -70,63 +70,33 @@ public class CIBridgeServletActivator implements BundleActivator {
 
     private void stopCIBridge() {
         // unregister all the services registered by this bundle
-        graphiqlServletRegistration.unregister();
-        graphQLServletRegistration.unregister();
+        ciBridgeGraphQLServlet.unregister();
+        ciBridgeGraphiQLServlet.unregister();
+        subscriptionServlet.unregister();
     }
 
     private void startCIBridge() {
 
-        Hashtable<String, String> graphiqlServletProperties = new Hashtable<>();
-        graphiqlServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphiql");
-        graphiqlServletProperties.put("alias", "/graphiql");
-        graphiqlServletProperties.put("osgi.http.whiteboard.servlet.name", "graphiql");
-        graphiqlServletRegistration = bundleContext.registerService(
-                new String[]{HttpServlet.class.getName(), Servlet.class.getName()}, new GraphiqlServlet(),
-                graphiqlServletProperties);
+        HttpService httpservice = (HttpService) this.getService(HttpService.class);
 
-        Hashtable<String, String> graphQLServletProperties = new Hashtable<>();
-        graphQLServletProperties.put("osgi.http.whiteboard.servlet.pattern", "/graphql");
-        graphQLServletProperties.put("alias", "/graphql");
-        graphQLServletProperties.put("osgi.http.whiteboard.servlet.name", "cibridge");
+        ciBridgeGraphiQLServlet = new CIBridgeGraphQLServlet(bundleContext, new GraphiqlServlet(), httpservice, "/graphiql");
+        ciBridgeGraphiQLServlet.register();
 
         this.ciBridge = new CIShellCIBridge(bundleContext);
         CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider = new CIBridgeGraphQLSchemaProvider(ciBridge);
-        SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider)
+
+        // Maps errors
+        GraphQLObjectMapper graphQLObjectMapper = GraphQLObjectMapper.newBuilder().withGraphQLErrorHandler(ciBridgeGraphQLSchemaProvider).build();
+        SimpleGraphQLHttpServlet graphQLServlet = SimpleGraphQLHttpServlet.newBuilder(ciBridgeGraphQLSchemaProvider).withObjectMapper(graphQLObjectMapper)
                 .build();
 
-        graphQLServletRegistration = bundleContext.registerService(
-                new String[]{HttpServlet.class.getName(), Servlet.class.getName()}, graphQLServlet,
-                graphQLServletProperties);
+        ciBridgeGraphQLServlet = new CIBridgeGraphQLServlet(bundleContext, graphQLServlet, httpservice, "/graphql");
+        ciBridgeGraphQLServlet.register();
 
-        HttpService httpservice = (HttpService) this.getService(HttpService.class);
+        subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider,
+                bundleContext, httpservice, "/subscriptions");
+        subscriptionServlet.register();
 
-        CIBridgeSubscriptionServlet subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider,
-                bundleContext, httpservice);
-        System.out.println("Starting subscriptions");
-        subscriptionServlet.start();
-
-        graphQLServlet.addListener(new GraphQLServletListener() {
-            @Override
-            public GraphQLServletListener.RequestCallback onRequest(HttpServletRequest request,
-                                                                    HttpServletResponse response) {
-
-                return new GraphQLServletListener.RequestCallback() {
-                    @Override
-                    public void onSuccess(HttpServletRequest request, HttpServletResponse response) {
-                    }
-
-                    @Override
-                    public void onError(HttpServletRequest request, HttpServletResponse response, Throwable throwable) {
-                        System.out.println("error");
-                        throwable.printStackTrace();
-                    }
-
-                    @Override
-                    public void onFinally(HttpServletRequest request, HttpServletResponse response) {
-                    }
-                };
-            }
-        });
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

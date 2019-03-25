@@ -1,30 +1,51 @@
 package org.cishell.cibridge.cishell.impl;
 
+import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUIBuilderService;
-import org.osgi.framework.BundleContext;
 import org.reactivestreams.Publisher;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.function.Predicate;
 
 public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationFacade {
-    private CIShellCIBridge cibridge;
-    private HashMap<String, Notification> notificationMap = new HashMap<String, Notification>();
 
-    public void setCIBridge(CIShellCIBridge cibridge) {
-        this.cibridge = cibridge;
+    private CIShellCIBridge cibridge;
+    private HashMap<String, Notification> notificationMap = new LinkedHashMap<>();
+    private ConnectableObservable<Notification> notificationAddedObservable;
+    private ObservableEmitter<Notification> notificationAddedObservableEmitter;
+    private ConnectableObservable<Notification> notificationUpdatedObservable;
+    private ObservableEmitter<Notification> notificationUpdatedObservableEmitter;
+
+    public CIShellCIBridgeNotificationFacade() {
+
+        Observable<Notification> notificationAddedObservable = Observable.create(emitter -> {
+            notificationAddedObservableEmitter = emitter;
+
+        });
+        this.notificationAddedObservable = notificationAddedObservable.share().publish();
+        this.notificationAddedObservable.connect();
+
+        Observable<Notification> notificationUpdatedObservable = Observable.create(emitter -> {
+            notificationUpdatedObservableEmitter = emitter;
+
+        });
+        this.notificationUpdatedObservable = notificationUpdatedObservable.share().publish();
+        this.notificationUpdatedObservable.connect();
     }
 
-    // FIXME (Check all the implementation of methods and test it).
-    private void registerGUIBuilderService() {
+    public void setCIBridge(CIShellCIBridge cibridge) {
+
+        Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
+        this.cibridge = cibridge;
         this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(),
                 new CIBridgeGUIBuilderService(cibridge), new Hashtable<String, String>());
 
@@ -32,85 +53,122 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
 
     @Override
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
-        List<Notification> notifications = new ArrayList<>();
-        BundleContext context = cibridge.getBundleContext();
-        PageInfo pageInfo = new PageInfo(false, false);
-        NotificationQueryResults queryResults = null;
-        try {
-            if (filter != null) {
-                System.out.println("Filter :" + filter);
-                if (filter.getID() != null) {
-                    for (String pids : filter.getID()) {
-                        if (notificationMap.containsKey(pids)) {
-                            notifications.add(notificationMap.get(pids));
-                        }
-                    }
-                }
+
+        List<Predicate<Notification>> criteria = new ArrayList<>();
+
+        criteria.add(data -> {
+            if (data == null)
+                return false;
+            if (filter.getID() == null) {
+                return true;
             } else {
-                System.out.println("Filter is empty!");
+                return filter.getID().contains(data.getId());
             }
-            for (Entry<String, Notification> entry : notificationMap.entrySet()) {
-                System.out.println("insdide for e");
-                System.out.println(entry.getKey());
+
+        });
+
+        criteria.add(data -> {
+            if (data == null)
+                return true;
+            if (filter.getIsClosed() == null) {
+                return true;
+            } else {
+                return filter.getIsClosed() == data.getIsClosed();
             }
-            queryResults = new NotificationQueryResults(notifications, pageInfo);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return queryResults;
+
+        });
+
+        List<Notification> notificationList = new ArrayList(notificationMap.values());
+
+        QueryResults<Notification> paginatedQueryResults = PaginationUtil.getPaginatedResults(notificationList,
+                criteria, filter.getOffset(), filter.getLimit());
+
+        return new NotificationQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
+
     }
 
     @Override
-    public Boolean isClosed(String NotificationId) {
-        if (notificationMap.containsKey(NotificationId)) {
-            return notificationMap.get(NotificationId).getIsClosed();
+    public Boolean isClosed(String notificationId) {
+
+        if (notificationMap.containsKey(notificationId)) {
+            return notificationMap.get(notificationId).getIsClosed();
         }
-        return null;
+        return false;
     }
 
     public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
+
+
         if (notificationMap.containsKey(notificationId)) {
             Notification notification = notificationMap.get(notificationId);
             notification.setClosed(response.getCloseNotification());
             notification.setConfirmationResponse(response.getConfirmationResponse());
 
-            List<Property> formResponse = new ArrayList<>();
-            for (PropertyInput inputProperty : response.getFormResponse()) {
-                formResponse.add(new Property(inputProperty.getKey(), inputProperty.getValue()));
+            List<Property> formResponse = null;
+            if (response.getFormResponse() != null) {
+                formResponse = new ArrayList<>();
+                for (PropertyInput inputProperty : response.getFormResponse()) {
+                    formResponse.add(new Property(inputProperty.getKey(), inputProperty.getValue()));
+                }
             }
             notification.setFormResponse(formResponse);
             notification.setQuestionResponse(response.getQuestionResponse());
             notificationMap.put(notificationId, notification);
+            synchronized (notification) {
+                notification.notify();
+            }
+            notificationUpdatedObservableEmitter.onNext(notification);
             return true;
         }
         return false;
     }
 
     public Boolean closeNotification(String notificationId) {
-        if (notificationMap.containsKey(notificationId)) {
-            Notification notification = notificationMap.get(notificationId);
-            notification.setClosed(true);
-            return true;
+
+        try {
+            if (notificationMap.containsKey(notificationId)) {
+                Notification notification = notificationMap.get(notificationId);
+                notification.setClosed(true);
+                synchronized (notification) {
+                    notification.notify();
+                }
+                notificationUpdatedObservableEmitter.onNext(notification);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+
         return false;
     }
 
-    // TODO Update the subscriptions with listener
-    public Publisher<Notification> notificationAdded() {
-        Notification notification = new Notification("1", NotificationType.INFORMATION, "Notification", "Test", null,
-                null, null, null, null, true, true);
-        List<Notification> results = new ArrayList<Notification>();
-        results.add(notification);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+    public void addNotification(Notification notification) {
+        notificationMap.put(notification.getId(), notification);
+        notificationAddedObservableEmitter.onNext(notification);
     }
 
-    // TODO Update the subscriptions with listener
+    public void removeNotification(String notificationId) {
+        notificationMap.remove(notificationId);
+    }
+
+    public ConnectableObservable<Notification> getNotificationUpdatedObservable() {
+        return notificationUpdatedObservable;
+    }
+
+    public Publisher<Notification> notificationAdded() {
+        Flowable<Notification> publisher;
+        ConnectableObservable<Notification> connectableObservable = notificationAddedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
+    }
+
     public Publisher<Notification> notificationUpdated() {
-        Notification notification = new Notification("1", NotificationType.INFORMATION, "Notification", "Test", null,
-                null, null, null, null, true, true);
-        List<Notification> results = new ArrayList<Notification>();
-        results.add(notification);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+        Flowable<Notification> publisher;
+        ConnectableObservable<Notification> connectableObservable = notificationUpdatedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
 }

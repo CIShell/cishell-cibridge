@@ -93,7 +93,6 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
 //		return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))
 //				.map(e -> e instanceof ExceptionWhileDataFetching ? new CustomGraphQLError(e) : e)
 //				.collect(Collectors.toList());
-
         return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))
                 .map(e -> e instanceof ExceptionWhileDataFetching ? e : e).collect(Collectors.toList());
 

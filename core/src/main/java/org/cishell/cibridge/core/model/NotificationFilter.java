@@ -8,6 +8,9 @@ public class NotificationFilter {
     private int limit;
     private int offset;
 
+    public NotificationFilter(){
+    }
+
     public NotificationFilter(List<String> ids, Boolean isClosed, int limit, int offset) {
         this.ids = ids;
         this.isClosed = isClosed;
@@ -20,7 +23,7 @@ public class NotificationFilter {
     }
 
     public void setID(List<String> ids) {
-        ids = ids;
+        this.ids = ids;
     }
 
     public Boolean getIsClosed() {

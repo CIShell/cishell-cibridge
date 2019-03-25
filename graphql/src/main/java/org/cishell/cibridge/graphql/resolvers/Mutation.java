@@ -41,11 +41,11 @@ public class Mutation implements GraphQLMutationResolver {
     }
 
     public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
-        return Boolean.TRUE;
+        return cibridge.notification.setNotificationResponse(notificationId, response);
     }
 
     public Boolean closeNotification(String notificationId) {
-        return Boolean.TRUE;
+        return cibridge.notification.closeNotification(notificationId);
     }
 
     public Boolean setAlgorithmCancelled(String algorithmInstanceId, Boolean isCancelled) {

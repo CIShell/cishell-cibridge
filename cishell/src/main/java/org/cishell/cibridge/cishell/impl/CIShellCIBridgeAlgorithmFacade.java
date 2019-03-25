@@ -46,6 +46,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             });
         }
 
+
         //predicate on algorithm instances
         if (filter.getAlgorithmInstanceIds() != null) {
             Set<String> algorithmDefinitionIds = new HashSet<>();
@@ -58,9 +59,11 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
             criteria.add(algorithmDefinition -> {
                 if (algorithmDefinition == null) return false;
+
                 return algorithmDefinitionIds.contains(algorithmDefinition.getId());
             });
         }
+
 
         //predicate on input data ids
         //todo need to clarify about how to filter based on input data ids
@@ -72,6 +75,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             }
 
             criteria.add(algorithmDefinition -> {
+
                 if (algorithmDefinition == null) return false;
                 return !Collections.disjoint(algorithmDefinition.getInData(), supportedFormats);
             });
@@ -81,6 +85,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (filter.getInputFormats() != null) {
             criteria.add(algorithmDefinition -> {
                 if (algorithmDefinition == null) return false;
+
                 return !Collections.disjoint(algorithmDefinition.getInData(), filter.getInputFormats());
             });
         }
@@ -89,6 +94,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (filter.getOutputFormats() != null) {
             criteria.add(algorithmDefinition -> {
                 if (algorithmDefinition == null) return false;
+
                 return !Collections.disjoint(algorithmDefinition.getOutData(), filter.getOutputFormats());
             });
         }
@@ -106,6 +112,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             for (Map.Entry<String, Set<String>> entry : propertyValuesMap.entrySet()) {
                 criteria.add(algorithmDefinition -> {
                     String key = entry.getKey();
+
                     if (algorithmDefinition == null) return false;
                     Map<String, String> otherProperties = algorithmDefinition.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue));
                     if (otherProperties.containsKey(key)) {
@@ -119,6 +126,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
         QueryResults<AlgorithmDefinition> paginatedQueryResults = PaginationUtil.getPaginatedResults(
                 new ArrayList<>(algorithmDefinitionMap.values()), criteria, filter.getOffset(), filter.getLimit());
+
 
         return new AlgorithmDefinitionQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
@@ -141,6 +149,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (filter.getAlgorithmDefinitionIds() != null) {
             criteria.add(algorithmInstance -> {
                 if (algorithmInstance == null) return false;
+
                 return filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition().getId());
             });
         }
@@ -149,6 +158,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (filter.getStates() != null) {
             criteria.add(algorithmInstance -> {
                 if (algorithmInstance == null) return false;
+
                 return filter.getStates().contains(algorithmInstance.getState());
             });
         }
@@ -160,11 +170,13 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         QueryResults<AlgorithmInstance> paginatedQueryResults = PaginationUtil.getPaginatedResults(
                 new ArrayList<>(algorithmInstanceMap.values()), criteria, filter.getOffset(), filter.getLimit());
 
+
         return new AlgorithmInstanceQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
 
     @Override
-    public AlgorithmInstance createAlgorithm(String algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
+    public AlgorithmInstance createAlgorithm(String
+                                                     algorithmDefinitionId, List<String> dataIds, List<PropertyInput> parameters) {
         CIShellCIBridgeAlgorithmDefinition algorithmDefinition = algorithmDefinitionMap.get(algorithmDefinitionId);
         AlgorithmFactory algorithmFactory = algorithmDefinitionMap.get(algorithmDefinitionId).getAlgorithmFactory();
 
@@ -172,15 +184,18 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         List<Property> paramList = new ArrayList<>();
 
         if (dataIds != null && !dataIds.isEmpty()) {
+
             dataList = cibridge.cishellData.getCIBridgeDataMap().entrySet()
                     .stream()
                     .filter(entry -> dataIds.contains(entry.getKey()))
                     .map(Map.Entry::getValue)
+
                     .collect(Collectors.toList());
         }
 
         org.cishell.framework.data.Data[] dataArray = null;
         if (!dataList.isEmpty()) {
+
             dataArray = (org.cishell.framework.data.Data[]) dataList.stream().map(CIShellCIBridgeData::getCIShellData).toArray();
         }
 
@@ -197,6 +212,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
         //create cibridge's algorithm object(algorithmInstance) containing cishell's algorithm object
         CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
+
         algorithmInstance.setParameters(paramList);
 
         algorithmInstanceMap.put(algorithmInstance.getId(), algorithmInstance);
@@ -208,6 +224,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     // TODO Update the implementation of subscription with listener
     @Override
     public Publisher<AlgorithmDefinition> algorithmDefinitionAdded() {
+
+
         List<AlgorithmDefinition> results = new ArrayList<AlgorithmDefinition>();
         AlgorithmDefinition algorithmDefinition = new AlgorithmDefinition("123");
         algorithmDefinition.setAuthors("Aravind");
@@ -219,6 +237,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         AlgorithmDefinitionQueryResults queryResults = getAlgorithmDefinitions(filter);
         results.addAll(queryResults.getResults());
         return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+
     }
 
     // TODO Update the implementation of subscription with listener
@@ -252,9 +271,11 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return Flowable.fromIterable(results.getResults()).delay(2, TimeUnit.SECONDS);
     }
 
+
     private void uncacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
         if (reference.getProperty(SERVICE_PID) != null) {
             String pid = reference.getProperty(SERVICE_PID).toString();
+
             if (pid != null) {
                 algorithmDefinitionMap.remove(pid);
             }
@@ -269,10 +290,13 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                 algorithmDefinitionMap.put(pid, algorithmDefinition);
             }
         }
+
     }
 
     public void cacheAlgorithmDefinitions() {
+
         //cache all the algorithms registered in the future through service listener
+
 
         synchronized (this) {
             try {
@@ -286,9 +310,11 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             } catch (InvalidSyntaxException ignored) {
             }
 
+
             //cache all the algorithms already registered
             try {
                 Collection<ServiceReference<AlgorithmFactory>> references = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);
+
                 if (references != null) {
                     for (ServiceReference<AlgorithmFactory> reference : references) {
                         cacheAlgorithmDefinition(reference);

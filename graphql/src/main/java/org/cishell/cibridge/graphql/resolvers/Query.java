@@ -52,11 +52,14 @@ public class Query implements GraphQLQueryResolver {
     }
 
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
-        return null;
+        System.out.println("Get Notifications Query");
+        System.out.println(filter);
+        return cibridge.notification.getNotifications(filter);
     }
 
-    public Boolean isClosed(String NotificationId) {
-        return null;
+    public Boolean isClosed(String notificationId) {
+        System.out.println("Closed Notification Query");
+        return cibridge.notification.isClosed(notificationId);
     }
 
     public Boolean isSchedulerEmpty() {
