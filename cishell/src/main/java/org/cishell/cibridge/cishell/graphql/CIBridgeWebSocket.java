@@ -13,6 +13,7 @@ import org.reactivestreams.Subscription;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -77,8 +78,9 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
         QueryParameters parameters = QueryParameters.from(graphqlQuery);
         switch (parameters.getType()) {
             case GQL_CONNECTION_INIT:
+                System.out.println("Inside ack");
                 try {
-                    String response = generateResponseString(GQL_CONNECTION_ACK, null, null);
+                    String response = generateResponseString(GQL_CONNECTION_ACK, null, parameters.getID());
                     if (response != null) {
                         this.getRemote().sendString(response);
                     } else {
@@ -113,6 +115,11 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
                 map.put("type", type);
                 if (id != null) {
                     map.put("id", id);
+                }
+                if (payload != null) {
+                    Map<String, Object> dataMap = new HashMap<>();
+                    dataMap.put("data", payload);
+                    map.put("payload", dataMap);
                 }
                 break;
             case GQL_ERROR:
@@ -159,63 +166,83 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
         ExecutionResult executionResult = CIBridgeSubscriptionServlet.graphql.execute(executionInput);
 
-        resultsStream = executionResult.getData();
-
-        resultsStream.subscribe(new Subscriber<ExecutionResult>() {
-
-            @Override
-            public void onSubscribe(Subscription s) {
-                subscriptionRef.set(s);
-                request(1);
-            }
-
-            @Override
-            public void onNext(ExecutionResult er) {
-                try {
-                    Object onDataChange = er.getData();
-                    String response = generateResponseString(GQL_DATA, onDataChange, id);
-                    if (response != null) {
-                        getRemote().sendString(response);
-                    } else {
-                        System.out.println("Invalid data given to generateResponseString() method");
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (executionResult.getErrors().size() > 0) {
+            try {
+                String response = generateResponseString(GQL_ERROR, executionResult.getErrors(), id);
+                if (response != null) {
+                    getRemote().sendString(response);
+                } else {
+                    System.out.println("Invalid data given to generateResponseString() method");
                 }
-                request(1);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            public void onError(Throwable t) {
-                try {
-                    String response = generateResponseString(GQL_ERROR, "Exception Occured while processing data", id);
-                    if (response != null) {
-                        getRemote().sendString(response);
-                    } else {
-                        System.out.println("Invalid data given to generateResponseString() method");
-                    }
+        } else if (executionResult.getData() instanceof LinkedHashMap) {
+            try {
+                getRemote().sendString(generateResponseString(GQL_DATA, executionResult.getData(), id));
+                getRemote().sendString(generateResponseString(GQL_COMPLETE, null, id));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
 
-                } catch (IOException e) {
-                    e.printStackTrace();
+            resultsStream = executionResult.getData();
+            resultsStream.subscribe(new Subscriber<ExecutionResult>() {
+
+                @Override
+                public void onSubscribe(Subscription s) {
+                    subscriptionRef.set(s);
+                    request(1);
                 }
-            }
 
-            @Override
-            public void onComplete() {
-                System.out.println("On Complete called");
-                try {
-                    String response = generateResponseString(GQL_COMPLETE, null, id);
-                    if (response != null) {
-                        getRemote().sendString(response);
-                    } else {
-                        System.out.println("Invalid data given to generateResponseString() method");
+                @Override
+                public void onNext(ExecutionResult er) {
+                    try {
+                        Object onDataChange = er.getData();
+                        String response = generateResponseString(GQL_DATA, onDataChange, id);
+                        if (response != null) {
+                            getRemote().sendString(response);
+                        } else {
+                            System.out.println("Invalid data given to generateResponseString() method");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    request(1);
                 }
-            }
-        });
 
+                @Override
+                public void onError(Throwable t) {
+                    try {
+                        String response = generateResponseString(GQL_ERROR, "Exception Occured while processing data", id);
+                        if (response != null) {
+                            getRemote().sendString(response);
+                        } else {
+                            System.out.println("Invalid data given to generateResponseString() method");
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onComplete() {
+                    System.out.println("On Complete called");
+                    try {
+                        String response = generateResponseString(GQL_COMPLETE, null, id);
+                        if (response != null) {
+                            getRemote().sendString(response);
+                        } else {
+                            System.out.println("Invalid data given to generateResponseString() method");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     private void request(int n) {

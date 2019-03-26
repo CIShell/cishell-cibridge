@@ -45,7 +45,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
         LogQueryResults results = null;
         ArrayList<LogEntry> listOfLogEntries;
         List<Predicate<LogEntry>> criteria = new ArrayList<>();
-
+        cibridge.getLogService().log(2, "Inside get logs");
         // Maps integers with LogLevel
         HashMap<Integer, LogLevel> logLevelMap = new HashMap<>();
         logLevelMap.put(1, LogLevel.ERROR);
