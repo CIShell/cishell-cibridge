@@ -8,9 +8,9 @@ public class AlgorithmInstance {
     private List<Data> inData;
     private List<Property> parameters;
     private final AlgorithmDefinition algorithmDefinition;
-    private AlgorithmState state;
+    private AlgorithmState state = AlgorithmState.IDLE;
     private ZonedDateTime scheduledRunTime;
-    private int progress;
+    private int progress = 0;
     private List<Data> outData;
 
     public AlgorithmInstance(String id, AlgorithmDefinition algorithmDefinition) {

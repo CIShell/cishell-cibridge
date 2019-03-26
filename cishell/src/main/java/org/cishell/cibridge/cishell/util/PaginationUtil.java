@@ -9,7 +9,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
-//todo rename the class
+//todo rename the class to Pagination
+//the parameters in the static methods should go inside constructor of pagination object
 public class PaginationUtil {
     public static <T> QueryResults<T> getPaginatedResults(List<T> items, List<Predicate<T>> criteria, int offset, int limit) {
 

@@ -23,7 +23,7 @@ public class CIShellCIBridgeData extends Data {
 
     private static long instanceCounter = 0;
 
-    //TODO adding rudimentary way of generating unique ids. improve it later on
+    //todo adding rudimentary way of generating unique ids. Should be UUIDs
     private static String generateAndGetUniqueID() {
         return ++instanceCounter + "";
     }

@@ -7,8 +7,8 @@ public class AlgorithmDefinition {
 
     private final String id;
     private InputParameters parameters;
-    private final List<String> inData = new LinkedList<>();
-    private final List<String> outData = new LinkedList<>();
+    private List<String> inData = new LinkedList<>();
+    private List<String> outData = new LinkedList<>();
     private String label;
     private String description;
     private Boolean parentOutputData;
@@ -23,7 +23,7 @@ public class AlgorithmDefinition {
     private String reference;
     private String referenceUrl;
     private String writtenIn;
-    private final List<Property> otherProperties = new LinkedList<>();
+    private List<Property> otherProperties = new LinkedList<>();
 
     public AlgorithmDefinition(String id) {
         this.id = id;
@@ -45,8 +45,16 @@ public class AlgorithmDefinition {
         return inData;
     }
 
+    public void setInData(List<String> inData) {
+        this.inData = inData;
+    }
+
     public List<String> getOutData() {
         return outData;
+    }
+
+    public void setOutData(List<String> outData) {
+        this.outData = outData;
     }
 
     public String getLabel() {
@@ -163,6 +171,10 @@ public class AlgorithmDefinition {
 
     public List<Property> getOtherProperties() {
         return otherProperties;
+    }
+
+    public void setOtherProperties(List<Property> otherProperties) {
+        this.otherProperties = otherProperties;
     }
 
     @Override

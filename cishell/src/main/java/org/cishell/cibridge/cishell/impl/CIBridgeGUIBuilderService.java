@@ -12,6 +12,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.util.*;
 
+//TODO all methods implementation
 public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     private CIShellCIBridge cibridge;
@@ -35,6 +36,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
 
     }
+
 
     // TODO Check the spec if the id being passed is a uniquely generated id
     @Override

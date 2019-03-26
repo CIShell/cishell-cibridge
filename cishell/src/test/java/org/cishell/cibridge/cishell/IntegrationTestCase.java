@@ -5,6 +5,7 @@ import org.cishell.app.service.scheduler.SchedulerService;
 import org.cishell.container.CIShellContainer;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
+import org.junit.AfterClass;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
