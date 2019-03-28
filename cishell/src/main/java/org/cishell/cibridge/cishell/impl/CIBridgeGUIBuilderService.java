@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.disposables.Disposable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -36,9 +37,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
 
     }
-
-
-    // TODO Check the spec if the id being passed is a uniquely generated id
+    
     @Override
     public synchronized GUI createGUI(String id, MetaTypeProvider params) {
 
@@ -57,8 +56,13 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                         Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                         properties.add(property);
                     }
-                    //TODO Fill Parameter definition using setters
                     ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
+                    parameterDefinition.setCardinality(attributes.getCardinality());
+                    parameterDefinition.setDefaultValues(Arrays.asList(attributes.getDefaultValue()));
+                    parameterDefinition.setDescription(attributes.getDescription());
+                    parameterDefinition.setName(attributes.getName());
+                    parameterDefinition.setOptions(properties);
+                    parameterDefinition.setType(Util.getAttributeTypeFromInteger(attributes.getType()));
 
                     notificationParams.add(parameterDefinition);
                 }
@@ -79,7 +83,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         return gui;
     }
 
-    // TODO Check the spec if the id being passed is a uniquely generated id
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
 
@@ -87,15 +90,21 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
         ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
         List<ParameterDefinition> notificationParams = new ArrayList<>();
-
+        List<Property> properties = null;
         for (AttributeDefinition attributes : objectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
-            List<Property> properties = new ArrayList<>();
+             properties = new ArrayList<>();
             for (int i = 0; i < attributes.getOptionLabels().length; i++) {
                 Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                 properties.add(property);
             }
-            // TODO fill parameter definition fields using setters
             ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
+            parameterDefinition.setCardinality(attributes.getCardinality());
+            parameterDefinition.setDefaultValues(Arrays.asList(attributes.getDefaultValue()));
+            parameterDefinition.setDescription(attributes.getDescription());
+            parameterDefinition.setName(attributes.getName());
+            parameterDefinition.setOptions(properties);
+            parameterDefinition.setType(Util.getAttributeTypeFromInteger(attributes.getType()));
+
             notificationParams.add(parameterDefinition);
         }
 
