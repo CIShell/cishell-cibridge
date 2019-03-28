@@ -44,6 +44,8 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
         GUI gui = null;
         Notification notification = null;
+        String UUID = counter.randomUUID().toString();
+
         try {
             if (params != null) {
                 ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
@@ -60,11 +62,11 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
                     notificationParams.add(parameterDefinition);
                 }
-                notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
+                notification = new Notification(UUID, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                         objectClassDefinition.getDescription(), null, notificationParams, false,
                         null, false, false);
             } else {
-                notification = new Notification(id, NotificationType.FORM, null, null,
+                notification = new Notification(UUID, NotificationType.FORM, null, null,
                         null, null, null, false,
                         null, false, false);
             }
@@ -81,6 +83,8 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
 
+        String UUID = counter.randomUUID().toString();
+
         ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
         List<ParameterDefinition> notificationParams = new ArrayList<>();
 
@@ -95,7 +99,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             notificationParams.add(parameterDefinition);
         }
 
-        Notification notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
+        Notification notification = new Notification(UUID, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                 objectClassDefinition.getDescription(), null, notificationParams, false,
                 null, false, false);
 

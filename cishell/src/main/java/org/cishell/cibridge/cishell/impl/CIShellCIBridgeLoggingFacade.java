@@ -42,7 +42,8 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
     public LogQueryResults getLogs(LogFilter filter) {
 
         Preconditions.checkNotNull(filter, "filter can't be empty");
-
+        cibridge.getLogService().log(3, "Get Logs endpoint called");
+        System.out.println("Logging called");
         LogQueryResults results = null;
         ArrayList<LogEntry> listOfLogEntries;
         List<Predicate<LogEntry>> criteria = new ArrayList<>();
