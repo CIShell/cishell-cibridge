@@ -79,7 +79,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
         QueryParameters parameters = QueryParameters.from(graphqlQuery);
         switch (parameters.getType()) {
             case GQL_CONNECTION_INIT:
-                System.out.println("Inside ack");
                 try {
                     String response = generateResponseString(GQL_CONNECTION_ACK, null, parameters.getID());
                     if (response != null) {
@@ -187,7 +186,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
                 e.printStackTrace();
             }
         } else {
-
             resultsStream = executionResult.getData();
             resultsStream.subscribe(new Subscriber<ExecutionResult>() {
 
