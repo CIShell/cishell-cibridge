@@ -15,8 +15,8 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     private int capabilities = 0;
     private double totalWorkUnits = 0;
     private AlgorithmState previousState;
-    private boolean paused;
-    private boolean canceled;
+    private boolean paused = false;
+    private boolean canceled = false;
 
     public ProgressMonitorImpl(CIBridge cibridge, AlgorithmInstance algorithmInstance) {
         this.cibridge = cibridge;
@@ -25,11 +25,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
 
     @Override
     public void start(int capabilities, int totalWorkUnits) {
-        Preconditions.checkArgument(totalWorkUnits > 0, "total work units should be a positive value");
-        this.capabilities = capabilities;
-        this.totalWorkUnits = totalWorkUnits;
-        algorithmInstance.setProgress(0);
-        algorithmInstance.setState(RUNNING);
+        start(capabilities, (double) totalWorkUnits);
         //todo call subscription method
     }
 
@@ -45,16 +41,13 @@ public class ProgressMonitorImpl implements ProgressMonitor {
 
     @Override
     public void worked(int work) {
-        if ((capabilities & WORK_TRACKABLE) > 0) {
-            algorithmInstance.setProgress((int) (work * 100.0 / totalWorkUnits));
-            //todo call subscription method
-        }
+        worked((double) work);
     }
 
     @Override
     public void worked(double work) {
         if ((capabilities & WORK_TRACKABLE) > 0) {
-            algorithmInstance.setProgress((int) (work * 100.0 / totalWorkUnits));
+            algorithmInstance.setProgress((int) (work * 100 / totalWorkUnits));
             //todo call subscription method
         }
     }
@@ -70,7 +63,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     public void setCanceled(boolean canceled) {
         if ((capabilities & CANCELLABLE) > 0) {
             //cancel the algorithm. currently you cant uncancel an already canceled algorithm
-            if(canceled) {
+            if (canceled) {
                 this.canceled = true;
                 algorithmInstance.setState(CANCELLED);
                 //todo call subscription method

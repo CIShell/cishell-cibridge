@@ -5,10 +5,11 @@ import org.cishell.app.service.scheduler.SchedulerService;
 import org.cishell.container.CIShellContainer;
 import org.cishell.service.conversion.DataConversionService;
 import org.cishell.service.guibuilder.GUIBuilderService;
-import org.junit.AfterClass;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
 import org.osgi.service.metatype.MetaTypeService;
+
+import java.util.function.Predicate;
 
 public abstract class IntegrationTestCase {
 
@@ -52,14 +53,39 @@ public abstract class IntegrationTestCase {
         return CISHELL_CONTAINER.getService(clazz);
     }
 
-    protected <S> S waitAndGetService(Class<S> clazz) throws InterruptedException {
-        int ticks = 200;
-        while (ticks-- > 0) {
+    protected <S> S waitAndGetService(Class<S> clazz) {
+        int quantum = 100;
+        int timeout = 20000;
+        while (timeout > 0) {
             if (getService(clazz) != null) {
                 return getService(clazz);
             }
-            Thread.sleep(100);
+            try {
+                Thread.sleep(quantum);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            timeout = timeout - quantum;
         }
         return null;
+    }
+
+    protected <T> boolean waitTillSatisfied(T object, Predicate<T> condition) {
+        int quantum = 100;
+        int timeout = 20000;
+
+        while (timeout > 0) {
+            if (condition.test(object)) {
+                return true;
+            }
+            try {
+                Thread.sleep(quantum);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            timeout = timeout - quantum;
+        }
+
+        return false;
     }
 }
