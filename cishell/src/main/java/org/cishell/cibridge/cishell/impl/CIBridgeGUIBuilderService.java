@@ -18,26 +18,14 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     private CIShellCIBridge cibridge;
     private CIShellCIBridgeNotificationFacade notificationFacade;
-    private static final HashMap<Integer, AttributeType> attributeTypeMap = new HashMap<>();
     private static UUID counter;
 
 
     public CIBridgeGUIBuilderService(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
         notificationFacade = cibridge.cishellNotification;
-
-        attributeTypeMap.put(1, AttributeType.STRING);
-        attributeTypeMap.put(2, AttributeType.LONG);
-        attributeTypeMap.put(3, AttributeType.INTEGER);
-        attributeTypeMap.put(4, AttributeType.SHORT);
-        attributeTypeMap.put(5, AttributeType.CHARACTER);
-        attributeTypeMap.put(6, AttributeType.BYTE);
-        attributeTypeMap.put(7, AttributeType.DOUBLE);
-        attributeTypeMap.put(8, AttributeType.FLOAT);
-
-
     }
-    
+
     @Override
     public synchronized GUI createGUI(String id, MetaTypeProvider params) {
 
