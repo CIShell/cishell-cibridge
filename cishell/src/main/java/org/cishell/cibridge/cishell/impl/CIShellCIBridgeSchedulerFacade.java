@@ -13,6 +13,7 @@ import org.reactivestreams.Publisher;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -127,7 +128,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
         if (algorithmInstance.getState() == SCHEDULED) {
             unscheduleAlgorithm(algorithmInstanceId);
-        }else if(algorithmInstance.getState() != IDLE){
+        } else if (algorithmInstance.getState() != IDLE) {
             return false;
         }
 
@@ -140,16 +141,14 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
         setProgressMonitorImpl(algorithmInstance);
 
-        if(algorithmInstance.getState() == IDLE){
+        if (algorithmInstance.getState() == IDLE) {
             cibridge.getSchedulerService().schedule(algorithmInstance.getAlgorithm(), getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
-        }else if(algorithmInstance.getState() == SCHEDULED){
+        } else if (algorithmInstance.getState() == SCHEDULED) {
             rescheduleAlgorithm(algorithmInstanceId, date);
-        }else{
+        } else {
             return false;
         }
 
-        algorithmInstance.setScheduledRunTime(date);
-        algorithmInstance.setState(SCHEDULED);
         return true;
     }
 
@@ -162,13 +161,9 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             return false;
         }
 
-        boolean isAlreadyScheduled = cibridge.getSchedulerService().reschedule(algorithmInstance.getAlgorithm(), GregorianCalendar.from(date));
-        if (!isAlreadyScheduled) {
-            System.out.println("came here");
-            return false;
-        }
-        algorithmInstance.setScheduledRunTime(date);
-        algorithmInstance.setState(SCHEDULED);
+        cibridge.getSchedulerService().unschedule(algorithmInstance.getAlgorithm());
+        cibridge.getSchedulerService().schedule(algorithmInstance.getAlgorithm(), getServiceReference(algorithmInstanceId), GregorianCalendar.from(date));
+
         return true;
     }
 
@@ -177,7 +172,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
         Algorithm algorithm = algorithmInstance.getAlgorithm();
 
-        if(algorithmInstance.getState() != SCHEDULED){
+        if (algorithmInstance.getState() != SCHEDULED) {
             return false;
         }
 
@@ -193,6 +188,18 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     @Override
     public Integer clearScheduler() {
         cibridge.getSchedulerService().clearSchedule();
+
+        Iterator<String> iterator = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().keySet().iterator();
+        while (iterator.hasNext()) {
+            String algorithmInstanceId = iterator.next();
+            CIShellCIBridgeAlgorithmInstance algorithmInstance = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().get(algorithmInstanceId);
+
+            if (!(algorithmInstance.getState() == RUNNING || algorithmInstance.getState() == PAUSED || algorithmInstance.getState() == WAITING)) {
+                cibridge.cishellAlgorithm.getCIShellAlgorithmCIBridgeAlgorithmMap().remove(algorithmInstance.getAlgorithm());
+                iterator.remove();
+            }
+        }
+
         return cibridge.getSchedulerService().getScheduledAlgorithms().length;
     }
 

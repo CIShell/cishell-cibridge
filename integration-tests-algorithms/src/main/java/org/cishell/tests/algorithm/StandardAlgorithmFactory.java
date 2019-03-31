@@ -27,46 +27,37 @@ public class StandardAlgorithmFactory implements AlgorithmFactory {
 
         @Override
         public Data[] execute() {
-
-            int quantum = 500;
+            int quantum = 200;
             int work = 10;
+            Data[] data;
 
-            System.out.println("Starting algorithm");
-            progressMonitor.start(CANCELLABLE | PAUSEABLE | WORK_TRACKABLE, work);
+            try {
+                progressMonitor.start(CANCELLABLE | PAUSEABLE | WORK_TRACKABLE, work);
 
-            for (int i = 1; i <= work; i += 1) {
-                if (progressMonitor.isCanceled()) {
-                    System.out.println("Algorithm is canceled");
-                    return new BasicData[0];
-                }
+                for (int i = 1; i <= work; i += 1) {
 
-                while (progressMonitor.isPaused()) {
                     if (progressMonitor.isCanceled()) {
-                        System.out.println("Algorithm is canceled");
                         return new BasicData[0];
                     }
 
-                    System.out.println("Algorithm is paused before completing milestone: " + i);
-                    sleep(quantum);
+                    if (progressMonitor.isPaused()) {
+                        synchronized (progressMonitor) {
+                            progressMonitor.wait();
+                        }
+                    }
+
+                    Thread.sleep(quantum);
+                    progressMonitor.worked(i);
                 }
 
-                sleep(quantum);
-                System.out.println("completed milestone: " + i);
-                progressMonitor.worked(i);
+                progressMonitor.done();
+                data = new BasicData[0];
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
-            System.out.println("algorithm finished");
-            progressMonitor.done();
-
-            return new BasicData[0];
-        }
-
-        private void sleep(int period) {
-            try {
-                Thread.sleep(period);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            return data;
         }
 
         @Override

@@ -48,6 +48,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     public void worked(double work) {
         if ((capabilities & WORK_TRACKABLE) > 0) {
             algorithmInstance.setProgress((int) (work * 100 / totalWorkUnits));
+            System.out.println("updating progress: " + algorithmInstance.getProgress());
             //todo call subscription method
         }
     }
@@ -89,6 +90,9 @@ public class ProgressMonitorImpl implements ProgressMonitor {
             else {
                 this.paused = false;
                 algorithmInstance.setState(previousState);
+                synchronized (this) {
+                    this.notify();
+                }
             }
 
             //todo call subscription method
@@ -104,5 +108,4 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     public void describeWork(String s) {
 
     }
-
 }

@@ -2,7 +2,6 @@ package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
-import org.cishell.cibridge.core.model.AlgorithmType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,9 +17,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
 
     private CIShellCIBridgeSchedulerFacade cishellCIBridgeSchedulerFacade = getCIShellCIBridge().cishellScheduler;
     private CIShellCIBridgeAlgorithmFacade cishellCIBridgeAlgorithmFacade = getCIShellCIBridge().cishellAlgorithm;
-
-    private static AlgorithmInstance finishedAlgorithmInstance = null;
-    private static AlgorithmInstance cancelledAlgorithmInstance = null;
 
     @Before
     public void setup() {
@@ -50,7 +46,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void setAlgorithmCancelled() {
+    public void setAlgorithmCancelled() throws InterruptedException {
         /* cancel running algorithm */
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
         assertSame(RUNNING, runningAI.getState());
@@ -69,7 +65,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void setAlgorithmPaused() {
+    public void setAlgorithmPaused() throws InterruptedException {
 
         /* pause and unpause IDLE algorithm */
         AlgorithmInstance idleAI = getIdleAlgorithmInstance();
@@ -84,7 +80,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertSame(RUNNING, runningAI.getState());
         assertTrue(cishellCIBridgeSchedulerFacade.setAlgorithmPaused(runningAI.getId(), true));
         assertSame(PAUSED, runningAI.getState());
-        cancel(runningAI);
 
         /* pause and unpause PAUSED algorithm */
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
@@ -92,7 +87,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertSame(PAUSED, pausedAI.getState());
         assertTrue(cishellCIBridgeSchedulerFacade.setAlgorithmPaused(pausedAI.getId(), false));
         assertSame(RUNNING, pausedAI.getState());
-        cancel(pausedAI);
 
         /* pause and unpause FINISHED algorithm */
         AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
@@ -109,7 +103,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertSame(SCHEDULED, scheduledAI.getState());
 
         /* pause and unpause CANCELLED algorithm */
-        AlgorithmInstance cancelledAI = getCancelledAlgorithm();
+        AlgorithmInstance cancelledAI = getCancelledAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.setAlgorithmPaused(cancelledAI.getId(), true));
         assertSame(CANCELLED, cancelledAI.getState());
         assertFalse(cishellCIBridgeSchedulerFacade.setAlgorithmPaused(cancelledAI.getId(), false));
@@ -130,7 +124,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
 
 
     @Test
-    public void runAlgorithmNow() {
+    public void runAlgorithmNow() throws InterruptedException {
         AlgorithmInstance idleAI = getIdleAlgorithmInstance();
         ZonedDateTime start = ZonedDateTime.now();
         ZonedDateTime end = start.plusSeconds(5);
@@ -138,15 +132,12 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertTrue(idleAI.getScheduledRunTime().compareTo(start) >= 0 &&
                 idleAI.getScheduledRunTime().compareTo(end) < 0);
         assertTrue(waitTillSatisfied(idleAI, ai -> ai.getState() == RUNNING));
-        cancel(idleAI);
 
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.runAlgorithmNow(runningAI.getId()));
-        cancel(runningAI);
 
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.runAlgorithmNow(pausedAI.getId()));
-        cancel(pausedAI);
 
         AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.runAlgorithmNow(finishedAI.getId()));
@@ -158,70 +149,69 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertTrue(scheduledAI.getScheduledRunTime().compareTo(start) >= 0 &&
                 scheduledAI.getScheduledRunTime().compareTo(end) < 0);
         assertTrue(waitTillSatisfied(scheduledAI, ai -> ai.getState() == RUNNING));
-        cancel(scheduledAI);
 
-        AlgorithmInstance cancelledAI = getCancelledAlgorithm();
+        AlgorithmInstance cancelledAI = getCancelledAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.runAlgorithmNow(cancelledAI.getId()));
     }
 
     @Test
-    public void scheduleAlgorithm() {
+    public void scheduleAlgorithm() throws InterruptedException {
+        ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
+
         AlgorithmInstance idleAI = getIdleAlgorithmInstance();
-        assertTrue(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(idleAI.getId(), ZonedDateTime.now().plusDays(1)));
+        assertTrue(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(idleAI.getId(), tomorrow));
+        assertSame(0, tomorrow.compareTo(idleAI.getScheduledRunTime()));
 
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(runningAI.getId(), ZonedDateTime.now().plusDays(1)));
-        cancel(runningAI);
+        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(runningAI.getId(), tomorrow));
 
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(pausedAI.getId(), ZonedDateTime.now().plusDays(1)));
-        cancel(pausedAI);
+        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(pausedAI.getId(), tomorrow));
 
         AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(finishedAI.getId(), ZonedDateTime.now().plusDays(1)));
+        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(finishedAI.getId(), tomorrow));
 
         AlgorithmInstance scheduledAI = getScheduledAlgorithmInstance();
-        assertTrue(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(scheduledAI.getId(), ZonedDateTime.now().plusDays(1)));
+        assertTrue(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(scheduledAI.getId(), tomorrow));
+        assertSame(0, tomorrow.compareTo(scheduledAI.getScheduledRunTime()));
 
-        AlgorithmInstance cancelledAI = getCancelledAlgorithm();
-        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(cancelledAI.getId(), ZonedDateTime.now().plusDays(1)));
+        AlgorithmInstance cancelledAI = getCancelledAlgorithmInstance();
+        assertFalse(cishellCIBridgeSchedulerFacade.scheduleAlgorithm(cancelledAI.getId(), tomorrow));
     }
 
     @Test
-    public void rescheduleAlgorithm() {
+    public void rescheduleAlgorithm() throws InterruptedException {
+        ZonedDateTime tomorrow = ZonedDateTime.now().plusDays(1);
+
         AlgorithmInstance idleAI = getIdleAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(idleAI.getId(), ZonedDateTime.now().plusDays(1)));
+        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(idleAI.getId(), tomorrow));
 
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(runningAI.getId(), ZonedDateTime.now().plusDays(1)));
-        cancel(runningAI);
+        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(runningAI.getId(), tomorrow));
 
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(pausedAI.getId(), ZonedDateTime.now().plusDays(1)));
-        cancel(pausedAI);
+        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(pausedAI.getId(), tomorrow));
 
         AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
-        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(finishedAI.getId(), ZonedDateTime.now().plusDays(1)));
+        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(finishedAI.getId(), tomorrow));
 
         AlgorithmInstance scheduledAI = getScheduledAlgorithmInstance();
-//todo        assertTrue(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(scheduledAI.getId(), ZonedDateTime.now().plusDays(2)));
+        assertTrue(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(scheduledAI.getId(), tomorrow));
 
-        AlgorithmInstance cancelledAI = getCancelledAlgorithm();
-        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(cancelledAI.getId(), ZonedDateTime.now().plusDays(1)));
+        AlgorithmInstance cancelledAI = getCancelledAlgorithmInstance();
+        assertFalse(cishellCIBridgeSchedulerFacade.rescheduleAlgorithm(cancelledAI.getId(), tomorrow));
     }
 
     @Test
-    public void unscheduleAlgorithm() {
+    public void unscheduleAlgorithm() throws InterruptedException {
         AlgorithmInstance idleAI = getIdleAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.unscheduleAlgorithm(idleAI.getId()));
 
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.unscheduleAlgorithm(runningAI.getId()));
-        cancel(runningAI);
 
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.unscheduleAlgorithm(pausedAI.getId()));
-        cancel(pausedAI);
 
         AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.unscheduleAlgorithm(finishedAI.getId()));
@@ -229,28 +219,24 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         AlgorithmInstance scheduledAI = getScheduledAlgorithmInstance();
         assertTrue(cishellCIBridgeSchedulerFacade.unscheduleAlgorithm(scheduledAI.getId()));
 
-        AlgorithmInstance cancelledAI = getCancelledAlgorithm();
+        AlgorithmInstance cancelledAI = getCancelledAlgorithmInstance();
         assertFalse(cishellCIBridgeSchedulerFacade.unscheduleAlgorithm(cancelledAI.getId()));
     }
 
     @Test
-    public void clearSchedule() {
+    public void clearSchedule() throws InterruptedException {
         AlgorithmInstance idleAI = getIdleAlgorithmInstance();
-
         AlgorithmInstance scheduledAI = getScheduledAlgorithmInstance();
-
+        AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
+        AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
+        AlgorithmInstance cancelledAI = getCancelledAlgorithmInstance();
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
 
-        AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
-
-        AlgorithmInstance finishedAI = getFinishedAlgorithmInstance();
-
-        AlgorithmInstance cancelledAI = getCancelledAlgorithm();
-
-        assertEquals(0, (int) cishellCIBridgeSchedulerFacade.clearScheduler());
-
-        cancel(runningAI);
-        cancel(pausedAI);
+        assertEquals(0, cishellCIBridgeSchedulerFacade.clearScheduler().intValue());
+        assertFalse(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(idleAI.getId()));
+        assertFalse(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(scheduledAI.getId()));
+        assertFalse(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(finishedAI.getId()));
+        assertFalse(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(cancelledAI.getId()));
     }
 
     @Test
@@ -262,31 +248,32 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
+        for (CIShellCIBridgeAlgorithmInstance algorithmInstance : cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().values()) {
+            if (algorithmInstance.getState() == RUNNING || algorithmInstance.getState() == PAUSED || algorithmInstance.getState() == WAITING) {
+                //cancel algorithm instances after use to save CPU resources
+                cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true);
+            }
+        }
+
+        //let algorithm get cancelled in cishell as well
+        Thread.sleep(5 * TIME_QUANTUM);
+
         cishellCIBridgeSchedulerFacade.clearScheduler();
         assertTrue(cishellCIBridgeSchedulerFacade.isSchedulerEmpty());
-
-        //todo remove algorithms from cibridge
-//        for (Algorithm algorithm : cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().keySet()) {
-//            System.out.println(algorithm);
-//        }
-//
-//        for (AlgorithmInstance instance : cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().values()) {
-//            System.out.println(instance);
-//        }
-
     }
 
     private AlgorithmInstance getIdleAlgorithmInstance() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
-        AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
+        CIShellCIBridgeAlgorithmInstance algorithmInstance = (CIShellCIBridgeAlgorithmInstance) cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
+        assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
+        assertTrue(cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().containsKey(algorithmInstance.getAlgorithm()));
         assertSame(IDLE, algorithmInstance.getState());
         return algorithmInstance;
     }
 
     private AlgorithmInstance getRunningAlgorithmInstance() {
         AlgorithmInstance algorithmInstance = getIdleAlgorithmInstance();
-
         //set algorithm running
         cishellCIBridgeSchedulerFacade.runAlgorithmNow(algorithmInstance.getId());
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == RUNNING));
@@ -294,48 +281,41 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         return algorithmInstance;
     }
 
-    private AlgorithmInstance getPausedAlgorithmInstance() {
+    private AlgorithmInstance getPausedAlgorithmInstance() throws InterruptedException {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
         cishellCIBridgeSchedulerFacade.setAlgorithmPaused(algorithmInstance.getId(), true);
+        //let algorithm pause in cishell
+        Thread.sleep(2 * TIME_QUANTUM);
+        //check the progress is halted
+        int progressBefore = algorithmInstance.getProgress();
+        Thread.sleep(10 * TIME_QUANTUM);
+        assertSame(progressBefore, algorithmInstance.getProgress());
+        //check proper state
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == PAUSED));
         assertSame(PAUSED, algorithmInstance.getState());
         return algorithmInstance;
     }
 
-    private AlgorithmInstance getFinishedAlgorithmInstance() {
-        if(finishedAlgorithmInstance == null){
-            System.out.println("came here once for finished");
-            finishedAlgorithmInstance = getIdleAlgorithmInstance();
-            cishellCIBridgeSchedulerFacade.runAlgorithmNow(finishedAlgorithmInstance.getId());
-            assertTrue(waitTillSatisfied(finishedAlgorithmInstance, ai -> ai.getState() == FINISHED));
-            assertSame(FINISHED, finishedAlgorithmInstance.getState());
-        }
-
-        return finishedAlgorithmInstance;
-    }
-
     private AlgorithmInstance getScheduledAlgorithmInstance() {
         AlgorithmInstance algorithmInstance = getIdleAlgorithmInstance();
         cishellCIBridgeSchedulerFacade.scheduleAlgorithm(algorithmInstance.getId(), ZonedDateTime.now().plusDays(1));
+        assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == SCHEDULED));
         assertSame(SCHEDULED, algorithmInstance.getState());
         return algorithmInstance;
     }
 
-    private AlgorithmInstance getCancelledAlgorithm() {
-
-        if(cancelledAlgorithmInstance == null){
-            System.out.println("came here once for cancelled");
-            cancelledAlgorithmInstance = getRunningAlgorithmInstance();
-            cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(cancelledAlgorithmInstance.getId(), true);
-            assertTrue(waitTillSatisfied(cancelledAlgorithmInstance, ai -> ai.getState() == CANCELLED));
-            assertSame(CANCELLED, cancelledAlgorithmInstance.getState());
-        }
-
-        return cancelledAlgorithmInstance;
+    private AlgorithmInstance getFinishedAlgorithmInstance() {
+        AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
+        assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == FINISHED));
+        assertSame(FINISHED, algorithmInstance.getState());
+        return algorithmInstance;
     }
 
-    //cancel algorithm instances after use to save CPU resources
-    private void cancel(AlgorithmInstance algorithmInstance) {
+    private AlgorithmInstance getCancelledAlgorithmInstance() {
+        AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
         cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true);
+        assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == CANCELLED));
+        assertSame(CANCELLED, algorithmInstance.getState());
+        return algorithmInstance;
     }
 }

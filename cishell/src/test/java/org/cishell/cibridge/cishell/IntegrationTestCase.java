@@ -13,6 +13,8 @@ import java.util.function.Predicate;
 
 public abstract class IntegrationTestCase {
 
+    public static final int TIME_QUANTUM = 200;
+
     private static final String PLUGINS_DIRECTORY_PATH = "../integration-tests-container/target/plugins";
     private static final CIShellContainer CISHELL_CONTAINER = CIShellContainer.getBuilder().pluginsDirectoryPath(PLUGINS_DIRECTORY_PATH).build();
     private static final CIShellCIBridge CISHELL_CIBRIDGE = new CIShellCIBridge(CISHELL_CONTAINER.getBundleContext());
@@ -54,36 +56,34 @@ public abstract class IntegrationTestCase {
     }
 
     protected <S> S waitAndGetService(Class<S> clazz) {
-        int quantum = 100;
         int timeout = 20000;
         while (timeout > 0) {
             if (getService(clazz) != null) {
                 return getService(clazz);
             }
             try {
-                Thread.sleep(quantum);
+                Thread.sleep(TIME_QUANTUM);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            timeout = timeout - quantum;
+            timeout = timeout - TIME_QUANTUM;
         }
         return null;
     }
 
     protected <T> boolean waitTillSatisfied(T object, Predicate<T> condition) {
-        int quantum = 100;
-        int timeout = 20000;
+        int timeout = 10000;
 
         while (timeout > 0) {
             if (condition.test(object)) {
                 return true;
             }
             try {
-                Thread.sleep(quantum);
+                Thread.sleep(TIME_QUANTUM);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            timeout = timeout - quantum;
+            timeout = timeout - TIME_QUANTUM;
         }
 
         return false;
