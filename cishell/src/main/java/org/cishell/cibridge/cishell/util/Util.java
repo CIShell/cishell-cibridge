@@ -42,7 +42,7 @@ public class Util {
         return logLevelMap.get(i);
     }
 
-    public static InputParameters getInputParamtersFromMetatypeInfo(MetaTypeInformation metaTypeInformation, String pid) {
+    public static InputParameters getInputParametersFromMetaTypeInfo(MetaTypeInformation metaTypeInformation, String pid) {
 
         String[] pids = metaTypeInformation.getPids() != null ? metaTypeInformation.getPids() : new String[0];
         Set<String> pidSet = Arrays.stream(pids).collect(Collectors.toCollection(HashSet::new));
