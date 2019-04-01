@@ -35,21 +35,31 @@ public class StandardAlgorithmFactory implements AlgorithmFactory {
                 progressMonitor.start(CANCELLABLE | PAUSEABLE | WORK_TRACKABLE, work);
 
                 for (int i = 1; i <= work; i += 1) {
-
+                    //before pausing check if the algorithm is cancelled
                     if (progressMonitor.isCanceled()) {
                         return new BasicData[0];
                     }
 
+                    //pause if required
                     if (progressMonitor.isPaused()) {
                         synchronized (progressMonitor) {
                             progressMonitor.wait();
                         }
                     }
 
+                    //after pausing check if the algorithm is cancelled
+                    if (progressMonitor.isCanceled()) {
+                        return new BasicData[0];
+                    }
+
+                    //sleep is like work here
                     Thread.sleep(quantum);
+
+                    //update the progress
                     progressMonitor.worked(i);
                 }
 
+                //mark finished and set result
                 progressMonitor.done();
                 data = new BasicData[0];
 
