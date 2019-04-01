@@ -58,6 +58,11 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     @Override
     public void algorithmFinished(Algorithm algorithm, Data[] data) {
+        AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
+
+        if (algorithmInstance.getState() == ERRORED) {
+            return;
+        }
 
         if (algorithm instanceof ProgressTrackable) {
             if (((ProgressTrackable) algorithm).getProgressMonitor().isCanceled()) {
