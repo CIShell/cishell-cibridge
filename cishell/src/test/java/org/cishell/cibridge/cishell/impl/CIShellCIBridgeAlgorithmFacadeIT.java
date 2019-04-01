@@ -22,7 +22,9 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
             "org.cishell.tests.algorithm.LosslessConverterAlgorithm",
             "org.cishell.tests.algorithm.ValidatorAlgorithm",
             "org.cishell.tests.algorithm.A2BConverterAlgorithm",
-            "org.cishell.tests.algorithm.B2CConverterAlgorithm"
+            "org.cishell.tests.algorithm.B2CConverterAlgorithm",
+            "org.cishell.tests.algorithm.ErringAlgorithm",
+            "org.cishell.tests.algorithm.QuickAlgorithm"
     );
 
     @Before
