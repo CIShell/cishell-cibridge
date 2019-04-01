@@ -63,8 +63,7 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         CIShellCIBridgeAlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithmInstanceId);
 
         if (!(algorithmInstance.getState() == RUNNING ||
-                algorithmInstance.getState() == PAUSED ||
-                algorithmInstance.getState() == WAITING)) {
+                algorithmInstance.getState() == PAUSED)) {
             return false;
         }
 
@@ -72,7 +71,10 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             if (cancel) {
                 ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
                 progressTrackableAlgorithm.getProgressMonitor().setCanceled(true);
-                return algorithmInstance.getState().equals(CANCELLED);
+                if (algorithmInstance.getState() == PAUSED) {
+                    progressTrackableAlgorithm.getProgressMonitor().setPaused(false);
+                }
+                return true;
             }
         }
 
@@ -88,13 +90,13 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
             ProgressTrackable progressTrackableAlgorithm = (ProgressTrackable) algorithmInstance.getAlgorithm();
             if (pause && algorithmInstance.getState() == RUNNING) {
                 progressTrackableAlgorithm.getProgressMonitor().setPaused(true);
+                return algorithmInstance.getState().equals(PAUSED);
             } else if (!pause && algorithmInstance.getState() == PAUSED) {
                 progressTrackableAlgorithm.getProgressMonitor().setPaused(false);
+                return algorithmInstance.getState().equals(RUNNING);
             } else {
                 return false;
             }
-
-            return algorithmInstance.getState().equals(PAUSED) == pause;
         }
 
         return false;

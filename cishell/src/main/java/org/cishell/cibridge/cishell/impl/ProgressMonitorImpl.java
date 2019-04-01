@@ -14,7 +14,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     private AlgorithmInstance algorithmInstance;
     private int capabilities = 0;
     private double totalWorkUnits = 0;
-    private AlgorithmState previousState;
     private boolean paused = false;
     private boolean canceled = false;
 
@@ -66,7 +65,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
             //cancel the algorithm. currently you cant uncancel an already canceled algorithm
             if (canceled) {
                 this.canceled = true;
-                algorithmInstance.setState(CANCELLED);
                 //todo call subscription method
             }
         }
@@ -83,16 +81,15 @@ public class ProgressMonitorImpl implements ProgressMonitor {
             //pause the algorithm
             if (paused) {
                 this.paused = true;
-                previousState = algorithmInstance.getState();
                 algorithmInstance.setState(PAUSED);
             }
             //resume the algorithm
             else {
                 this.paused = false;
-                algorithmInstance.setState(previousState);
                 synchronized (this) {
                     this.notify();
                 }
+                algorithmInstance.setState(RUNNING);
             }
 
             //todo call subscription method
