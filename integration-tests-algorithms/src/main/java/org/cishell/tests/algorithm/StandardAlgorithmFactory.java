@@ -1,10 +1,7 @@
 package org.cishell.tests.algorithm;
 
 import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.algorithm.ProgressMonitor;
-import org.cishell.framework.algorithm.ProgressTrackable;
+import org.cishell.framework.algorithm.*;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 
@@ -26,7 +23,7 @@ public class StandardAlgorithmFactory implements AlgorithmFactory {
         }
 
         @Override
-        public Data[] execute() {
+        public Data[] execute() throws AlgorithmExecutionException {
             int quantum = 200;
             int work = 10;
             Data[] data;
@@ -64,7 +61,7 @@ public class StandardAlgorithmFactory implements AlgorithmFactory {
                 data = new BasicData[0];
 
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                throw new AlgorithmExecutionException(e);
             }
 
             return data;
