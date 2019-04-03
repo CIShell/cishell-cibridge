@@ -5,6 +5,8 @@ import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
 import org.junit.Test;
+import org.osgi.service.metatype.MetaTypeProvider;
+import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,6 +61,20 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
+
+        MetaTypeProvider metaTypeProvider = new MetaTypeProvider() {
+            @Override
+            public ObjectClassDefinition getObjectClassDefinition(String s, String s1) {
+                return null;
+            }
+
+            @Override
+            public String[] getLocales() {
+                return new String[0];
+            }
+        };
+
+
 
         String id = "NotificationOpenWithParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
@@ -186,7 +202,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
                 testSubscriber.awaitCount(1);
             }
         });
-
 
         createNotificationThread.start();
         testSubscriber.awaitCount(1);
@@ -493,6 +508,18 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         assertEquals(expectedDetail, actualNotification.getDetail());
         assertNull(actualNotification.getFormParameters());
         assertFalse(actualNotification.getConfirmationResponse());
+
+    }
+
+    // TODO Complete This tests to check selection listener
+    @Test
+    public void validateSelectionListenerHitOk() {
+
+    }
+
+    // TODO Complete This tests to check selection listener
+    @Test
+    public void validateSelectionListenerCancelled() {
 
     }
 
