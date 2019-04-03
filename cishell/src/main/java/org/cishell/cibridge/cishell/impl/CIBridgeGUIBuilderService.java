@@ -13,13 +13,10 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.util.*;
 
-//TODO all methods implementation
 public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     private CIShellCIBridge cibridge;
     private CIShellCIBridgeNotificationFacade notificationFacade;
-    private static UUID counter;
-
 
     public CIBridgeGUIBuilderService(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
@@ -31,7 +28,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
         GUI gui = null;
         Notification notification = null;
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
 
         try {
             if (params != null) {
@@ -74,7 +71,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
 
         ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
         List<ParameterDefinition> notificationParams = new ArrayList<>();
@@ -108,7 +105,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public boolean showConfirm(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
 
         Notification notification = new Notification(UUID, NotificationType.CONFIRM, title, message,
                 detail, null, null, false,
@@ -123,7 +120,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showError(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
 
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 detail, null, null, false,
@@ -140,7 +137,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             stackTrace.add(element.toString());
         }
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 null, stackTrace, null, false,
                 null, false, false);
@@ -151,7 +148,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showInformation(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.INFORMATION, title, message,
                 detail, null, null, false,
                 null, false, false);
@@ -162,7 +159,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public boolean showQuestion(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.QUESTION, title, message,
                 detail, null, null, false,
                 null, false, false);
@@ -176,7 +173,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showWarning(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.WARNING, title, message,
                 detail, null, null, false,
                 null, false, false);
@@ -228,7 +225,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             public boolean isClosed() {
                 return notification.getIsClosed();
             }
-            
+
             @Override
             public void setSelectionListener(SelectionListener selectionListener) {
 

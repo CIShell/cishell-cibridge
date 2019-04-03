@@ -546,7 +546,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
     }
 
-    // TODO Complete This tests to check selection listener
     @Test
     public void validateSelectionListenerCancelled() {
         TestSubscriber<Notification> testNotiAddedSubscriber = new TestSubscriber<>();
