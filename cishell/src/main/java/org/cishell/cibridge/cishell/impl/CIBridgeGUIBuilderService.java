@@ -228,8 +228,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             public boolean isClosed() {
                 return notification.getIsClosed();
             }
-
-            // TODO Tests Pending
+            
             @Override
             public void setSelectionListener(SelectionListener selectionListener) {
 
