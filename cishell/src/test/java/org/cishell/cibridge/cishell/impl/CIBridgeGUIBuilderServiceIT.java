@@ -4,14 +4,12 @@ import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
+import org.cishell.service.guibuilder.SelectionListener;
 import org.junit.Test;
 import org.osgi.service.metatype.MetaTypeProvider;
 import org.osgi.service.metatype.ObjectClassDefinition;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -511,16 +509,80 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
     }
 
-    // TODO Complete This tests to check selection listener
     @Test
     public void validateSelectionListenerHitOk() {
+        TestSubscriber<Notification> testNotiAddedSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testNotiAddedSubscriber);
 
+        SelectionListener selectionListener = new SelectionListener() {
+            @Override
+            public void hitOk(Dictionary<String, Object> dictionary) {
+                System.out.println(dictionary);
+                assertNotNull(dictionary.get("key"));
+                assertSame("value", dictionary.get("key"));
+            }
+
+            @Override
+            public void cancelled() {
+                System.out.println("cancelled");
+            }
+        };
+
+        GUI gui = ciBridgeGUIBuilderService.createGUI("RandomId", null);
+        gui.setSelectionListener(selectionListener);
+
+        gui.open();
+
+        testNotiAddedSubscriber.awaitCount(1);
+        List<Notification> notificationList = testNotiAddedSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+
+        List<PropertyInput> formResponse = new ArrayList<>();
+        formResponse.add(new PropertyInput("key", "value"));
+        NotificationResponse notificationResponse = new NotificationResponse(formResponse, null, null, null);
+
+        ciShellCIBridgeNotificationFacade.setNotificationResponse(expectedNotification.getId(), notificationResponse);
+
+        ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
     }
 
     // TODO Complete This tests to check selection listener
     @Test
     public void validateSelectionListenerCancelled() {
+        TestSubscriber<Notification> testNotiAddedSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testNotiAddedSubscriber);
 
+        TestSubscriber<Notification> testNotiUpdatedSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationUpdated().subscribe(testNotiUpdatedSubscriber);
+
+        SelectionListener selectionListener = new SelectionListener() {
+            @Override
+            public void hitOk(Dictionary<String, Object> dictionary) {
+                assertFalse(false);
+            }
+
+            @Override
+            public void cancelled() {
+                //This function has to be called
+                assertTrue(true);
+            }
+        };
+
+        GUI gui = ciBridgeGUIBuilderService.createGUI("Random Id", null);
+        gui.setSelectionListener(selectionListener);
+
+        gui.open();
+
+        testNotiAddedSubscriber.awaitCount(1);
+        List<Notification> notificationList = testNotiAddedSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+
+        List<PropertyInput> formResponse = new ArrayList<>();
+        formResponse.add(new PropertyInput("key", "value"));
+        NotificationResponse notificationResponse = new NotificationResponse(null, null, null, true);
+
+        ciShellCIBridgeNotificationFacade.setNotificationResponse(expectedNotification.getId(), notificationResponse);
+        ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
     }
 
 }
