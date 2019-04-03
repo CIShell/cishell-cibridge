@@ -94,7 +94,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
                 processSubscriptionQuery(parameters);
                 break;
             case GQL_STOP:
-                getSession().close();
+                subscriptionRef.get().cancel();
                 break;
             case GQL_CONNECTION_TERMINATE:
                 getSession().close();
