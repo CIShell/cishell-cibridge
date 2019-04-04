@@ -42,7 +42,7 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
     public LogQueryResults getLogs(LogFilter filter) {
 
         Preconditions.checkNotNull(filter, "filter can't be empty");
-
+        cibridge.getLogService().log(3, "Get Logs endpoint called");
         LogQueryResults results = null;
         ArrayList<LogEntry> listOfLogEntries;
         List<Predicate<LogEntry>> criteria = new ArrayList<>();
@@ -107,14 +107,8 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
 
     private Log logEntryToLog(LogEntry logEntry) {
 
-        HashMap<Integer, LogLevel> logLevelMap = new HashMap<>();
-        logLevelMap.put(1, LogLevel.ERROR);
-        logLevelMap.put(2, LogLevel.WARNING);
-        logLevelMap.put(3, LogLevel.INFO);
-        logLevelMap.put(4, LogLevel.DEBUG);
-
         Log log = new Log();
-        log.setLogLevel(logLevelMap.get(logEntry.getLevel()));
+        log.setLogLevel(Util.getLogLevelFromInteger(logEntry.getLevel()));
         log.setMessage(logEntry.getMessage());
         List<String> stacktrace = new ArrayList<String>();
         // Adding stacktrace if it exists

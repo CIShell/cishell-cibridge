@@ -4,7 +4,10 @@ import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
+import org.cishell.service.guibuilder.SelectionListener;
 import org.junit.Test;
+import org.osgi.service.metatype.MetaTypeProvider;
+import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.util.*;
 
@@ -18,21 +21,27 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     @Test
     public void validateCreateGUIOpenWithoutParams() {
 
+        TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
         String id = "NotificationOpenWithoutParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
         // Should create a notification and add it to map.
         gui.open();
 
+        testSubscriber.awaitCount(1);
+        List<Notification> notificationList = testSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+
         NotificationFilter notificationFilter = new NotificationFilter();
-        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
         notificationFilter.setID(notificationId);
 
         Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
         assertNotNull(notification);
 
         // Verify if the notification object getting created is having desired values in the fields
-        assertEquals(id, notification.getId());
+        assertEquals(expectedNotification.getId(), notification.getId());
         assertEquals(NotificationType.FORM, notification.getType());
         assertNull(notification.getFormResponse());
         assertFalse(notification.getConfirmationResponse());
@@ -44,24 +53,45 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         assertNull(notification.getFormParameters());
     }
 
+    // FIXME Not sure how to pass params. Pass params and assert the values of params passed are being filled in the notification form
     @Test
     public void validateCreateGUIOpenWithParams() {
 
-        // FIXME Not sure how to pass params. Pass params and assert the values of params passed are being filled in the notification form
+        TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
+
+        MetaTypeProvider metaTypeProvider = new MetaTypeProvider() {
+            @Override
+            public ObjectClassDefinition getObjectClassDefinition(String s, String s1) {
+                return null;
+            }
+
+            @Override
+            public String[] getLocales() {
+                return new String[0];
+            }
+        };
+
+
 
         String id = "NotificationOpenWithParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
         // Should create a notification and add it to map.
         gui.open();
+        testSubscriber.awaitCount(1);
+        List<Notification> notificationList = testSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+
+
         NotificationFilter notificationFilter = new NotificationFilter();
-        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
         notificationFilter.setID(notificationId);
 
         Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
         assertNotNull(notification);
 
         // Verify if the notification object getting created is having desired values in the fields
-        assertEquals(id, notification.getId());
+        assertEquals(expectedNotification.getId(), notification.getId());
         assertEquals(NotificationType.FORM, notification.getType());
         assertNull(notification.getFormResponse());
         assertFalse(notification.getConfirmationResponse());
@@ -77,7 +107,8 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
     @Test
     public void validateCreateGUIOpenAndWaitWithoutParams() {
-
+        TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
         String id = "NotificationOpenAndWaitWithoutParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
@@ -96,16 +127,19 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
             public void run() {
                 // Should create a notification and add it to map and wait for response.
                 gui.openAndWait();
+                testSubscriber.awaitCount(1);
+                List<Notification> notificationList = testSubscriber.values();
+                Notification expectedNotification = notificationList.get(0);
 
                 NotificationFilter notificationFilter = new NotificationFilter();
-                List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+                List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
                 notificationFilter.setID(notificationId);
 
                 Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
                 assertNotNull(notification);
 
                 // Verify if the notification object getting created is having desired values in the fields
-                assertEquals(id, notification.getId());
+                assertEquals(expectedNotification.getId(), notification.getId());
                 assertEquals(NotificationType.FORM, notification.getType());
                 assertNotNull(notification.getFormResponse());
                 assertFalse(notification.getConfirmationResponse());
@@ -140,12 +174,14 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
     }
 
+    // FIXME Not sure how to pass params. Pass params and assert the values of params passed are being filled in the notification form
     @Test
     public void validateCreateGUIOpenAndWaitWithParams() {
 
+        TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
         String id = "NotificationOpenAndWaitWithoutParamsID";
 
-        // FIXME Not sure how to pass params. Pass params and assert the values of params passed are being filled in the notification form
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
 
         HashSet<String> propertyKeys = new HashSet<>();
@@ -161,41 +197,34 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
             @Override
             public void run() {
                 gui.openAndWait();
-            }
-        });
-
-        Thread notificationResponseThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // Should create a notification and add it to map and wait for response.
-                List<PropertyInput> formResponse = new ArrayList<>();
-                formResponse.add(property);
-                formResponse.add(property1);
-                formResponse.add(property2);
-                NotificationResponse notificationResponse = new NotificationResponse(formResponse, false, false, false);
-                ciShellCIBridgeNotificationFacade.setNotificationResponse(id, notificationResponse);
-
+                testSubscriber.awaitCount(1);
             }
         });
 
         createNotificationThread.start();
-        notificationResponseThread.start();
+        testSubscriber.awaitCount(1);
+        List<Notification> notificationList = testSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+        List<PropertyInput> expectedFormResponse = new ArrayList<>();
+        expectedFormResponse.add(property);
+        expectedFormResponse.add(property1);
+        expectedFormResponse.add(property2);
+        NotificationResponse notificationResponse = new NotificationResponse(expectedFormResponse, false, false, false);
 
-        try {
-            Thread.sleep(50);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        notificationList = testSubscriber.values();
+        Notification tempExpectedNotification = notificationList.get(0);
+        System.out.println(tempExpectedNotification);
+        ciShellCIBridgeNotificationFacade.setNotificationResponse(tempExpectedNotification.getId(), notificationResponse);
 
         NotificationFilter notificationFilter = new NotificationFilter();
-        List<String> notificationId = new ArrayList<>(Arrays.asList(id));
+        List<String> notificationId = new ArrayList<>(Arrays.asList(expectedNotification.getId()));
         notificationFilter.setID(notificationId);
 
         Notification notification = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter).getResults().get(0);
         assertNotNull(notification);
 
         // Verify if the notification object getting created is having desired values in the fields
-        assertEquals(id, notification.getId());
+        assertEquals(expectedNotification.getId(), notification.getId());
         assertEquals(NotificationType.FORM, notification.getType());
         assertNotNull(notification.getFormResponse());
         assertFalse(notification.getConfirmationResponse());
@@ -207,9 +236,9 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         assertNull(notification.getFormParameters());
 
         //Comparing Form response
-        List<Property> formResponse = notification.getFormResponse();
-        assertEquals(propertyKeys.size(), formResponse.size());
-        for (Property p : formResponse) {
+        List<Property> actualFormResponse = notification.getFormResponse();
+        assertEquals(propertyKeys.size(), actualFormResponse.size());
+        for (Property p : actualFormResponse) {
             assertTrue(propertyKeys.contains(p.getKey()));
             assertTrue(propertyValues.contains(p.getValue()));
         }
@@ -238,7 +267,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
         try {
             Thread.sleep(50);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -346,7 +375,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
         List<String> actualStacktrace = actualNotification.getStackTrace();
         StackTraceElement[] stackTraceElements = expectedException.getStackTrace();
-        for(int i=0; i<stackTraceElements.length; i++){
+        for (int i = 0; i < stackTraceElements.length; i++) {
             assertEquals(stackTraceElements[i].toString(), actualStacktrace.get(i));
         }
     }
@@ -410,7 +439,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
 
         try {
             Thread.sleep(50);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -478,6 +507,81 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         assertNull(actualNotification.getFormParameters());
         assertFalse(actualNotification.getConfirmationResponse());
 
+    }
+
+    @Test
+    public void validateSelectionListenerHitOk() {
+        TestSubscriber<Notification> testNotiAddedSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testNotiAddedSubscriber);
+
+        SelectionListener selectionListener = new SelectionListener() {
+            @Override
+            public void hitOk(Dictionary<String, Object> dictionary) {
+                System.out.println(dictionary);
+                assertNotNull(dictionary.get("key"));
+                assertSame("value", dictionary.get("key"));
+            }
+
+            @Override
+            public void cancelled() {
+                System.out.println("cancelled");
+            }
+        };
+
+        GUI gui = ciBridgeGUIBuilderService.createGUI("RandomId", null);
+        gui.setSelectionListener(selectionListener);
+
+        gui.open();
+
+        testNotiAddedSubscriber.awaitCount(1);
+        List<Notification> notificationList = testNotiAddedSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+
+        List<PropertyInput> formResponse = new ArrayList<>();
+        formResponse.add(new PropertyInput("key", "value"));
+        NotificationResponse notificationResponse = new NotificationResponse(formResponse, null, null, null);
+
+        ciShellCIBridgeNotificationFacade.setNotificationResponse(expectedNotification.getId(), notificationResponse);
+
+        ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
+    }
+
+    @Test
+    public void validateSelectionListenerCancelled() {
+        TestSubscriber<Notification> testNotiAddedSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testNotiAddedSubscriber);
+
+        TestSubscriber<Notification> testNotiUpdatedSubscriber = new TestSubscriber<>();
+        ciShellCIBridgeNotificationFacade.notificationUpdated().subscribe(testNotiUpdatedSubscriber);
+
+        SelectionListener selectionListener = new SelectionListener() {
+            @Override
+            public void hitOk(Dictionary<String, Object> dictionary) {
+                assertFalse(false);
+            }
+
+            @Override
+            public void cancelled() {
+                //This function has to be called
+                assertTrue(true);
+            }
+        };
+
+        GUI gui = ciBridgeGUIBuilderService.createGUI("Random Id", null);
+        gui.setSelectionListener(selectionListener);
+
+        gui.open();
+
+        testNotiAddedSubscriber.awaitCount(1);
+        List<Notification> notificationList = testNotiAddedSubscriber.values();
+        Notification expectedNotification = notificationList.get(0);
+
+        List<PropertyInput> formResponse = new ArrayList<>();
+        formResponse.add(new PropertyInput("key", "value"));
+        NotificationResponse notificationResponse = new NotificationResponse(null, null, null, true);
+
+        ciShellCIBridgeNotificationFacade.setNotificationResponse(expectedNotification.getId(), notificationResponse);
+        ciShellCIBridgeNotificationFacade.removeNotification(expectedNotification.getId());
     }
 
 }

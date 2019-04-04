@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.disposables.Disposable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUI;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -12,38 +13,23 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 
 import java.util.*;
 
-//TODO all methods implementation
 public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     private CIShellCIBridge cibridge;
     private CIShellCIBridgeNotificationFacade notificationFacade;
-    private static final HashMap<Integer, AttributeType> attributeTypeMap = new HashMap<>();
-    private static UUID counter;
-
 
     public CIBridgeGUIBuilderService(CIShellCIBridge cibridge) {
         this.cibridge = cibridge;
         notificationFacade = cibridge.cishellNotification;
-
-        attributeTypeMap.put(1, AttributeType.STRING);
-        attributeTypeMap.put(2, AttributeType.LONG);
-        attributeTypeMap.put(3, AttributeType.INTEGER);
-        attributeTypeMap.put(4, AttributeType.SHORT);
-        attributeTypeMap.put(5, AttributeType.CHARACTER);
-        attributeTypeMap.put(6, AttributeType.BYTE);
-        attributeTypeMap.put(7, AttributeType.DOUBLE);
-        attributeTypeMap.put(8, AttributeType.FLOAT);
-
-
     }
 
-
-    // TODO Check the spec if the id being passed is a uniquely generated id
     @Override
     public synchronized GUI createGUI(String id, MetaTypeProvider params) {
 
         GUI gui = null;
         Notification notification = null;
+        String UUID = java.util.UUID.randomUUID().toString();
+
         try {
             if (params != null) {
                 ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
@@ -55,16 +41,21 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                         Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                         properties.add(property);
                     }
-                    //TODO Fill Parameter definition using setters
                     ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
+                    parameterDefinition.setCardinality(attributes.getCardinality());
+                    parameterDefinition.setDefaultValues(Arrays.asList(attributes.getDefaultValue()));
+                    parameterDefinition.setDescription(attributes.getDescription());
+                    parameterDefinition.setName(attributes.getName());
+                    parameterDefinition.setOptions(properties);
+                    parameterDefinition.setType(Util.getAttributeTypeFromInteger(attributes.getType()));
 
                     notificationParams.add(parameterDefinition);
                 }
-                notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
+                notification = new Notification(UUID, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                         objectClassDefinition.getDescription(), null, notificationParams, false,
                         null, false, false);
             } else {
-                notification = new Notification(id, NotificationType.FORM, null, null,
+                notification = new Notification(UUID, NotificationType.FORM, null, null,
                         null, null, null, false,
                         null, false, false);
             }
@@ -77,25 +68,32 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         return gui;
     }
 
-    // TODO Check the spec if the id being passed is a uniquely generated id
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
 
+        String UUID = java.util.UUID.randomUUID().toString();
+
         ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
         List<ParameterDefinition> notificationParams = new ArrayList<>();
-
+        List<Property> properties = null;
         for (AttributeDefinition attributes : objectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
-            List<Property> properties = new ArrayList<>();
+             properties = new ArrayList<>();
             for (int i = 0; i < attributes.getOptionLabels().length; i++) {
                 Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                 properties.add(property);
             }
-            // TODO fill parameter definition fields using setters
             ParameterDefinition parameterDefinition = new ParameterDefinition(attributes.getID());
+            parameterDefinition.setCardinality(attributes.getCardinality());
+            parameterDefinition.setDefaultValues(Arrays.asList(attributes.getDefaultValue()));
+            parameterDefinition.setDescription(attributes.getDescription());
+            parameterDefinition.setName(attributes.getName());
+            parameterDefinition.setOptions(properties);
+            parameterDefinition.setType(Util.getAttributeTypeFromInteger(attributes.getType()));
+
             notificationParams.add(parameterDefinition);
         }
 
-        Notification notification = new Notification(id, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
+        Notification notification = new Notification(UUID, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                 objectClassDefinition.getDescription(), null, notificationParams, false,
                 null, false, false);
 
@@ -107,7 +105,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public boolean showConfirm(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
 
         Notification notification = new Notification(UUID, NotificationType.CONFIRM, title, message,
                 detail, null, null, false,
@@ -122,7 +120,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showError(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
 
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 detail, null, null, false,
@@ -139,7 +137,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
             stackTrace.add(element.toString());
         }
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 null, stackTrace, null, false,
                 null, false, false);
@@ -150,7 +148,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showInformation(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.INFORMATION, title, message,
                 detail, null, null, false,
                 null, false, false);
@@ -161,7 +159,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public boolean showQuestion(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.QUESTION, title, message,
                 detail, null, null, false,
                 null, false, false);
@@ -175,7 +173,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
     @Override
     public void showWarning(String title, String message, String detail) {
 
-        String UUID = counter.randomUUID().toString();
+        String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.WARNING, title, message,
                 detail, null, null, false,
                 null, false, false);
@@ -228,7 +226,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 return notification.getIsClosed();
             }
 
-            // TODO Tests Pending
             @Override
             public void setSelectionListener(SelectionListener selectionListener) {
 
