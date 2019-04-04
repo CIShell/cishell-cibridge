@@ -42,7 +42,7 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
 
         //read parameters from metatype service
         MetaTypeInformation metaTypeInformation = cibridge.getMetaTypeService().getMetaTypeInformation(reference.getBundle());
-        setParameters(Util.getInputParamtersFromMetatypeInfo(metaTypeInformation, getId()));
+        setParameters(Util.getInputParametersFromMetaTypeInfo(metaTypeInformation, getId()));
 
         if (reference.getProperty(IN_DATA) != null) {
             Arrays.stream(reference.getProperty(IN_DATA).toString().split(",")).sequential().map(String::trim)

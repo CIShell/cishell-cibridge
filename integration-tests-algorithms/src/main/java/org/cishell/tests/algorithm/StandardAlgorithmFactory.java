@@ -1,14 +1,13 @@
 package org.cishell.tests.algorithm;
 
 import org.cishell.framework.CIShellContext;
-import org.cishell.framework.algorithm.Algorithm;
-import org.cishell.framework.algorithm.AlgorithmFactory;
-import org.cishell.framework.algorithm.ProgressMonitor;
-import org.cishell.framework.algorithm.ProgressTrackable;
+import org.cishell.framework.algorithm.*;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
 
 import java.util.Dictionary;
+
+import static org.cishell.framework.algorithm.ProgressMonitor.*;
 
 public class StandardAlgorithmFactory implements AlgorithmFactory {
 
@@ -24,15 +23,48 @@ public class StandardAlgorithmFactory implements AlgorithmFactory {
         }
 
         @Override
-        public Data[] execute() {
+        public Data[] execute() throws AlgorithmExecutionException {
+            int quantum = 200;
+            int work = 100;
+            Data[] data;
 
-            getProgressMonitor().start(ProgressMonitor.CANCELLABLE | ProgressMonitor.PAUSEABLE | ProgressMonitor.WORK_TRACKABLE, 100);
-            for(int i = 10; i <= 100; i += 10){
-                getProgressMonitor().worked(i);
+            try {
+                progressMonitor.start(CANCELLABLE | PAUSEABLE | WORK_TRACKABLE, work);
+
+                for (int i = 1; i <= work; i += 1) {
+                    //before pausing check if the algorithm is cancelled
+                    if (progressMonitor.isCanceled()) {
+                        return new BasicData[0];
+                    }
+
+                    //pause if required
+                    if (progressMonitor.isPaused()) {
+                        synchronized (progressMonitor) {
+                            progressMonitor.wait();
+                        }
+                    }
+
+                    //after pausing check if the algorithm is cancelled
+                    if (progressMonitor.isCanceled()) {
+                        return new BasicData[0];
+                    }
+
+                    //sleep is like work here
+                    Thread.sleep(quantum);
+
+                    //update the progress
+                    progressMonitor.worked(i);
+                }
+
+                //mark finished and set result
+                progressMonitor.done();
+                data = new BasicData[0];
+
+            } catch (Exception e) {
+                throw new AlgorithmExecutionException(e);
             }
-            getProgressMonitor().done();
 
-            return new BasicData[0];
+            return data;
         }
 
         @Override
