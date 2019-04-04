@@ -25,7 +25,7 @@ public class StandardAlgorithmFactory implements AlgorithmFactory {
         @Override
         public Data[] execute() throws AlgorithmExecutionException {
             int quantum = 200;
-            int work = 10;
+            int work = 100;
             Data[] data;
 
             try {
