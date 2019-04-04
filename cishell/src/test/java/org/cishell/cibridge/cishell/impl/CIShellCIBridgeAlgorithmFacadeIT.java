@@ -286,6 +286,18 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         assertEquals(2, queryResults.getResults().size());
     }
 
+    //TODO Complete pending tests
+    @Test
+    public void validateAlgorithmDefinitionAddedSubscription() {
+
+    }
+
+    //TODO Complete pending tests
+    @Test
+    public void validateAlgorithmDefinitionRemovedSubscription() {
+
+    }
+
     //todo write tests for filtering algorithm instances
     @Test
     public void getAlgorithmInstances() {

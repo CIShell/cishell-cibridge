@@ -20,6 +20,7 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
 
     @Test
     public void validateGetNotificationsWithOutFilter() {
+
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -41,12 +42,14 @@ public class CIShellCIBridgeNotificationFacadeIT extends IntegrationTestCase {
         testSubscriber.awaitCount(3);
         List<Notification> notificationList = testSubscriber.values();
 
-        List<String> listOfIds = new ArrayList<>(Arrays.asList(notificationList.get(0).getId(), notificationList.get(1).getId(), notificationList.get(2).getId()));
+        List<String> listOfIds = new ArrayList<>();
 
-        NotificationQueryResults actualResults = ciShellCIBridgeNotificationFacade.getNotifications(notificationFilter);
+        for (Notification n : testSubscriber.values()) {
+            listOfIds.add(n.getId());
+        }
+
+        NotificationQueryResults actualResults = ciShellCIBridgeNotificationFacade.getNotifications(new NotificationFilter());
         List<Notification> actualNotifications = actualResults.getResults();
-
-        assertEquals(3, actualNotifications.size());
 
         for (Notification notification : actualNotifications) {
             assertTrue(listOfIds.contains(notification.getId()));
