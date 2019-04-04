@@ -98,6 +98,5 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     private AlgorithmInstance getAlgorithmInstance(Algorithm algorithm) {
         return cibridge.cishellAlgorithm.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm);
-
     }
 }

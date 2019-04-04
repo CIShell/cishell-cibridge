@@ -8,6 +8,9 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.apache.commons.io.FilenameUtils;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmDefinition;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
+import org.cishell.cibridge.cishell.model.CIShellData;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
@@ -71,11 +74,15 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
         Converter[] converters = cibridge.getDataConversionService().findConverters(inFormat, outFormat);
 
+        List<AlgorithmDefinition> algorithmDefinitionList = new ArrayList<>();
+
         for (Converter converter : converters) {
-            converter.getAlgorithmFactory();
+            CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(converter);
+            cibridge.cishellAlgorithm.getAlgorithmDefinitionMap().put(algorithmDefinition.getId(), algorithmDefinition);
+            algorithmDefinitionList.add(algorithmDefinition);
         }
 
-        return null;
+        return algorithmDefinitionList;
     }
 
     @Override

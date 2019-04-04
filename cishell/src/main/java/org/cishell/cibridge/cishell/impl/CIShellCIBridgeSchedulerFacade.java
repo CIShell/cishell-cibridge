@@ -3,6 +3,7 @@ package org.cishell.cibridge.cishell.impl;
 import com.google.common.base.Preconditions;
 import io.reactivex.Flowable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;

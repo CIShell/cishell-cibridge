@@ -1,4 +1,4 @@
-package org.cishell.cibridge.cishell.impl;
+package org.cishell.cibridge.cishell.model;
 
 import com.google.common.base.Preconditions;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
@@ -8,6 +8,7 @@ import org.cishell.cibridge.core.model.AlgorithmType;
 import org.cishell.cibridge.core.model.ConversionType;
 import org.cishell.cibridge.core.model.Property;
 import org.cishell.framework.algorithm.AlgorithmFactory;
+import org.cishell.service.conversion.Converter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.service.metatype.MetaTypeInformation;
 
@@ -33,6 +34,15 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
                     SERVICE_PID, SERVICE_ID, COMPONENT_ID, COMPONENT_NAME, OBJECTCLASS, SERVICE_BUNDLEID, SERVICE_SCOPE
             ).collect(Collectors.toCollection(HashSet::new));
 
+    public CIShellCIBridgeAlgorithmDefinition(Converter converter) {
+        super("ConverterAlgorithm@" + Integer.toHexString(converter.hashCode()));
+
+        algorithmFactory = converter.getAlgorithmFactory();
+        Preconditions.checkNotNull(algorithmFactory, "algorithmFactory cannot be null for service: " + getId());
+
+
+
+    }
 
     public CIShellCIBridgeAlgorithmDefinition(CIShellCIBridge cibridge, ServiceReference<AlgorithmFactory> reference) {
         super(reference.getProperty(SERVICE_PID).toString());

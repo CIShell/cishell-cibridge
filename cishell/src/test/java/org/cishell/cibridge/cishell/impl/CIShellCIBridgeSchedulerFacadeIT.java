@@ -1,6 +1,7 @@
 package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.cibridge.cishell.IntegrationTestCase;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.junit.After;
 import org.junit.Before;

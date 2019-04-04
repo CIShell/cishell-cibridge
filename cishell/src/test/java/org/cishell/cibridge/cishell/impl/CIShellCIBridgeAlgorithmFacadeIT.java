@@ -1,6 +1,7 @@
 package org.cishell.cibridge.cishell.impl;
 
 import org.cishell.cibridge.cishell.IntegrationTestCase;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.junit.After;
@@ -23,6 +24,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
             "org.cishell.tests.algorithm.ValidatorAlgorithm",
             "org.cishell.tests.algorithm.A2BConverterAlgorithm",
             "org.cishell.tests.algorithm.B2CConverterAlgorithm",
+            "org.cishell.tests.algorithm.UserInputAlgorithm",
             "org.cishell.tests.algorithm.ErringAlgorithm",
             "org.cishell.tests.algorithm.QuickAlgorithm"
     );

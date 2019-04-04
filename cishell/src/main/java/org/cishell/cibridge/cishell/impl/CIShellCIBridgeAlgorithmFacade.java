@@ -3,6 +3,10 @@ package org.cishell.cibridge.cishell.impl;
 import com.google.common.base.Preconditions;
 import io.reactivex.Flowable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmDefinition;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
+import org.cishell.cibridge.cishell.model.CIShellData;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
@@ -189,14 +193,12 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                     .stream()
                     .filter(entry -> dataIds.contains(entry.getKey()))
                     .map(Map.Entry::getValue)
-
                     .collect(Collectors.toList());
         }
 
         org.cishell.framework.data.Data[] dataArray = null;
         if (!dataList.isEmpty()) {
-
-            dataArray = (org.cishell.framework.data.Data[]) dataList.stream().map(CIShellCIBridgeData::getCIShellData).toArray();
+            dataArray = dataList.stream().map(CIShellCIBridgeData::getCIShellData).toArray(CIShellData[]::new);
         }
 
         Dictionary<String, Object> paramTable = null;
@@ -296,8 +298,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     public void cacheAlgorithmDefinitions() {
 
         //cache all the algorithms registered in the future through service listener
-
-
         synchronized (this) {
             try {
                 cibridge.getBundleContext().addServiceListener(event -> {

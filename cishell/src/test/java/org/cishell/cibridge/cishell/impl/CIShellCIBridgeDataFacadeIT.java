@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.cibridge.core.model.*;
 import org.junit.After;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -208,11 +208,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void getDataWithSpecifiedPagination() {
-
-    }
-
-    @Test
     public void getDataWithSpecifiedFormats() {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
@@ -400,19 +395,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     @Test
     public void validateData() {
 
-    }
-
-    @Test
-    public void findConverters() {
-
-    }
-
-    @Test
-    public void findConvertersByFormat() {
-        String inputDataFormat = "file:text/A";
-        String outputDataFormat = "file:text/C";
-
-        cishellCIBridgeDataFacade.findConvertersByFormat(inputDataFormat, outputDataFormat);
     }
 
     @Test

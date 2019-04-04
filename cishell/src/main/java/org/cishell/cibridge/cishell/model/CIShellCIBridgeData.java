@@ -1,4 +1,4 @@
-package org.cishell.cibridge.cishell.impl;
+package org.cishell.cibridge.cishell.model;
 
 import com.google.common.base.Preconditions;
 import org.cishell.cibridge.core.model.Data;
@@ -25,7 +25,7 @@ public class CIShellCIBridgeData extends Data {
 
     //todo adding rudimentary way of generating unique ids. Should be UUIDs
     private static String generateAndGetUniqueID() {
-        return ++instanceCounter + "";
+        return java.util.UUID.randomUUID().toString();
     }
 
     @Override

@@ -5,6 +5,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.app.service.datamanager.DataManagerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.cibridge.core.model.DataType;
 import org.cishell.cibridge.core.model.Property;
 import org.cishell.framework.data.Data;
