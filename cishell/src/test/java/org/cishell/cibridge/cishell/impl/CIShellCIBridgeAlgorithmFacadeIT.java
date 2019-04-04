@@ -22,41 +22,27 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
             "org.cishell.tests.algorithm.LosslessConverterAlgorithm",
             "org.cishell.tests.algorithm.ValidatorAlgorithm",
             "org.cishell.tests.algorithm.A2BConverterAlgorithm",
-            "org.cishell.tests.algorithm.B2CConverterAlgorithm"
+            "org.cishell.tests.algorithm.B2CConverterAlgorithm",
+            "org.cishell.tests.algorithm.ErringAlgorithm",
+            "org.cishell.tests.algorithm.QuickAlgorithm"
     );
 
     @Before
     public void waitForAllAlgorithmDefinitionsToBeCached() {
-
         for (String algorithmPID : listOfIntegrationTestsAlgorithmsPIDs) {
-            assertNotNull(waitAndGetAlgorithmDefinition(algorithmPID));
+            boolean success = waitTillSatisfied(algorithmPID, pid -> cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().containsKey(pid));
+            assertTrue("Algorithm factory for pid: '" + algorithmPID + "' was not cached", success);
         }
     }
 
-    private AlgorithmDefinition waitAndGetAlgorithmDefinition(String pid) {
-        int timePeriod = 10_000;//10 seconds
-        int tickTime = 100;//100 milliseconds
-        int ticks = timePeriod / tickTime;
-        try {
-            while (ticks-- > 0) {
-                if (cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().get(pid) != null) {
-                    return cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().get(pid);
-                }
-                Thread.sleep(100);
-            }
-        } catch (InterruptedException e) {
-            System.err.println("Interrupted before caching algorithm definition with pid: " + pid);
-            return null;
-        }
-
-        System.out.println("Algorithm factory for pid: '" + pid + "' was not cached");
-        return null;
+    private AlgorithmDefinition getAlgorithmDefinition(String pid) {
+        return cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().get(pid);
     }
 
     @Test
     public void validateStringValuePropertiesOfAlgorithmDefinitions() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
-        AlgorithmDefinition algorithmDefinition = waitAndGetAlgorithmDefinition(pid);
+        AlgorithmDefinition algorithmDefinition = getAlgorithmDefinition(pid);
         assertNotNull(algorithmDefinition);
         assertEquals(pid, algorithmDefinition.getId());
         assertEquals("Run/Run...", algorithmDefinition.getMenuPath());
@@ -77,17 +63,17 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         String converter = "org.cishell.tests.algorithm.LossyConverterAlgorithm";
         String validator = "org.cishell.tests.algorithm.ValidatorAlgorithm";
 
-        AlgorithmDefinition standardAlgorithmDefinition = waitAndGetAlgorithmDefinition(standard);
+        AlgorithmDefinition standardAlgorithmDefinition = getAlgorithmDefinition(standard);
         assertNotNull(standardAlgorithmDefinition);
         assertEquals(standard, standardAlgorithmDefinition.getId());
         assertEquals(AlgorithmType.STANDARD, standardAlgorithmDefinition.getType());
 
-        AlgorithmDefinition converterAlgorithmDefinition = waitAndGetAlgorithmDefinition(converter);
+        AlgorithmDefinition converterAlgorithmDefinition = getAlgorithmDefinition(converter);
         assertNotNull(converterAlgorithmDefinition);
         assertEquals(converter, converterAlgorithmDefinition.getId());
         assertEquals(AlgorithmType.CONVERTER, converterAlgorithmDefinition.getType());
 
-        AlgorithmDefinition validatorAlgorithmDefinition = waitAndGetAlgorithmDefinition(validator);
+        AlgorithmDefinition validatorAlgorithmDefinition = getAlgorithmDefinition(validator);
         assertNotNull(validatorAlgorithmDefinition);
         assertEquals(validator, validatorAlgorithmDefinition.getId());
         assertEquals(AlgorithmType.VALIDATOR, validatorAlgorithmDefinition.getType());
@@ -97,7 +83,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     public void validateInputAndOutputFormatsOfAlgorithmDefinitions() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
 
-        AlgorithmDefinition algorithmDefinition = waitAndGetAlgorithmDefinition(pid);
+        AlgorithmDefinition algorithmDefinition = getAlgorithmDefinition(pid);
 
         assertNotNull(algorithmDefinition);
         assertEquals(2, algorithmDefinition.getInData().size());
@@ -113,12 +99,12 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         String lossy = "org.cishell.tests.algorithm.LossyConverterAlgorithm";
         String lossless = "org.cishell.tests.algorithm.LosslessConverterAlgorithm";
 
-        AlgorithmDefinition lossyAlgorithmDefinition = waitAndGetAlgorithmDefinition(lossy);
+        AlgorithmDefinition lossyAlgorithmDefinition = getAlgorithmDefinition(lossy);
         assertNotNull(lossyAlgorithmDefinition);
         assertEquals(lossy, lossyAlgorithmDefinition.getId());
         assertEquals(ConversionType.LOSSY, lossyAlgorithmDefinition.getConversion());
 
-        AlgorithmDefinition losslessAlgorithmDefinition = waitAndGetAlgorithmDefinition(lossless);
+        AlgorithmDefinition losslessAlgorithmDefinition = getAlgorithmDefinition(lossless);
         assertNotNull(losslessAlgorithmDefinition);
         assertEquals(lossless, losslessAlgorithmDefinition.getId());
         assertEquals(ConversionType.LOSSLESS, losslessAlgorithmDefinition.getConversion());
@@ -129,12 +115,12 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         String remoteable = "org.cishell.tests.algorithm.ValidatorAlgorithm";
         String nonRemoteable = "org.cishell.tests.algorithm.LosslessConverterAlgorithm";
 
-        AlgorithmDefinition remoteableAlgorithmDefinition = waitAndGetAlgorithmDefinition(remoteable);
+        AlgorithmDefinition remoteableAlgorithmDefinition = getAlgorithmDefinition(remoteable);
         assertNotNull(remoteableAlgorithmDefinition);
         assertEquals(remoteable, remoteableAlgorithmDefinition.getId());
         assertTrue(remoteableAlgorithmDefinition.getRemoteable());
 
-        AlgorithmDefinition nonRemoteableAlgorithmDefinition = waitAndGetAlgorithmDefinition(nonRemoteable);
+        AlgorithmDefinition nonRemoteableAlgorithmDefinition = getAlgorithmDefinition(nonRemoteable);
         assertNotNull(nonRemoteableAlgorithmDefinition);
         assertEquals(nonRemoteable, nonRemoteableAlgorithmDefinition.getId());
         assertFalse(nonRemoteableAlgorithmDefinition.getRemoteable());
@@ -143,7 +129,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     @Test
     public void validateOtherPropertiesOfAlgorithmDefinition() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
-        AlgorithmDefinition algorithmDefinition = waitAndGetAlgorithmDefinition(pid);
+        AlgorithmDefinition algorithmDefinition = getAlgorithmDefinition(pid);
         assertNotNull(algorithmDefinition);
         assertEquals(pid, algorithmDefinition.getId());
         assertEquals("its_value", algorithmDefinition.getOtherProperties().stream().collect(Collectors.toMap(Property::getKey, Property::getValue)).get("other_property"));
@@ -309,7 +295,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     @Test
     public void createAlgorithm() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
-        assertNotNull(waitAndGetAlgorithmDefinition(pid));
+        assertNotNull(getAlgorithmDefinition(pid));
         AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
         assertNotNull(algorithmInstance);
         assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));

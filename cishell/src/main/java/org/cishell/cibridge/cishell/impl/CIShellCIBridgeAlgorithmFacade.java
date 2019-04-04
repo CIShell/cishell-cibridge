@@ -38,11 +38,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     private ConnectableObservable<AlgorithmInstance> algorithmInstanceUpdatedObservable;
     private ObservableEmitter<AlgorithmInstance> algorithmInstanceUpdatedObservableEmitter;
 
-    public void setCIBridge(CIShellCIBridge cibridge) {
-
-        this.cibridge = cibridge;
-        cacheAlgorithmDefinitions();
-
+    public CIShellCIBridgeAlgorithmFacade() {
         io.reactivex.Observable<AlgorithmDefinition> algorithmaddedobservable = Observable.create(emitter -> {
             algorithmDefinitionAddedObservableEmitter = emitter;
 
@@ -63,6 +59,12 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         });
         algorithmInstanceUpdatedObservable = algorithmupdatedobservable.share().publish();
         algorithmInstanceUpdatedObservable.connect();
+    }
+
+    public void setCIBridge(CIShellCIBridge cibridge) {
+
+        this.cibridge = cibridge;
+        cacheAlgorithmDefinitions();
 
     }
 
