@@ -1,9 +1,14 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.core.CIBridge;
+import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.ProgressTrackable;
@@ -21,11 +26,30 @@ import static org.cishell.cibridge.core.model.AlgorithmState.*;
 public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade {
     private CIShellCIBridge cibridge;
     private SchedulerListenerImpl schedulerListener = new SchedulerListenerImpl();
+    private ConnectableObservable<Boolean> schedulerClearedObservable;
+    private ObservableEmitter<Boolean> schedulerClearedObservableEmitter;
+
+    private ConnectableObservable<Boolean> schedulerRunningChangedObservable;
+    private ObservableEmitter<Boolean> schedulerRunningChangedObservableEmitter;
 
     public void setCIBridge(CIShellCIBridge cibridge) {
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
         this.schedulerListener.setCIBridge(cibridge);
+
+        io.reactivex.Observable<Boolean> schedulerclearedobservable = Observable.create(emitter -> {
+            schedulerClearedObservableEmitter = emitter;
+
+        });
+        schedulerClearedObservable = schedulerclearedobservable.share().publish();
+        schedulerClearedObservable.connect();
+
+        io.reactivex.Observable<Boolean> schedulerrunningchangedobservable = Observable.create(emitter -> {
+            schedulerRunningChangedObservableEmitter = emitter;
+
+        });
+        schedulerRunningChangedObservable = schedulerrunningchangedobservable.share().publish();
+        schedulerRunningChangedObservable.connect();
     }
 
     /* Queries */
@@ -172,33 +196,31 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     @Override
     public Integer clearScheduler() {
         cibridge.getSchedulerService().clearSchedule();
+        schedulerClearedObservableEmitter.onNext(false);
         return cibridge.getSchedulerService().getScheduledAlgorithms().length;
     }
 
     @Override
     public Boolean setSchedulerRunning(Boolean running) {
         cibridge.getSchedulerService().setRunning(running);
+        schedulerRunningChangedObservableEmitter.onNext(running);
         return cibridge.getSchedulerService().isRunning();
     }
 
-    // TODO Update the subscriptions implementation with listeners
     @Override
     public Publisher<Boolean> schedulerCleared() {
-        Boolean boolean1 = true;
-        List<Boolean> results = new ArrayList<>();
-        results.add(boolean1);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
-        // return Flowable.just(boolean1).;
+        Flowable<Boolean> publisher;
+        ConnectableObservable<Boolean> connectableObservable = schedulerClearedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
-    // TODO Update the subscriptions implementation with listeners
     @Override
     public Publisher<Boolean> schedulerRunningChanged() {
-        Boolean boolean1 = true;
-        List<Boolean> results = new ArrayList<>();
-        results.add(boolean1);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
-        // return Flowable.just(boolean1).;
+        Flowable<Boolean> publisher;
+        ConnectableObservable<Boolean> connectableObservable = schedulerRunningChangedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
     private CIShellCIBridgeAlgorithmInstance getAlgorithmInstance(String algorithmInstanceId) {

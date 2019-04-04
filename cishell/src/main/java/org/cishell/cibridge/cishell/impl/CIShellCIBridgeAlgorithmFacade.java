@@ -1,7 +1,11 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.core.CIBridge;
@@ -14,7 +18,6 @@ import org.osgi.framework.ServiceReference;
 import org.reactivestreams.Publisher;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -26,10 +29,41 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     private final Map<String, CIShellCIBridgeAlgorithmInstance> algorithmInstanceMap = new LinkedHashMap<>();
     private final Map<Algorithm, CIShellCIBridgeAlgorithmInstance> cishellAlgorithmCIBridgeAlgorithmMap = new HashMap<>();
     private final Map<String, CIShellCIBridgeAlgorithmDefinition> algorithmDefinitionMap = new LinkedHashMap<>();
+    private ConnectableObservable<AlgorithmDefinition> algorithmDefinitionAddedObservable;
+    private ObservableEmitter<AlgorithmDefinition> algorithmDefinitionAddedObservableEmitter;
+
+    private ConnectableObservable<AlgorithmDefinition> algorithmDefinitionRemovedObservable;
+    private ObservableEmitter<AlgorithmDefinition> algorithmDefinitionRemovedObservableEmitter;
+
+    private ConnectableObservable<AlgorithmInstance> algorithmInstanceUpdatedObservable;
+    private ObservableEmitter<AlgorithmInstance> algorithmInstanceUpdatedObservableEmitter;
 
     public void setCIBridge(CIShellCIBridge cibridge) {
+
         this.cibridge = cibridge;
         cacheAlgorithmDefinitions();
+
+        io.reactivex.Observable<AlgorithmDefinition> algorithmaddedobservable = Observable.create(emitter -> {
+            algorithmDefinitionAddedObservableEmitter = emitter;
+
+        });
+        algorithmDefinitionAddedObservable = algorithmaddedobservable.share().publish();
+        algorithmDefinitionAddedObservable.connect();
+
+        io.reactivex.Observable<AlgorithmDefinition> algorithmremovedobservable = Observable.create(emitter -> {
+            algorithmDefinitionRemovedObservableEmitter = emitter;
+
+        });
+        algorithmDefinitionRemovedObservable = algorithmremovedobservable.share().publish();
+        algorithmDefinitionRemovedObservable.connect();
+
+        io.reactivex.Observable<AlgorithmInstance> algorithmupdatedobservable = Observable.create(emitter -> {
+            algorithmInstanceUpdatedObservableEmitter = emitter;
+
+        });
+        algorithmInstanceUpdatedObservable = algorithmupdatedobservable.share().publish();
+        algorithmInstanceUpdatedObservable.connect();
+
     }
 
     @Override
@@ -66,7 +100,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
 
         //predicate on input data ids
-        //todo need to clarify about how to filter based on input data ids
+        //TODO need to clarify about how to filter based on input data ids
         // filter by matching on either (OR)
         if (filter.getInputDataIds() != null) {
             Set<String> supportedFormats = new HashSet<>();
@@ -221,54 +255,28 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return algorithmInstance;
     }
 
-    // TODO Update the implementation of subscription with listener
     @Override
     public Publisher<AlgorithmDefinition> algorithmDefinitionAdded() {
-
-
-        List<AlgorithmDefinition> results = new ArrayList<AlgorithmDefinition>();
-        AlgorithmDefinition algorithmDefinition = new AlgorithmDefinition("123");
-        algorithmDefinition.setAuthors("Aravind");
-        algorithmDefinition.setDescription("Test Subscription Algo");
-        algorithmDefinition.setDocumentationUrl("https://testsubscriptions.com");
-        results.add(algorithmDefinition);
-        AlgorithmFilter filter = new AlgorithmFilter();
-        filter.setLimit(2);
-        AlgorithmDefinitionQueryResults queryResults = getAlgorithmDefinitions(filter);
-        results.addAll(queryResults.getResults());
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
-
+        Flowable<AlgorithmDefinition> publisher;
+        ConnectableObservable<AlgorithmDefinition> connectableObservable = algorithmDefinitionAddedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
-    // TODO Update the implementation of subscription with listener
     @Override
     public Publisher<AlgorithmDefinition> algorithmDefinitionRemoved() {
-        List<AlgorithmDefinition> results = new ArrayList<AlgorithmDefinition>();
-        AlgorithmDefinition algorithmDefinition = new AlgorithmDefinition("123");
-        algorithmDefinition.setAuthors("Aravind");
-        algorithmDefinition.setDescription("Test Subscription Algo");
-        algorithmDefinition.setDocumentationUrl("https://testsubscriptions.com");
-        results.add(algorithmDefinition);
-        AlgorithmFilter filter = new AlgorithmFilter();
-        filter.setLimit(2);
-        AlgorithmDefinitionQueryResults queryResults = getAlgorithmDefinitions(filter);
-        results.addAll(queryResults.getResults());
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
+        Flowable<AlgorithmDefinition> publisher;
+        ConnectableObservable<AlgorithmDefinition> connectableObservable = algorithmDefinitionRemovedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
-    // TODO Update the implementation of subscription with listener
     @Override
     public Publisher<AlgorithmInstance> algorithmInstanceUpdated(AlgorithmFilter filter) {
-
-        AlgorithmInstanceQueryResults results = getAlgorithmInstances(filter);
-        AlgorithmDefinition algorithmDefinition = new AlgorithmDefinition("123");
-        algorithmDefinition.setAuthors("Aravind");
-        algorithmDefinition.setDescription("Test Subscription Algo");
-        algorithmDefinition.setDocumentationUrl("https://testsubscriptions.com");
-
-        AlgorithmInstance algorithmInstance = new AlgorithmInstance("1", algorithmDefinition);
-        results.getResults().add(algorithmInstance);
-        return Flowable.fromIterable(results.getResults()).delay(2, TimeUnit.SECONDS);
+        Flowable<AlgorithmInstance> publisher;
+        ConnectableObservable<AlgorithmInstance> connectableObservable = algorithmInstanceUpdatedObservable;
+        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
+        return publisher;
     }
 
 
@@ -278,6 +286,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
             if (pid != null) {
                 algorithmDefinitionMap.remove(pid);
+                algorithmDefinitionRemovedObservableEmitter.onNext(algorithmDefinitionMap.get(pid));
             }
         }
     }
@@ -288,6 +297,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             if (pid != null) {
                 CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(cibridge, reference);
                 algorithmDefinitionMap.put(pid, algorithmDefinition);
+                algorithmDefinitionAddedObservableEmitter.onNext(algorithmDefinition);
+
             }
         }
 
@@ -296,7 +307,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
     public void cacheAlgorithmDefinitions() {
 
         //cache all the algorithms registered in the future through service listener
-
 
         synchronized (this) {
             try {
@@ -309,7 +319,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                 }, "(" + OBJECTCLASS + "=" + AlgorithmFactory.class.getName() + ")");
             } catch (InvalidSyntaxException ignored) {
             }
-
 
             //cache all the algorithms already registered
             try {
@@ -336,5 +345,17 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCIShellAlgorithmCIBridgeAlgorithmMap() {
         return cishellAlgorithmCIBridgeAlgorithmMap;
+    }
+
+    public ObservableEmitter<AlgorithmDefinition> getAlgorithmDefinitionAddedObservableEmitter() {
+        return algorithmDefinitionAddedObservableEmitter;
+    }
+
+    public ObservableEmitter<AlgorithmDefinition> getAlgorithmDefinitionRemovedObservableEmitter() {
+        return algorithmDefinitionRemovedObservableEmitter;
+    }
+
+    public ObservableEmitter<AlgorithmInstance> getAlgorithmInstanceUpdatedObservableEmitter() {
+        return algorithmInstanceUpdatedObservableEmitter;
     }
 }
