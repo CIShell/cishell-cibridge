@@ -36,20 +36,21 @@ public class SchedulerListenerImpl implements SchedulerListener {
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
         algorithmInstance.setState(SCHEDULED);
         algorithmInstance.setScheduledRunTime(calendar.toInstant().atZone(ZoneId.systemDefault()));
-        //todo call subscription method
+        //todo call subscription method - verify with hardik
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmRescheduled(Algorithm algorithm, Calendar calendar) {
         algorithmScheduled(algorithm, calendar);
         //todo call subscription method
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmUnscheduled(Algorithm algorithm) {
         System.out.println("Algorithm unscheduled");
         getAlgorithmInstance(algorithm).setState(IDLE);
-        //todo call subscription method
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
@@ -57,7 +58,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
     public void algorithmStarted(Algorithm algorithm) {
         System.out.println("Algorithm started running");
         getAlgorithmInstance(algorithm).setState(RUNNING);
-        //todo call subscription method
         System.out.println("Running called");
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
@@ -80,8 +80,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
         System.out.println("Algorithm finished");
         getAlgorithmInstance(algorithm).setState(FINISHED);
-
-        //todo call subscription method
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
@@ -89,7 +87,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
     public void algorithmError(Algorithm algorithm, Throwable throwable) {
         System.out.println("Algorithm errored");
         getAlgorithmInstance(algorithm).setState(ERRORED);
-        //todo call subscription method
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
         throwable.printStackTrace();
 

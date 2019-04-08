@@ -26,7 +26,7 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     @Override
     public void start(int capabilities, int totalWorkUnits) {
         start(capabilities, (double) totalWorkUnits);
-        //todo call subscription method
+        //todo call subscription method - verify with hardik
     }
 
     @Override
@@ -36,7 +36,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
         this.totalWorkUnits = totalWorkUnits;
         algorithmInstance.setProgress(0);
         algorithmInstance.setState(RUNNING);
-        //todo call subscription method
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
 
     }
@@ -51,7 +50,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
         if ((capabilities & WORK_TRACKABLE) > 0) {
             algorithmInstance.setProgress((int) (work * 100 / totalWorkUnits));
             System.out.println("updating progress: " + algorithmInstance.getProgress());
-            //todo call subscription method
             cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
         }
     }
@@ -60,7 +58,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     public void done() {
         algorithmInstance.setProgress(100);
         algorithmInstance.setState(FINISHED);
-        //todo call subscription method
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
     }
 
@@ -70,7 +67,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
             //cancel the algorithm. currently you cant uncancel an already canceled algorithm
             if (canceled) {
                 this.canceled = true;
-                //todo call subscription method
                 cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
             }
         }
@@ -97,8 +93,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
                 }
                 algorithmInstance.setState(RUNNING);
             }
-
-            //todo call subscription method
             cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
         }
     }
