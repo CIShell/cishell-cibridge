@@ -36,14 +36,12 @@ public class SchedulerListenerImpl implements SchedulerListener {
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
         algorithmInstance.setState(SCHEDULED);
         algorithmInstance.setScheduledRunTime(calendar.toInstant().atZone(ZoneId.systemDefault()));
-        //todo call subscription method - verify with hardik
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmRescheduled(Algorithm algorithm, Calendar calendar) {
         algorithmScheduled(algorithm, calendar);
-        //todo call subscription method
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
