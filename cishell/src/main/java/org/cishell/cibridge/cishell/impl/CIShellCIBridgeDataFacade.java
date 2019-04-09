@@ -27,6 +27,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     private DataManagerListenerImpl dataManagerListener = new DataManagerListenerImpl();
     private final Map<String, CIShellCIBridgeData> cibridgeDataMap = new LinkedHashMap<>();
     private final Map<org.cishell.framework.data.Data, CIShellCIBridgeData> cishellDataCIBridgeDataMap = new HashMap<>();
+    private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataAddedObservable;
+    private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataAddedObservableEmitter;
+    private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataRemovedObservable;
+    private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataRemovedObservableEmitter;
     private ConnectableObservable<Data> dataUpdatedObservable;
     private ObservableEmitter<Data> dataUpdatedObservableEmitter;
 
@@ -44,6 +48,20 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         });
         dataUpdatedObservable = dataupdatedobservable.share().publish();
         dataUpdatedObservable.connect();
+
+        Observable<org.cishell.cibridge.core.model.Data> dataaddedobservable = Observable.create(emitter -> {
+            dataAddedObservableEmitter = emitter;
+
+        });
+        dataAddedObservable = dataaddedobservable.share().publish();
+        dataAddedObservable.connect();
+
+        Observable<org.cishell.cibridge.core.model.Data> dataremovedobservable = Observable.create(emitter -> {
+            dataRemovedObservableEmitter = emitter;
+
+        });
+        dataRemovedObservable = dataremovedobservable.share().publish();
+        dataRemovedObservable.connect();
     }
 
     @Override
@@ -269,7 +287,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     @Override
     public Publisher<Data> dataAdded() {
         Flowable<Data> publisher;
-        ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataAddedObservable();
+        ConnectableObservable<Data> connectableObservable = dataAddedObservable;
         publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
         return publisher;
     }
@@ -277,7 +295,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     @Override
     public Publisher<Data> dataRemoved() {
         Flowable<Data> publisher;
-        ConnectableObservable<Data> connectableObservable = dataManagerListener.getDataRemovedObservable();
+        ConnectableObservable<Data> connectableObservable = dataRemovedObservable;
         publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
         return publisher;
     }
@@ -296,5 +314,17 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
     Map<org.cishell.framework.data.Data, CIShellCIBridgeData> getCIShellDataCIBridgeDataMap() {
         return cishellDataCIBridgeDataMap;
+    }
+
+    public ObservableEmitter<Data> getDataAddedObservableEmitter() {
+        return dataAddedObservableEmitter;
+    }
+
+    public ObservableEmitter<Data> getDataRemovedObservableEmitter() {
+        return dataRemovedObservableEmitter;
+    }
+
+    public ObservableEmitter<Data> getDataUpdatedObservableEmitter() {
+        return dataUpdatedObservableEmitter;
     }
 }
