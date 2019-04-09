@@ -1,5 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
+import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
@@ -289,7 +290,17 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     //TODO Complete pending tests
     @Test
     public void validateAlgorithmDefinitionAddedSubscription() {
+        TestSubscriber<AlgorithmDefinition> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeAlgorithmFacade.algorithmDefinitionAdded().subscribe(testSubscriber);
 
+        String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
+        assertNotNull(getAlgorithmDefinition(pid));
+        AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
+        assertNotNull(algorithmInstance);
+        assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
+
+        testSubscriber.awaitCount(1);
+        System.out.println(testSubscriber.values());
     }
 
     //TODO Complete pending tests
