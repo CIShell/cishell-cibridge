@@ -63,11 +63,9 @@ public class SchedulerListenerImpl implements SchedulerListener {
     @Override
     public void algorithmFinished(Algorithm algorithm, Data[] data) {
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
-
         if (algorithmInstance.getState() == ERRORED) {
             return;
         }
-
         if (algorithm instanceof ProgressTrackable) {
             if (((ProgressTrackable) algorithm).getProgressMonitor().isCanceled()) {
                 System.out.println("Algorithm cancelled");
@@ -75,7 +73,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
                 return;
             }
         }
-
         System.out.println("Algorithm finished");
         getAlgorithmInstance(algorithm).setState(FINISHED);
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
@@ -87,8 +84,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
         getAlgorithmInstance(algorithm).setState(ERRORED);
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
         throwable.printStackTrace();
-
-
     }
 
     @Override
@@ -105,7 +100,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     private AlgorithmInstance getAlgorithmInstance(Algorithm algorithm) {
         return cibridge.cishellAlgorithm.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm);
-
     }
 
 }

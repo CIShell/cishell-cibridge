@@ -21,7 +21,6 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
 
     public DataManagerListenerImpl() {
-
     }
 
     public void setCIBridge(CIShellCIBridge ciBridge) {
@@ -31,28 +30,21 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
     @Override
     public void dataAdded(Data data, String s) {
-
         // create cibridge data object which is a wrapper for cishell data object
         CIShellCIBridgeData cishellCIBridgeData = new CIShellCIBridgeData(data);
-
         // add the cibridge data object created to maps for easier access with its ID
         // and CIShellData
         cibridge.cishellData.getCIBridgeDataMap().put(cishellCIBridgeData.getId(), cishellCIBridgeData);
         cibridge.cishellData.getCIShellDataCIBridgeDataMap().put(data, cishellCIBridgeData);
-
         // update CIShellCIBridgeData properties with CIShellData properties
         updateCIShellCIBridgeDataProperties(cishellCIBridgeData, data);
-
         cibridge.cishellData.getDataAddedObservableEmitter().onNext(cishellCIBridgeData);
-
     }
 
     private void updateCIShellCIBridgeDataProperties(CIShellCIBridgeData cishellCIBridgeData, Data data) {
         cishellCIBridgeData.setFormat(data.getFormat());
         Dictionary<String, Object> metadata = data.getMetadata();
-
         Enumeration<String> metadataIterator = metadata.keys();
-
         while (metadataIterator.hasMoreElements()) {
             String propertyKey = metadataIterator.nextElement();
             switch (propertyKey) {
@@ -77,7 +69,6 @@ public class DataManagerListenerImpl implements DataManagerListener {
                             .add(new Property(propertyKey, metadata.get(propertyKey).toString()));
             }
         }
-
     }
 
     @Override
