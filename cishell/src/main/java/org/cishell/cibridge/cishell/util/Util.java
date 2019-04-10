@@ -1,10 +1,13 @@
 package org.cishell.cibridge.cishell.util;
 
 import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.core.model.*;
 import org.osgi.service.metatype.AttributeDefinition;
 import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.ObjectClassDefinition;
+import org.reactivestreams.Publisher;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -79,5 +82,8 @@ public class Util {
         return null;
     }
 
+    public static <T> Publisher<T> asPublisher(ConnectableObservable<T> updateObservable) {
+        return updateObservable.toFlowable(BackpressureStrategy.BUFFER);
+    }
 
 }

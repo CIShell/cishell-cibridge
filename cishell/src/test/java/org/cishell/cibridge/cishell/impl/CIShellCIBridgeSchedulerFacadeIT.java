@@ -1,12 +1,15 @@
 package org.cishell.cibridge.cishell.impl;
 
+import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
+import org.cishell.cibridge.core.model.AlgorithmFilter;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 import static org.cishell.cibridge.core.model.AlgorithmState.*;
 import static org.junit.Assert.*;
@@ -266,6 +269,50 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertTrue(cishellCIBridgeSchedulerFacade.setSchedulerRunning(true));
     }
 
+    @Test
+    public void validateSchedulerClearedSubscription() {
+        TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeSchedulerFacade.schedulerCleared().subscribe(testSubscriber);
+
+        cishellCIBridgeSchedulerFacade.clearScheduler();
+
+        testSubscriber.awaitCount(1);
+        assertTrue(testSubscriber.values().get(0));
+    }
+
+    @Test
+    public void validateSchedulerStateChangedSubscription() {
+        TestSubscriber<Boolean> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeSchedulerFacade.schedulerRunningChanged().subscribe(testSubscriber);
+
+        cishellCIBridgeSchedulerFacade.setSchedulerRunning(false);
+        testSubscriber.awaitCount(1);
+        assertFalse(testSubscriber.values().get(0));
+
+        cishellCIBridgeSchedulerFacade.setSchedulerRunning(true);
+        testSubscriber.awaitCount(2);
+        assertTrue(testSubscriber.values().get(1));
+    }
+
+    @Test
+    public void validateAlgorithmInstanceUpdatedSubscription() {
+        AlgorithmFilter algorithmFilter = new AlgorithmFilter();
+        algorithmFilter.setAlgorithmInstanceIds(Arrays.asList("org.cishell.tests.algorithm.StandardAlgorithm"));
+        TestSubscriber<AlgorithmInstance> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeAlgorithmFacade.algorithmInstanceUpdated(algorithmFilter).subscribe(testSubscriber);
+
+        cishellCIBridgeSchedulerFacade.runAlgorithmNow(getRunningAlgorithmInstance().getId());
+        testSubscriber.awaitCount(2);
+        for (AlgorithmInstance algorithmInstance :
+                testSubscriber.values()) {
+            System.out.println(algorithmInstance);
+        }
+        AlgorithmInstance actualAlgoInstance = testSubscriber.values().get(0);
+        System.out.println(actualAlgoInstance.getState() + "--->" + actualAlgoInstance.getProgress());
+        assertTrue(RUNNING == actualAlgoInstance.getState() || FINISHED == actualAlgoInstance.getState());
+
+    }
+
     @After
     public void tearDown() {
         for (CIShellCIBridgeAlgorithmInstance algorithmInstance : cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().values()) {
@@ -353,4 +400,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == WAITING));
         return algorithmInstance;
     }
+
+
 }

@@ -23,7 +23,6 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -40,19 +39,16 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
     @SuppressWarnings("unchecked")
     @Override
     public LogQueryResults getLogs(LogFilter filter) {
-
         Preconditions.checkNotNull(filter, "filter can't be empty");
         cibridge.getLogService().log(3, "Get Logs endpoint called");
         LogQueryResults results = null;
         ArrayList<LogEntry> listOfLogEntries;
         List<Predicate<LogEntry>> criteria = new ArrayList<>();
-
         try {
 
             LogReaderService logReaderService = getLogReaderService();
             // Getting the Logs from service
             listOfLogEntries = Collections.list(logReaderService.getLog());
-
             // Adding LogLevel to Criteria
             criteria.add(data -> {
                 if (data == null)
@@ -61,7 +57,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
                     return true;
                 return filter.getLogLevel().contains(Util.getLogLevelFromInteger(data.getLevel()));
             });
-
             // Adding LogsBefore timestamp to the criteria
             criteria.add(data -> {
                 if (data == null)
@@ -72,7 +67,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
                     return filter.getLogsBefore().toInstant().toEpochMilli() > data.getTime();
                 }
             });
-
             // Adding LogsSince timestamp to the criteria
             criteria.add(data -> {
                 if (data == null)
@@ -84,20 +78,16 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
                 }
 
             });
-
             // Paginating the results
             QueryResults<LogEntry> paginatedQueryResults = PaginationUtil.getPaginatedResults(listOfLogEntries,
                     criteria, filter.getOffset(), filter.getLimit());
-
             // Converting the LogLevel to List Of Logs
             List<Log> listOfLogs = new ArrayList<Log>();
             for (LogEntry logEntry : paginatedQueryResults.getResults()) {
                 Log log = logEntryToLog(logEntry);
                 listOfLogs.add(log);
             }
-
             return new LogQueryResults(listOfLogs, paginatedQueryResults.getPageInfo());
-
         } catch (Exception e) {
             System.out.println("LogReader service returned null");
             e.printStackTrace();
@@ -106,7 +96,6 @@ public class CIShellCIBridgeLoggingFacade implements CIBridge.LoggingFacade, Gra
     }
 
     private Log logEntryToLog(LogEntry logEntry) {
-
         Log log = new Log();
         log.setLogLevel(Util.getLogLevelFromInteger(logEntry.getLevel()));
         log.setMessage(logEntry.getMessage());

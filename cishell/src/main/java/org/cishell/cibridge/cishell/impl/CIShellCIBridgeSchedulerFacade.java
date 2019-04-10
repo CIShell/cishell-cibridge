@@ -1,9 +1,15 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
+import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.ProgressTrackable;
@@ -23,10 +29,30 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     private CIShellCIBridge cibridge;
     private SchedulerListenerImpl schedulerListener = new SchedulerListenerImpl();
 
+    private ConnectableObservable<Boolean> schedulerClearedObservable;
+    private ObservableEmitter<Boolean> schedulerClearedObservableEmitter;
+
+    private ConnectableObservable<Boolean> schedulerRunningChangedObservable;
+    private ObservableEmitter<Boolean> schedulerRunningChangedObservableEmitter;
+
     public void setCIBridge(CIShellCIBridge cibridge) {
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
         this.schedulerListener.setCIBridge(cibridge);
+
+        io.reactivex.Observable<Boolean> schedulerclearedobservable = Observable.create(emitter -> {
+            schedulerClearedObservableEmitter = emitter;
+
+        });
+        schedulerClearedObservable = schedulerclearedobservable.share().publish();
+        schedulerClearedObservable.connect();
+
+        io.reactivex.Observable<Boolean> schedulerrunningchangedobservable = Observable.create(emitter -> {
+            schedulerRunningChangedObservableEmitter = emitter;
+
+        });
+        schedulerRunningChangedObservable = schedulerrunningchangedobservable.share().publish();
+        schedulerRunningChangedObservable.connect();
     }
 
     /* Queries */
@@ -190,7 +216,6 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
     @Override
     public Integer clearScheduler() {
         cibridge.getSchedulerService().clearSchedule();
-
         Iterator<String> iterator = cibridge.cishellAlgorithm.getAlgorithmInstanceMap().keySet().iterator();
         while (iterator.hasNext()) {
             String algorithmInstanceId = iterator.next();
@@ -201,7 +226,6 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
                 iterator.remove();
             }
         }
-
         return cibridge.getSchedulerService().getScheduledAlgorithms().length;
     }
 
@@ -211,24 +235,14 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         return cibridge.getSchedulerService().isRunning();
     }
 
-    // TODO Update the subscriptions implementation with listeners
     @Override
     public Publisher<Boolean> schedulerCleared() {
-        Boolean boolean1 = true;
-        List<Boolean> results = new ArrayList<>();
-        results.add(boolean1);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
-        // return Flowable.just(boolean1).;
+        return Util.asPublisher(schedulerClearedObservable);
     }
 
-    // TODO Update the subscriptions implementation with listeners
     @Override
     public Publisher<Boolean> schedulerRunningChanged() {
-        Boolean boolean1 = true;
-        List<Boolean> results = new ArrayList<>();
-        results.add(boolean1);
-        return Flowable.fromIterable(results).delay(2, TimeUnit.SECONDS);
-        // return Flowable.just(boolean1).;
+        return Util.asPublisher(schedulerRunningChangedObservable);
     }
 
     private CIShellCIBridgeAlgorithmInstance getAlgorithmInstance(String algorithmInstanceId) {
@@ -255,5 +269,13 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     private void log(int logLevel, String message) {
         cibridge.getLogService().log(logLevel, message);
+    }
+
+    protected ObservableEmitter<Boolean> getSchedulerClearedObservableEmitter() {
+        return schedulerClearedObservableEmitter;
+    }
+
+    protected ObservableEmitter<Boolean> getSchedulerRunningChangedObservableEmitter() {
+        return schedulerRunningChangedObservableEmitter;
     }
 }

@@ -5,6 +5,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.app.service.datamanager.DataManagerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.impl.CIShellCIBridgeData;
 import org.cishell.cibridge.core.model.DataType;
 import org.cishell.cibridge.core.model.Property;
 import org.cishell.framework.data.Data;
@@ -16,26 +17,10 @@ import static org.cishell.framework.data.DataProperty.*;
 
 public class DataManagerListenerImpl implements DataManagerListener {
     private CIShellCIBridge cibridge;
-    private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataAddedObservable;
-    private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataAddedObservableEmitter;
-    private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataRemovedObservable;
-    private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataRemovedObservableEmitter;
+
 
 
     public DataManagerListenerImpl() {
-        Observable<org.cishell.cibridge.core.model.Data> dataaddedobservable = Observable.create(emitter -> {
-            dataAddedObservableEmitter = emitter;
-
-        });
-        dataAddedObservable = dataaddedobservable.share().publish();
-        dataAddedObservable.connect();
-
-        Observable<org.cishell.cibridge.core.model.Data> dataremovedobservable = Observable.create(emitter -> {
-            dataRemovedObservableEmitter = emitter;
-
-        });
-        dataRemovedObservable = dataremovedobservable.share().publish();
-        dataRemovedObservable.connect();
     }
 
     public void setCIBridge(CIShellCIBridge ciBridge) {
@@ -45,28 +30,21 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
     @Override
     public void dataAdded(Data data, String s) {
-
         // create cibridge data object which is a wrapper for cishell data object
         CIShellCIBridgeData cishellCIBridgeData = new CIShellCIBridgeData(data);
-
         // add the cibridge data object created to maps for easier access with its ID
         // and CIShellData
         cibridge.cishellData.getCIBridgeDataMap().put(cishellCIBridgeData.getId(), cishellCIBridgeData);
         cibridge.cishellData.getCIShellDataCIBridgeDataMap().put(data, cishellCIBridgeData);
-
         // update CIShellCIBridgeData properties with CIShellData properties
         updateCIShellCIBridgeDataProperties(cishellCIBridgeData, data);
-
-        dataAddedObservableEmitter.onNext(cishellCIBridgeData);
-
+        cibridge.cishellData.getDataAddedObservableEmitter().onNext(cishellCIBridgeData);
     }
 
     private void updateCIShellCIBridgeDataProperties(CIShellCIBridgeData cishellCIBridgeData, Data data) {
         cishellCIBridgeData.setFormat(data.getFormat());
         Dictionary<String, Object> metadata = data.getMetadata();
-
         Enumeration<String> metadataIterator = metadata.keys();
-
         while (metadataIterator.hasMoreElements()) {
             String propertyKey = metadataIterator.nextElement();
             switch (propertyKey) {
@@ -91,15 +69,6 @@ public class DataManagerListenerImpl implements DataManagerListener {
                             .add(new Property(propertyKey, metadata.get(propertyKey).toString()));
             }
         }
-
-    }
-
-    public ConnectableObservable<org.cishell.cibridge.core.model.Data> getDataAddedObservable() {
-        return dataAddedObservable;
-    }
-
-    public ConnectableObservable<org.cishell.cibridge.core.model.Data> getDataRemovedObservable() {
-        return dataRemovedObservable;
     }
 
     @Override
@@ -118,8 +87,7 @@ public class DataManagerListenerImpl implements DataManagerListener {
             cibridge.cishellData.getCIBridgeDataMap().remove(cishellCIBridgeData.getId());
         }
         cibridge.cishellData.getCIShellDataCIBridgeDataMap().remove(data);
-
-        dataRemovedObservableEmitter.onNext(cishellCIBridgeData);
+        cibridge.cishellData.getDataRemovedObservableEmitter().onNext(cishellCIBridgeData);
     }
 
     @Override

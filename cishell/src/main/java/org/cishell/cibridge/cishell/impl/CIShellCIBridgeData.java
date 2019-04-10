@@ -8,13 +8,10 @@ public class CIShellCIBridgeData extends Data {
     private org.cishell.framework.data.Data ciShellData;
 
     public CIShellCIBridgeData(org.cishell.framework.data.Data data) {
-
         super(generateAndGetUniqueID());
         Preconditions.checkNotNull(data, "data cannot be null");
         this.ciShellData = data;
         this.format = this.ciShellData.getFormat();
-
-
     }
 
     public org.cishell.framework.data.Data getCIShellData() {

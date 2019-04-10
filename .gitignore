@@ -16,6 +16,7 @@ cishell/plugins/
 .project/
 .project
 dependency-reduced-pom.xml
+*.iml
 
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar

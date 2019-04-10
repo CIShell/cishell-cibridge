@@ -1,5 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
+import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
@@ -284,6 +285,28 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         filter.setProperties(Arrays.asList(new PropertyInput("other_property", "its_value"), new PropertyInput("other_property", "some_value")));
         queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
+    }
+
+    //TODO Complete pending tests
+    @Test
+    public void validateAlgorithmDefinitionAddedSubscription() {
+        TestSubscriber<AlgorithmDefinition> testSubscriber = new TestSubscriber<>();
+        cishellCIBridgeAlgorithmFacade.algorithmDefinitionAdded().subscribe(testSubscriber);
+
+        String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
+        assertNotNull(getAlgorithmDefinition(pid));
+        AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
+        assertNotNull(algorithmInstance);
+        assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
+
+        testSubscriber.awaitCount(1);
+        System.out.println(testSubscriber.values());
+    }
+
+    //TODO Complete pending tests
+    @Test
+    public void validateAlgorithmDefinitionRemovedSubscription() {
+
     }
 
     //todo write tests for filtering algorithm instances

@@ -25,16 +25,13 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
     @Override
     public synchronized GUI createGUI(String id, MetaTypeProvider params) {
-
         GUI gui = null;
         Notification notification = null;
         String UUID = java.util.UUID.randomUUID().toString();
-
         try {
             if (params != null) {
                 ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
                 List<ParameterDefinition> notificationParams = new ArrayList<>();
-
                 for (AttributeDefinition attributes : objectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
                     List<Property> properties = new ArrayList<>();
                     for (int i = 0; i < attributes.getOptionLabels().length; i++) {
@@ -59,20 +56,16 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                         null, null, null, false,
                         null, false, false);
             }
-
             gui = createAndGetGui(notification);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return gui;
     }
 
     @Override
     public Dictionary createGUIandWait(String id, MetaTypeProvider params) {
-
         String UUID = java.util.UUID.randomUUID().toString();
-
         ObjectClassDefinition objectClassDefinition = params.getObjectClassDefinition(id, null);
         List<ParameterDefinition> notificationParams = new ArrayList<>();
         List<Property> properties = null;
@@ -92,99 +85,77 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
             notificationParams.add(parameterDefinition);
         }
-
         Notification notification = new Notification(UUID, NotificationType.FORM, objectClassDefinition.getID(), objectClassDefinition.getName(),
                 objectClassDefinition.getDescription(), null, notificationParams, false,
                 null, false, false);
-
         GUI gui = createAndGetGui(notification);
-
         return gui.openAndWait();
     }
 
     @Override
     public boolean showConfirm(String title, String message, String detail) {
-
         String UUID = java.util.UUID.randomUUID().toString();
-
         Notification notification = new Notification(UUID, NotificationType.CONFIRM, title, message,
                 detail, null, null, false,
                 null, false, false);
-
         GUI gui = createAndGetGui(notification);
         gui.openAndWait();
-
         return notification.getConfirmationResponse();
     }
 
     @Override
     public void showError(String title, String message, String detail) {
-
         String UUID = java.util.UUID.randomUUID().toString();
-
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 detail, null, null, false,
                 null, false, false);
-
         notificationFacade.addNotification(notification);
     }
 
     @Override
     public void showError(String title, String message, Throwable error) {
-
         List<String> stackTrace = new ArrayList<>();
         for (StackTraceElement element : error.getStackTrace()) {
             stackTrace.add(element.toString());
         }
-
         String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.ERROR, title, message,
                 null, stackTrace, null, false,
                 null, false, false);
-
         notificationFacade.addNotification(notification);
     }
 
     @Override
     public void showInformation(String title, String message, String detail) {
-
         String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.INFORMATION, title, message,
                 detail, null, null, false,
                 null, false, false);
-
         notificationFacade.addNotification(notification);
     }
 
     @Override
     public boolean showQuestion(String title, String message, String detail) {
-
         String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.QUESTION, title, message,
                 detail, null, null, false,
                 null, false, false);
-
         GUI gui = createAndGetGui(notification);
         gui.openAndWait();
-
         return notification.getQuestionResponse();
     }
 
     @Override
     public void showWarning(String title, String message, String detail) {
-
         String UUID = java.util.UUID.randomUUID().toString();
         Notification notification = new Notification(UUID, NotificationType.WARNING, title, message,
                 detail, null, null, false,
                 null, false, false);
-
         notificationFacade.addNotification(notification);
     }
 
     private GUI createAndGetGui(Notification notification) {
-
         return new GUI() {
-
             @Override
             public Dictionary openAndWait() {
                 notificationFacade.addNotification(notification);
@@ -195,7 +166,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 if (notification.getFormResponse() != null) {
                     List<Property> formResponse = notification.getFormResponse();
                     Dictionary<String, String> dictionary = new Hashtable<>();
@@ -205,7 +175,6 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
                     return dictionary;
                 }
-
                 return null;
             }
 
@@ -228,13 +197,11 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
 
             @Override
             public void setSelectionListener(SelectionListener selectionListener) {
-
                 if (selectionListener != null) {
                     notificationFacade.getNotificationUpdatedObservable().filter(notification1 -> notification1.getId().equals(notification.getId())).subscribe(new io.reactivex.Observer<Notification>() {
                         @Override
                         public void onSubscribe(Disposable d) {
                         }
-
                         @Override
                         public void onNext(Notification notification) {
                             if ((notification.getType().equals(NotificationType.FORM) && notification.getFormResponse() != null)) {
@@ -251,11 +218,9 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                                 selectionListener.cancelled();
                             }
                         }
-
                         @Override
                         public void onError(Throwable e) {
                         }
-
                         @Override
                         public void onComplete() {
                         }
@@ -263,7 +228,5 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
                 }
             }
         };
-
     }
-
 }

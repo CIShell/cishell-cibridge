@@ -24,7 +24,6 @@ import java.util.Collections;
 public class CIBridgeSubscriptionServlet extends WebSocketServlet {
 
     private static final long serialVersionUID = 1L;
-
     private HttpService httpService;
     private CIBridgeGraphQLSchemaProvider ciBridgeGraphQLSchemaProvider;
     private BundleContext bundleContext;

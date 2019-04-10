@@ -1,13 +1,12 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.guibuilder.GUIBuilderService;
@@ -26,14 +25,12 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     private ObservableEmitter<Notification> notificationUpdatedObservableEmitter;
 
     public CIShellCIBridgeNotificationFacade() {
-
         Observable<Notification> notificationAddedObservable = Observable.create(emitter -> {
             notificationAddedObservableEmitter = emitter;
 
         });
         this.notificationAddedObservable = notificationAddedObservable.share().publish();
         this.notificationAddedObservable.connect();
-
         Observable<Notification> notificationUpdatedObservable = Observable.create(emitter -> {
             notificationUpdatedObservableEmitter = emitter;
 
@@ -43,19 +40,15 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public void setCIBridge(CIShellCIBridge cibridge) {
-
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
         this.cibridge.getBundleContext().registerService(GUIBuilderService.class.getName(),
                 new CIBridgeGUIBuilderService(cibridge), new Hashtable<String, String>());
-
     }
 
     @Override
     public NotificationQueryResults getNotifications(NotificationFilter filter) {
-
         List<Predicate<Notification>> criteria = new ArrayList<>();
-
         criteria.add(data -> {
             if (data == null)
                 return false;
@@ -66,7 +59,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
             }
 
         });
-
         criteria.add(data -> {
             if (data == null)
                 return true;
@@ -84,12 +76,10 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
                 criteria, filter.getOffset(), filter.getLimit());
 
         return new NotificationQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
-
     }
 
     @Override
     public Boolean isClosed(String notificationId) {
-
         if (notificationMap.containsKey(notificationId)) {
             return notificationMap.get(notificationId).getIsClosed();
         }
@@ -97,8 +87,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public Boolean setNotificationResponse(String notificationId, NotificationResponse response) {
-
-
         if (notificationMap.containsKey(notificationId)) {
             Notification notification = notificationMap.get(notificationId);
             notification.setClosed(response.getCloseNotification());
@@ -124,7 +112,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public Boolean closeNotification(String notificationId) {
-
         try {
             if (notificationMap.containsKey(notificationId)) {
                 Notification notification = notificationMap.get(notificationId);
@@ -139,8 +126,6 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return false;
     }
 
@@ -158,17 +143,10 @@ public class CIShellCIBridgeNotificationFacade implements CIBridge.NotificationF
     }
 
     public Publisher<Notification> notificationAdded() {
-        Flowable<Notification> publisher;
-        ConnectableObservable<Notification> connectableObservable = notificationAddedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(notificationAddedObservable);
     }
 
     public Publisher<Notification> notificationUpdated() {
-        Flowable<Notification> publisher;
-        ConnectableObservable<Notification> connectableObservable = notificationUpdatedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(notificationUpdatedObservable);
     }
-
 }

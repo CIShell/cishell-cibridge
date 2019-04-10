@@ -76,7 +76,6 @@ public class CIBridgeServletActivator implements BundleActivator {
     }
 
     private void startCIBridge() {
-
         HttpService httpservice = (HttpService) this.getService(HttpService.class);
 
         ciBridgeGraphiQLServlet = new CIBridgeGraphQLServlet(bundleContext, new GraphiqlServlet(), httpservice, "/graphiql");
@@ -96,7 +95,6 @@ public class CIBridgeServletActivator implements BundleActivator {
         subscriptionServlet = new CIBridgeSubscriptionServlet(ciBridgeGraphQLSchemaProvider,
                 bundleContext, httpservice, "/subscriptions");
         subscriptionServlet.register();
-
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
