@@ -125,7 +125,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         PropertyInput property1 = new PropertyInput("key2", "value2");
         PropertyInput property2 = new PropertyInput("key3", "value3");
 
-        Thread notificationCreatethread = new Thread(new Runnable() {
+        Thread notificationCreateThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 // Should create a notification and add it to map and wait for response.
@@ -134,7 +134,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
             }
         });
 
-        notificationCreatethread.start();
+        notificationCreateThread.start();
 
         Thread notificationSetResponseThread = new Thread(new Runnable() {
             @Override

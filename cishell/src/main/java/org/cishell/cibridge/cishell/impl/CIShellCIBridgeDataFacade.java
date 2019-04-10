@@ -40,7 +40,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         this.dataManagerListener.setCIBridge(ciBridge);
     }
 
-
     public CIShellCIBridgeDataFacade() {
         Observable<Data> dataupdatedobservable = Observable.create(emitter -> {
             dataUpdatedObservableEmitter = emitter;
@@ -316,15 +315,15 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         return cishellDataCIBridgeDataMap;
     }
 
-    public ObservableEmitter<Data> getDataAddedObservableEmitter() {
+    protected ObservableEmitter<Data> getDataAddedObservableEmitter() {
         return dataAddedObservableEmitter;
     }
 
-    public ObservableEmitter<Data> getDataRemovedObservableEmitter() {
+    protected ObservableEmitter<Data> getDataRemovedObservableEmitter() {
         return dataRemovedObservableEmitter;
     }
 
-    public ObservableEmitter<Data> getDataUpdatedObservableEmitter() {
+    protected ObservableEmitter<Data> getDataUpdatedObservableEmitter() {
         return dataUpdatedObservableEmitter;
     }
 }

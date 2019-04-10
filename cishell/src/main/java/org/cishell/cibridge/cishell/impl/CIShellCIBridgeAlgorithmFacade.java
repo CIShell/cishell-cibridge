@@ -8,6 +8,7 @@ import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
@@ -259,26 +260,17 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     @Override
     public Publisher<AlgorithmDefinition> algorithmDefinitionAdded() {
-        Flowable<AlgorithmDefinition> publisher;
-        ConnectableObservable<AlgorithmDefinition> connectableObservable = algorithmDefinitionAddedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(algorithmDefinitionAddedObservable);
     }
 
     @Override
     public Publisher<AlgorithmDefinition> algorithmDefinitionRemoved() {
-        Flowable<AlgorithmDefinition> publisher;
-        ConnectableObservable<AlgorithmDefinition> connectableObservable = algorithmDefinitionRemovedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(algorithmDefinitionRemovedObservable);
     }
 
     @Override
     public Publisher<AlgorithmInstance> algorithmInstanceUpdated(AlgorithmFilter filter) {
-        Flowable<AlgorithmInstance> publisher;
-        ConnectableObservable<AlgorithmInstance> connectableObservable = algorithmInstanceUpdatedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(algorithmInstanceUpdatedObservable);
     }
 
 
@@ -349,15 +341,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         return cishellAlgorithmCIBridgeAlgorithmMap;
     }
 
-    public ObservableEmitter<AlgorithmDefinition> getAlgorithmDefinitionAddedObservableEmitter() {
-        return algorithmDefinitionAddedObservableEmitter;
-    }
-
-    public ObservableEmitter<AlgorithmDefinition> getAlgorithmDefinitionRemovedObservableEmitter() {
-        return algorithmDefinitionRemovedObservableEmitter;
-    }
-
-    public ObservableEmitter<AlgorithmInstance> getAlgorithmInstanceUpdatedObservableEmitter() {
+    protected ObservableEmitter<AlgorithmInstance> getAlgorithmInstanceUpdatedObservableEmitter() {
         return algorithmInstanceUpdatedObservableEmitter;
     }
 }

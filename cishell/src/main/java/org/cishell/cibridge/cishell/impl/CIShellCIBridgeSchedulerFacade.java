@@ -7,6 +7,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
@@ -236,18 +237,12 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
 
     @Override
     public Publisher<Boolean> schedulerCleared() {
-        Flowable<Boolean> publisher;
-        ConnectableObservable<Boolean> connectableObservable = schedulerClearedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(schedulerClearedObservable);
     }
 
     @Override
     public Publisher<Boolean> schedulerRunningChanged() {
-        Flowable<Boolean> publisher;
-        ConnectableObservable<Boolean> connectableObservable = schedulerRunningChangedObservable;
-        publisher = connectableObservable.toFlowable(BackpressureStrategy.BUFFER);
-        return publisher;
+        return Util.asPublisher(schedulerRunningChangedObservable);
     }
 
     private CIShellCIBridgeAlgorithmInstance getAlgorithmInstance(String algorithmInstanceId) {
@@ -276,11 +271,11 @@ public class CIShellCIBridgeSchedulerFacade implements CIBridge.SchedulerFacade 
         cibridge.getLogService().log(logLevel, message);
     }
 
-    public ObservableEmitter<Boolean> getSchedulerClearedObservableEmitter() {
+    protected ObservableEmitter<Boolean> getSchedulerClearedObservableEmitter() {
         return schedulerClearedObservableEmitter;
     }
 
-    public ObservableEmitter<Boolean> getSchedulerRunningChangedObservableEmitter() {
+    protected ObservableEmitter<Boolean> getSchedulerRunningChangedObservableEmitter() {
         return schedulerRunningChangedObservableEmitter;
     }
 }
