@@ -80,9 +80,15 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
         switch (parameters.getType()) {
             case GQL_CONNECTION_INIT:
                 try {
-                    String response = generateResponseString(GQL_CONNECTION_ACK, null, parameters.getID());
-                    if (response != null) {
-                        this.getRemote().sendString(response);
+                    String ackResponse = generateResponseString(GQL_CONNECTION_ACK, null, parameters.getID());
+                    String kaResponse = generateResponseString(GQL_CONNECTION_KEEP_ALIVE, null, parameters.getID());
+                    if (ackResponse != null) {
+                        this.getRemote().sendString(ackResponse);
+                    } else {
+                        System.out.println("Invalid data given to generateResponseString method");
+                    }
+                    if (kaResponse != null) {
+                        this.getRemote().sendString(kaResponse);
                     } else {
                         System.out.println("Invalid data given to generateResponseString method");
                     }
@@ -110,7 +116,7 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
         switch (type) {
             case GQL_CONNECTION_ACK:
             case GQL_CONNECTION_ERROR:
-            case GQL_CONNECTION_KEEP_ALIVE: // TODO might have to change this in future.
+            case GQL_CONNECTION_KEEP_ALIVE:
             case GQL_COMPLETE:
                 map.put("type", type);
                 if (id != null) {
