@@ -29,37 +29,36 @@ public class SchedulerListenerImpl implements SchedulerListener {
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
         algorithmInstance.setState(SCHEDULED);
         algorithmInstance.setScheduledRunTime(calendar.toInstant().atZone(ZoneId.systemDefault()));
-        //todo call subscription method
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmRescheduled(Algorithm algorithm, Calendar calendar) {
         algorithmScheduled(algorithm, calendar);
-        //todo call subscription method
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmUnscheduled(Algorithm algorithm) {
         System.out.println("Algorithm unscheduled");
         getAlgorithmInstance(algorithm).setState(IDLE);
-        //todo call subscription method
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmStarted(Algorithm algorithm) {
         System.out.println("Algorithm started running");
         getAlgorithmInstance(algorithm).setState(RUNNING);
-        //todo call subscription method
+        System.out.println("Running called");
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
     public void algorithmFinished(Algorithm algorithm, Data[] data) {
         AlgorithmInstance algorithmInstance = getAlgorithmInstance(algorithm);
-
         if (algorithmInstance.getState() == ERRORED) {
             return;
         }
-
         if (algorithm instanceof ProgressTrackable) {
             if (((ProgressTrackable) algorithm).getProgressMonitor().isCanceled()) {
                 System.out.println("Algorithm cancelled");
@@ -67,9 +66,9 @@ public class SchedulerListenerImpl implements SchedulerListener {
                 return;
             }
         }
-
         System.out.println("Algorithm finished");
         getAlgorithmInstance(algorithm).setState(FINISHED);
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
 
         if (data != null) {
             for (Data datum : data) {
@@ -77,28 +76,32 @@ public class SchedulerListenerImpl implements SchedulerListener {
                 cibridge.cishellData.getDataManagerListener().dataAdded(datum, null);
             }
         }
-        //todo call subscription method
+
+
     }
 
     @Override
     public void algorithmError(Algorithm algorithm, Throwable throwable) {
         System.out.println("Algorithm errored");
         getAlgorithmInstance(algorithm).setState(ERRORED);
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
         throwable.printStackTrace();
-        //todo call subscription method
     }
 
     @Override
     public void schedulerRunStateChanged(boolean b) {
+        cibridge.cishellScheduler.getSchedulerRunningChangedObservableEmitter().onNext(b);
         System.out.println("scheduler run state: " + b);
     }
 
     @Override
     public void schedulerCleared() {
+        cibridge.cishellScheduler.getSchedulerClearedObservableEmitter().onNext(true);
         System.out.println("scheduler cleared");
     }
 
     private AlgorithmInstance getAlgorithmInstance(Algorithm algorithm) {
         return cibridge.cishellAlgorithm.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm);
     }
+
 }

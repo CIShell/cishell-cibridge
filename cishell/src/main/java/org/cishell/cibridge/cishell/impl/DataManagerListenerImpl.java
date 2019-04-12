@@ -1,8 +1,5 @@
 package org.cishell.cibridge.cishell.impl;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.observables.ConnectableObservable;
 import org.cishell.app.service.datamanager.DataManagerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
@@ -12,26 +9,9 @@ import static org.cishell.framework.data.DataProperty.PARENT;
 
 public class DataManagerListenerImpl implements DataManagerListener {
     private CIShellCIBridge cibridge;
-    private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataAddedObservable;
-    private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataAddedObservableEmitter;
-    private ConnectableObservable<org.cishell.cibridge.core.model.Data> dataRemovedObservable;
-    private ObservableEmitter<org.cishell.cibridge.core.model.Data> dataRemovedObservableEmitter;
 
 
     public DataManagerListenerImpl() {
-        Observable<org.cishell.cibridge.core.model.Data> dataaddedobservable = Observable.create(emitter -> {
-            dataAddedObservableEmitter = emitter;
-
-        });
-        dataAddedObservable = dataaddedobservable.share().publish();
-        dataAddedObservable.connect();
-
-        Observable<org.cishell.cibridge.core.model.Data> dataremovedobservable = Observable.create(emitter -> {
-            dataRemovedObservableEmitter = emitter;
-
-        });
-        dataRemovedObservable = dataremovedobservable.share().publish();
-        dataRemovedObservable.connect();
     }
 
     public void setCIBridge(CIShellCIBridge ciBridge) {
@@ -41,7 +21,6 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
     @Override
     public void dataAdded(Data data, String s) {
-
         //get parent id
         String parentDataId = null;
         if (data.getMetadata() != null && data.getMetadata().get(PARENT) != null) {
@@ -57,15 +36,7 @@ public class DataManagerListenerImpl implements DataManagerListener {
         cibridge.cishellData.getCIBridgeDataMap().put(cishellCIBridgeData.getId(), cishellCIBridgeData);
         cibridge.cishellData.getCIShellDataCIBridgeDataMap().put(data, cishellCIBridgeData);
 
-        dataAddedObservableEmitter.onNext(cishellCIBridgeData);
-    }
-
-    public ConnectableObservable<org.cishell.cibridge.core.model.Data> getDataAddedObservable() {
-        return dataAddedObservable;
-    }
-
-    public ConnectableObservable<org.cishell.cibridge.core.model.Data> getDataRemovedObservable() {
-        return dataRemovedObservable;
+        cibridge.cishellData.getDataAddedObservableEmitter().onNext(cishellCIBridgeData);
     }
 
     @Override
@@ -84,8 +55,7 @@ public class DataManagerListenerImpl implements DataManagerListener {
             cibridge.cishellData.getCIBridgeDataMap().remove(cishellCIBridgeData.getId());
         }
         cibridge.cishellData.getCIShellDataCIBridgeDataMap().remove(data);
-
-        dataRemovedObservableEmitter.onNext(cishellCIBridgeData);
+        cibridge.cishellData.getDataRemovedObservableEmitter().onNext(cishellCIBridgeData);
     }
 
     @Override

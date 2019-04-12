@@ -87,7 +87,6 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
 
     @Override
     public List<GraphQLError> processErrors(List<GraphQLError> errors) {
-
         // TODO Uncomment this section if stacktrace has to hidden in production
         // have debug mode. show stack trace in debug mode. in production show a simple message
 //		return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))

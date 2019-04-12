@@ -58,9 +58,6 @@ public class CIShellCIBridgeData extends Data {
         return cishellData;
     }
 
-    private static long instanceCounter = 0;
-
-    //todo adding rudimentary way of generating unique ids. Should be UUIDs
     private static String generateAndGetUniqueID() {
         return java.util.UUID.randomUUID().toString();
     }
