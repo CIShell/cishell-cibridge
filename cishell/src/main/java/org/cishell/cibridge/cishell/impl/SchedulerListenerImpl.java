@@ -17,10 +17,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
 
     private CIShellCIBridge cibridge;
 
-    public SchedulerListenerImpl() {
-        System.out.println("Listener created");
-    }
-
     public void setCIBridge(CIShellCIBridge cibridge) {
         Preconditions.checkNotNull(cibridge, "cibridge cannot be null");
         this.cibridge = cibridge;
@@ -75,6 +71,12 @@ public class SchedulerListenerImpl implements SchedulerListener {
         System.out.println("Algorithm finished");
         getAlgorithmInstance(algorithm).setState(FINISHED);
 
+        if (data != null) {
+            for (Data datum : data) {
+                //todo set some label here. Its not being set by cishell
+                cibridge.cishellData.getDataManagerListener().dataAdded(datum, null);
+            }
+        }
         //todo call subscription method
     }
 
