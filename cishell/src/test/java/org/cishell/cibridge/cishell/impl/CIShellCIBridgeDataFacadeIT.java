@@ -424,7 +424,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         testSubscriber.assertNoErrors();
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
-        assertTrue(resultData.size() == 1);
+        assertEquals(1, resultData.size());
 
         // Assert the log messages with the expected results
         Data actualData = resultData.get(0);
@@ -469,7 +469,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         testSubscriber.assertNoErrors();
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
-        assertTrue(resultData.size() == 1);
+        assertEquals(1, resultData.size());
 
         // Assert the log messages with the expected results
         Data actualData = resultData.get(0);
@@ -521,7 +521,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
 
-        assertTrue(resultData.size() == 1);
+        assertEquals(1, resultData.size());
 
         // Assert the log messages with the expected results
         Data actualData = resultData.get(0);
