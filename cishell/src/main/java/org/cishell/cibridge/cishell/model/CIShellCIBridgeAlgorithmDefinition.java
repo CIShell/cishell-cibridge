@@ -40,8 +40,23 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
         algorithmFactory = converter.getAlgorithmFactory();
         Preconditions.checkNotNull(algorithmFactory, "algorithmFactory cannot be null for service: " + getId());
 
+        setInData(converter.getProperties().get(IN_DATA));
 
+        setOutData(converter.getProperties().get(OUT_DATA));
 
+        if (converter.getProperties().get(LABEL) != null) {
+            setLabel(converter.getProperties().get(LABEL).toString());
+        }
+
+        if (converter.getProperties().get(DESCRIPTION) != null) {
+            setDescription(converter.getProperties().get(DESCRIPTION).toString());
+        }
+
+        setType(AlgorithmType.CONVERTER);
+
+        if (converter.getProperties().get(CONVERSION) != null) {
+            setConversion(ConversionType.valueOf(converter.getProperties().get(CONVERSION).toString().toUpperCase()));
+        }
     }
 
     public CIShellCIBridgeAlgorithmDefinition(CIShellCIBridge cibridge, ServiceReference<AlgorithmFactory> reference) {
@@ -54,19 +69,9 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
         MetaTypeInformation metaTypeInformation = cibridge.getMetaTypeService().getMetaTypeInformation(reference.getBundle());
         setParameters(Util.getInputParametersFromMetaTypeInfo(metaTypeInformation, getId()));
 
-        if (reference.getProperty(IN_DATA) != null) {
-            Arrays.stream(reference.getProperty(IN_DATA).toString().split(",")).sequential().map(String::trim)
-                    .forEachOrdered(getInData()::add);
-        } else {
-            setInData(Collections.singletonList("null"));
-        }
+        setInData(reference.getProperty(IN_DATA));
 
-        if (reference.getProperty(OUT_DATA) != null) {
-            Arrays.stream(reference.getProperty(OUT_DATA).toString().split(",")).sequential().map(String::trim)
-                    .forEachOrdered(getOutData()::add);
-        } else {
-            setOutData(Collections.singletonList("null"));
-        }
+        setOutData(reference.getProperty(OUT_DATA));
 
         if (reference.getProperty(LABEL) != null) {
             setLabel(reference.getProperty(LABEL).toString());
@@ -140,5 +145,23 @@ public class CIShellCIBridgeAlgorithmDefinition extends AlgorithmDefinition {
     @Override
     public String toString() {
         return "CIShellCIBridgeAlgorithmDefinition{" + "algorithmFactory=" + algorithmFactory + "} " + super.toString();
+    }
+
+    private void setInData(Object inData) {
+        if (inData != null) {
+            Arrays.stream(inData.toString().split(",")).sequential().map(String::trim)
+                    .forEachOrdered(getInData()::add);
+        } else {
+            setInData(Collections.singletonList("null"));
+        }
+    }
+
+    private void setOutData(Object outData) {
+        if (outData != null) {
+            Arrays.stream(outData.toString().split(",")).sequential().map(String::trim)
+                    .forEachOrdered(getOutData()::add);
+        } else {
+            setOutData(Collections.singletonList("null"));
+        }
     }
 }
