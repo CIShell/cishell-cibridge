@@ -146,7 +146,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         }
         QueryResults<AlgorithmDefinition> paginatedQueryResults = PaginationUtil.getPaginatedResults(
                 new ArrayList<>(algorithmDefinitionMap.values()), criteria, filter.getOffset(), filter.getLimit());
-
         return new AlgorithmDefinitionQueryResults(paginatedQueryResults.getResults(), paginatedQueryResults.getPageInfo());
     }
 

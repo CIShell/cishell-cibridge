@@ -284,7 +284,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         return cishellDataCIBridgeDataMap;
     }
 
-
     DataManagerListenerImpl getDataManagerListener() {
         return dataManagerListener;
     }
@@ -300,5 +299,4 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
     protected ObservableEmitter<Data> getDataUpdatedObservableEmitter() {
         return dataUpdatedObservableEmitter;
     }
-
 }

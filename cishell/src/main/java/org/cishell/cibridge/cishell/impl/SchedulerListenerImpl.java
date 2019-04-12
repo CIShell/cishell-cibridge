@@ -76,8 +76,6 @@ public class SchedulerListenerImpl implements SchedulerListener {
                 cibridge.cishellData.getDataManagerListener().dataAdded(datum, null);
             }
         }
-
-
     }
 
     @Override

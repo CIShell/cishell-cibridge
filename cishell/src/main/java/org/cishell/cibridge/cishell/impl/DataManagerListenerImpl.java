@@ -10,7 +10,6 @@ import static org.cishell.framework.data.DataProperty.PARENT;
 public class DataManagerListenerImpl implements DataManagerListener {
     private CIShellCIBridge cibridge;
 
-
     public DataManagerListenerImpl() {
     }
 
