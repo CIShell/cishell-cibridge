@@ -72,7 +72,7 @@ public abstract class IntegrationTestCase {
     }
 
     protected <T> boolean waitTillSatisfied(T object, Predicate<T> condition) {
-        int timeout = 10000;
+        int timeout = 20000;
 
         while (timeout > 0) {
             if (condition.test(object)) {

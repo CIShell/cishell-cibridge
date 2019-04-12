@@ -63,7 +63,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
             //cancel the algorithm. currently you cant uncancel an already canceled algorithm
             if (canceled) {
                 this.canceled = true;
-                cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
             }
         }
     }
