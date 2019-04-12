@@ -48,6 +48,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
         assertSame(RUNNING, runningAI.getState());
         cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(runningAI.getId(), true);
+        Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
         assertSame(CANCELLED, runningAI.getState());
 
@@ -55,6 +56,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
         assertSame(PAUSED, pausedAI.getState());
         cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(pausedAI.getId(), true);
+        Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
         assertSame(CANCELLED, pausedAI.getState());
 
