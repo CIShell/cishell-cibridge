@@ -61,10 +61,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "No data found with id '%s'", dataId);
 
         CIShellCIBridgeData cibridgeData = cibridgeDataMap.get(dataId);
-
         Converter[] converters = cibridge.getDataConversionService().findConverters(cibridgeData.getCIShellData(), outFormat);
-
-        return null;
+        return getAlgorithmDefinitionListFromConverters(converters);
     }
 
     @Override
@@ -73,7 +71,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         Preconditions.checkNotNull(outFormat, "output format cannot be null");
 
         Converter[] converters = cibridge.getDataConversionService().findConverters(inFormat, outFormat);
+        return getAlgorithmDefinitionListFromConverters(converters);
+    }
 
+    private List<AlgorithmDefinition> getAlgorithmDefinitionListFromConverters(Converter[] converters) {
         List<AlgorithmDefinition> algorithmDefinitionList = new ArrayList<>();
 
         for (Converter converter : converters) {
@@ -303,5 +304,9 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
     Map<org.cishell.framework.data.Data, CIShellCIBridgeData> getCIShellDataCIBridgeDataMap() {
         return cishellDataCIBridgeDataMap;
+    }
+
+    DataManagerListenerImpl getDataManagerListener() {
+        return dataManagerListener;
     }
 }
