@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.cibridge.core.model.*;
 import org.junit.After;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -208,11 +208,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void getDataWithSpecifiedPagination() {
-
-    }
-
-    @Test
     public void getDataWithSpecifiedFormats() {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
@@ -403,19 +398,6 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     }
 
     @Test
-    public void findConverters() {
-
-    }
-
-    @Test
-    public void findConvertersByFormat() {
-        String inputDataFormat = "file:text/A";
-        String outputDataFormat = "file:text/C";
-
-        cishellCIBridgeDataFacade.findConvertersByFormat(inputDataFormat, outputDataFormat);
-    }
-
-    @Test
     public void dataAddedSubscriptionTests() {
         //Setting up a mock Subscriber
         TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
@@ -442,7 +424,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         testSubscriber.assertNoErrors();
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
-        assertTrue(resultData.size() == 1);
+        assertEquals(1, resultData.size());
 
         // Assert the log messages with the expected results
         Data actualData = resultData.get(0);
@@ -487,7 +469,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         testSubscriber.assertNoErrors();
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
-        assertTrue(resultData.size() == 1);
+        assertEquals(1, resultData.size());
 
         // Assert the log messages with the expected results
         Data actualData = resultData.get(0);
@@ -539,7 +521,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         // Getting values from subscriber
         List<Data> resultData = testSubscriber.values();
 
-        assertTrue(resultData.size() == 1);
+        assertEquals(1, resultData.size());
 
         // Assert the log messages with the expected results
         Data actualData = resultData.get(0);

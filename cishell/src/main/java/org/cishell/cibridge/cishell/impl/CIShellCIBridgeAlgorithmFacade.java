@@ -5,6 +5,9 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmDefinition;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
@@ -77,6 +80,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                 return filter.getAlgorithmDefinitionIds().contains(algorithmDefinition.getId());
             });
         }
+
         //predicate on algorithm instances
         if (filter.getAlgorithmInstanceIds() != null) {
             Set<String> algorithmDefinitionIds = new HashSet<>();
@@ -91,8 +95,6 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             });
         }
         //predicate on input data ids
-        //TODO need to clarify about how to filter based on input data ids
-        // filter by matching on either (OR)
         if (filter.getInputDataIds() != null) {
             Set<String> supportedFormats = new HashSet<>();
             for (String inputDataId : filter.getInputDataIds()) {
@@ -175,8 +177,32 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
             });
         }
         // filter based on input data ids
+        if (filter.getInputDataIds() != null) {
+            criteria.add(algorithmInstance -> {
+                if (algorithmInstance == null) return false;
+
+                return !Collections.disjoint(algorithmInstance.getInData().stream().map(Data::getId).collect(Collectors.toList()), filter.getInputDataIds());
+            });
+        }
+
         // filter based on input data format
+        if (filter.getInputFormats() != null) {
+            criteria.add(algorithmInstance -> {
+                if (algorithmInstance == null) return false;
+
+                return !Collections.disjoint(algorithmInstance.getAlgorithmDefinition().getInData(), filter.getInputFormats());
+            });
+        }
+
         // filter based on output data format
+        if (filter.getOutputFormats() != null) {
+            criteria.add(algorithmInstance -> {
+                if (algorithmInstance == null) return false;
+
+                return !Collections.disjoint(algorithmInstance.getAlgorithmDefinition().getOutData(), filter.getOutputFormats());
+            });
+        }
+
         QueryResults<AlgorithmInstance> paginatedQueryResults = PaginationUtil.getPaginatedResults(
                 new ArrayList<>(algorithmInstanceMap.values()), criteria, filter.getOffset(), filter.getLimit());
 
@@ -196,13 +222,11 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                     .stream()
                     .filter(entry -> dataIds.contains(entry.getKey()))
                     .map(Map.Entry::getValue)
-
                     .collect(Collectors.toList());
         }
         org.cishell.framework.data.Data[] dataArray = null;
         if (!dataList.isEmpty()) {
-
-            dataArray = (org.cishell.framework.data.Data[]) dataList.stream().map(CIShellCIBridgeData::getCIShellData).toArray();
+            dataArray = dataList.stream().map(CIShellCIBridgeData::getCIShellData).toArray(org.cishell.framework.data.Data[]::new);
         }
         Dictionary<String, Object> paramTable = null;
         if (parameters != null && !parameters.isEmpty()) {

@@ -2,6 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.subscribers.TestSubscriber;
 import org.cishell.cibridge.cishell.IntegrationTestCase;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
 import org.cishell.cibridge.core.model.AlgorithmFilter;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.junit.After;
@@ -50,6 +51,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
         assertSame(RUNNING, runningAI.getState());
         cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(runningAI.getId(), true);
+        Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
         assertSame(CANCELLED, runningAI.getState());
 
@@ -57,6 +59,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends IntegrationTestCase {
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
         assertSame(PAUSED, pausedAI.getState());
         cishellCIBridgeSchedulerFacade.setAlgorithmCancelled(pausedAI.getId(), true);
+        Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
         assertSame(CANCELLED, pausedAI.getState());
 

@@ -75,7 +75,6 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         };
 
 
-
         String id = "NotificationOpenWithParamsID";
         GUI gui = ciBridgeGUIBuilderService.createGUI(id, null);
         // Should create a notification and add it to map.
@@ -109,7 +108,7 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
     }
 
     @Test
-    public void validateCreateGUIOpenAndWaitWithoutParams() {
+    public void validateCreateGUIOpenAndWaitWithoutParams() throws InterruptedException {
         TestSubscriber<Notification> testSubscriber = new TestSubscriber<>();
         ciShellCIBridgeNotificationFacade.notificationAdded().subscribe(testSubscriber);
 
@@ -154,11 +153,8 @@ public class CIBridgeGUIBuilderServiceIT extends IntegrationTestCase {
         });
 
         notificationSetResponseThread.start();
-        try {
-            Thread.sleep(50);
-        } catch (Exception e){
 
-        }
+        Thread.sleep(50);
 
         List<Notification> notificationList = testSubscriber.values();
         Notification expectedNotification = notificationList.get(0);

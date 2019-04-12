@@ -1,24 +1,14 @@
 package org.cishell.cibridge.cishell.impl;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.observables.ConnectableObservable;
 import org.cishell.app.service.datamanager.DataManagerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.cibridge.cishell.impl.CIShellCIBridgeData;
-import org.cishell.cibridge.core.model.DataType;
-import org.cishell.cibridge.core.model.Property;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.framework.data.Data;
 
-import java.util.Dictionary;
-import java.util.Enumeration;
-
-import static org.cishell.framework.data.DataProperty.*;
+import static org.cishell.framework.data.DataProperty.PARENT;
 
 public class DataManagerListenerImpl implements DataManagerListener {
     private CIShellCIBridge cibridge;
-
-
 
     public DataManagerListenerImpl() {
     }
@@ -30,45 +20,22 @@ public class DataManagerListenerImpl implements DataManagerListener {
 
     @Override
     public void dataAdded(Data data, String s) {
+        //get parent id
+        String parentDataId = null;
+        if (data.getMetadata() != null && data.getMetadata().get(PARENT) != null) {
+            Data parent = (Data) data.getMetadata().get(PARENT);
+            parentDataId = cibridge.cishellData.getCIShellDataCIBridgeDataMap().get(parent).getId();
+        }
+
         // create cibridge data object which is a wrapper for cishell data object
-        CIShellCIBridgeData cishellCIBridgeData = new CIShellCIBridgeData(data);
+        CIShellCIBridgeData cishellCIBridgeData = new CIShellCIBridgeData(data, parentDataId);
+
         // add the cibridge data object created to maps for easier access with its ID
         // and CIShellData
         cibridge.cishellData.getCIBridgeDataMap().put(cishellCIBridgeData.getId(), cishellCIBridgeData);
         cibridge.cishellData.getCIShellDataCIBridgeDataMap().put(data, cishellCIBridgeData);
-        // update CIShellCIBridgeData properties with CIShellData properties
-        updateCIShellCIBridgeDataProperties(cishellCIBridgeData, data);
-        cibridge.cishellData.getDataAddedObservableEmitter().onNext(cishellCIBridgeData);
-    }
 
-    private void updateCIShellCIBridgeDataProperties(CIShellCIBridgeData cishellCIBridgeData, Data data) {
-        cishellCIBridgeData.setFormat(data.getFormat());
-        Dictionary<String, Object> metadata = data.getMetadata();
-        Enumeration<String> metadataIterator = metadata.keys();
-        while (metadataIterator.hasMoreElements()) {
-            String propertyKey = metadataIterator.nextElement();
-            switch (propertyKey) {
-                case LABEL:
-                    cishellCIBridgeData.setLabel(metadata.get(LABEL).toString());
-                    break;
-                case "Name":
-                    cishellCIBridgeData.setName(metadata.get("Name").toString());
-                    break;
-                case TYPE:
-                    cishellCIBridgeData.setType(DataType.valueOf(metadata.get(TYPE).toString().toUpperCase()));
-                    break;
-                case MODIFIED:
-                    cishellCIBridgeData.setModified(Boolean.valueOf(metadata.get(MODIFIED).toString()));
-                    break;
-                case PARENT:
-                    String parentDataId = cibridge.cishellData.getCIShellDataCIBridgeDataMap()
-                            .get((Data) metadata.get(PARENT)).getId();
-                    cishellCIBridgeData.setParentDataId(parentDataId);
-                default:
-                    cishellCIBridgeData.getOtherProperties()
-                            .add(new Property(propertyKey, metadata.get(propertyKey).toString()));
-            }
-        }
+        cibridge.cishellData.getDataAddedObservableEmitter().onNext(cishellCIBridgeData);
     }
 
     @Override

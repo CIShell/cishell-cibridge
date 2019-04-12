@@ -3,7 +3,10 @@ package org.cishell.cibridge.cishell.impl;
 import io.reactivex.disposables.Disposable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
 import org.cishell.cibridge.cishell.util.Util;
-import org.cishell.cibridge.core.model.*;
+import org.cishell.cibridge.core.model.Notification;
+import org.cishell.cibridge.core.model.NotificationType;
+import org.cishell.cibridge.core.model.ParameterDefinition;
+import org.cishell.cibridge.core.model.Property;
 import org.cishell.service.guibuilder.GUI;
 import org.cishell.service.guibuilder.GUIBuilderService;
 import org.cishell.service.guibuilder.SelectionListener;
@@ -70,7 +73,7 @@ public class CIBridgeGUIBuilderService implements GUIBuilderService {
         List<ParameterDefinition> notificationParams = new ArrayList<>();
         List<Property> properties = null;
         for (AttributeDefinition attributes : objectClassDefinition.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
-             properties = new ArrayList<>();
+            properties = new ArrayList<>();
             for (int i = 0; i < attributes.getOptionLabels().length; i++) {
                 Property property = new Property(attributes.getOptionLabels()[i], attributes.getOptionValues()[i]);
                 properties.add(property);

@@ -1,4 +1,4 @@
-package org.cishell.cibridge.cishell.impl;
+package org.cishell.cibridge.cishell.model;
 
 import com.google.common.base.Preconditions;
 import org.cishell.framework.data.Data;

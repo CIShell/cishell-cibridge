@@ -2,9 +2,7 @@ package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
-import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
-import org.cishell.cibridge.core.model.AlgorithmState;
 import org.cishell.framework.algorithm.ProgressMonitor;
 
 import static org.cishell.cibridge.core.model.AlgorithmState.*;
@@ -26,7 +24,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
     @Override
     public void start(int capabilities, int totalWorkUnits) {
         start(capabilities, (double) totalWorkUnits);
-        //todo call subscription method - verify with hardik
     }
 
     @Override
@@ -37,7 +34,6 @@ public class ProgressMonitorImpl implements ProgressMonitor {
         algorithmInstance.setProgress(0);
         algorithmInstance.setState(RUNNING);
         cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(algorithmInstance);
-
     }
 
     @Override

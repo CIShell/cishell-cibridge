@@ -1,15 +1,13 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
 import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
-import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.ProgressTrackable;
@@ -17,11 +15,8 @@ import org.osgi.framework.ServiceReference;
 import org.reactivestreams.Publisher;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.cishell.cibridge.core.model.AlgorithmState.*;
 

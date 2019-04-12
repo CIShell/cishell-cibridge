@@ -1,4 +1,4 @@
-package org.cishell.cibridge.cishell.impl;
+package org.cishell.cibridge.cishell.model;
 
 import org.cishell.cibridge.core.model.AlgorithmDefinition;
 import org.cishell.cibridge.core.model.AlgorithmInstance;

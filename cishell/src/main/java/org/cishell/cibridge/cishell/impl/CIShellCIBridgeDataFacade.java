@@ -1,13 +1,14 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
-import io.reactivex.BackpressureStrategy;
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
 import org.apache.commons.io.FilenameUtils;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmDefinition;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
+import org.cishell.cibridge.cishell.model.CIShellData;
 import org.cishell.cibridge.cishell.util.PaginationUtil;
 import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
@@ -76,7 +77,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         Preconditions.checkArgument(cibridgeDataMap.containsKey(dataId), "No data found with id '%s'", dataId);
         CIShellCIBridgeData cibridgeData = cibridgeDataMap.get(dataId);
         Converter[] converters = cibridge.getDataConversionService().findConverters(cibridgeData.getCIShellData(), outFormat);
-        return null;
+        return getAlgorithmDefinitionListFromConverters(converters);
     }
 
     @Override
@@ -84,10 +85,19 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         Preconditions.checkNotNull(inFormat, "input format cannot be null");
         Preconditions.checkNotNull(outFormat, "output format cannot be null");
         Converter[] converters = cibridge.getDataConversionService().findConverters(inFormat, outFormat);
+        return getAlgorithmDefinitionListFromConverters(converters);
+    }
+
+    private List<AlgorithmDefinition> getAlgorithmDefinitionListFromConverters(Converter[] converters) {
+        List<AlgorithmDefinition> algorithmDefinitionList = new ArrayList<>();
+
         for (Converter converter : converters) {
-            converter.getAlgorithmFactory();
+            CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(converter);
+            cibridge.cishellAlgorithm.getAlgorithmDefinitionMap().put(algorithmDefinition.getId(), algorithmDefinition);
+            algorithmDefinitionList.add(algorithmDefinition);
         }
-        return null;
+
+        return algorithmDefinitionList;
     }
 
     @Override
@@ -272,6 +282,10 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
     Map<org.cishell.framework.data.Data, CIShellCIBridgeData> getCIShellDataCIBridgeDataMap() {
         return cishellDataCIBridgeDataMap;
+    }
+
+    DataManagerListenerImpl getDataManagerListener() {
+        return dataManagerListener;
     }
 
     protected ObservableEmitter<Data> getDataAddedObservableEmitter() {
