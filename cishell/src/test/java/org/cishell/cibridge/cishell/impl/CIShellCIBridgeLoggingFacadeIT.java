@@ -1,7 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.subscribers.TestSubscriber;
-import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.Log;
 import org.cishell.cibridge.core.model.LogFilter;
 import org.cishell.cibridge.core.model.LogLevel;
@@ -18,7 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CIShellCIBridgeLoggingFacadeIT extends IntegrationTestCase {
+public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
 
     private CIShellCIBridgeLoggingFacade ciShellCIBridgeLoggingFacade = getCIShellCIBridge().cishellLogging;
 

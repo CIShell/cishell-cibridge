@@ -312,19 +312,23 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         }
     }
 
-    Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceMap() {
+    protected Map<String, CIShellCIBridgeAlgorithmInstance> getAlgorithmInstanceMap() {
         return algorithmInstanceMap;
     }
 
-    Map<String, CIShellCIBridgeAlgorithmDefinition> getAlgorithmDefinitionMap() {
+    protected Map<String, CIShellCIBridgeAlgorithmDefinition> getAlgorithmDefinitionMap() {
         return algorithmDefinitionMap;
     }
 
-    Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCIShellAlgorithmCIBridgeAlgorithmMap() {
+    protected Map<Algorithm, CIShellCIBridgeAlgorithmInstance> getCIShellAlgorithmCIBridgeAlgorithmMap() {
         return cishellAlgorithmCIBridgeAlgorithmMap;
     }
 
     protected ObservableEmitter<AlgorithmInstance> getAlgorithmInstanceUpdatedObservableEmitter() {
         return algorithmInstanceUpdatedObservableEmitter;
+    }
+
+    protected ObservableEmitter<AlgorithmDefinition> getAlgorithmDefinitionAddedObservableEmitter() {
+        return algorithmDefinitionAddedObservableEmitter;
     }
 }

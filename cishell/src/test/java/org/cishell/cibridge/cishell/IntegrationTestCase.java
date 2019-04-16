@@ -13,7 +13,7 @@ import java.util.function.Predicate;
 
 public abstract class IntegrationTestCase {
 
-    public static final int TIME_QUANTUM = 200;
+    protected static final int TIME_QUANTUM = 200;
 
     private static final String PLUGINS_DIRECTORY_PATH = "../integration-tests-container/target/plugins";
     private static final CIShellContainer CISHELL_CONTAINER = CIShellContainer.getBuilder().pluginsDirectoryPath(PLUGINS_DIRECTORY_PATH).build();
@@ -53,22 +53,6 @@ public abstract class IntegrationTestCase {
 
     protected <S> S getService(Class<S> clazz) {
         return CISHELL_CONTAINER.getService(clazz);
-    }
-
-    protected <S> S waitAndGetService(Class<S> clazz) {
-        int timeout = 20000;
-        while (timeout > 0) {
-            if (getService(clazz) != null) {
-                return getService(clazz);
-            }
-            try {
-                Thread.sleep(TIME_QUANTUM);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            timeout = timeout - TIME_QUANTUM;
-        }
-        return null;
     }
 
     protected <T> boolean waitTillSatisfied(T object, Predicate<T> condition) {

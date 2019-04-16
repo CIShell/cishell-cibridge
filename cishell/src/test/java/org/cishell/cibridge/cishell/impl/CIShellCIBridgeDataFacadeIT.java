@@ -1,7 +1,6 @@
 package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.subscribers.TestSubscriber;
-import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.cibridge.core.model.*;
 import org.junit.After;
@@ -17,25 +16,25 @@ import java.util.List;
 import static org.cishell.framework.data.DataProperty.*;
 import static org.junit.Assert.*;
 
-public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
+public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
 
-    private CIShellCIBridgeDataFacade cishellCIBridgeDataFacade = getCIShellCIBridge().cishellData;
+    private CIShellCIBridgeDataFacade dataFacade = getCIShellCIBridge().cishellData;
 
     @Test(expected = IllegalArgumentException.class)
     public void uploadNonExistentFile() {
-        cishellCIBridgeDataFacade.uploadData("SomeNonExistentFile.txt", null);
+        dataFacade.uploadData("SomeNonExistentFile.txt", null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void uploadDirectory() {
-        cishellCIBridgeDataFacade.uploadData(System.getProperty("user.dir"), null);
+        dataFacade.uploadData(System.getProperty("user.dir"), null);
     }
 
     @Test
     public void uploadFileWithoutProperties() {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
-        Data data = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data data = dataFacade.uploadData(dataFileUrl.getFile(), null);
 
         assertNotNull(data);
         assertNotNull(data.getId());
@@ -55,7 +54,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     public void uploadFileWithProperties() {
         URL parentDataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(parentDataFileUrl);
-        Data parentData = cishellCIBridgeDataFacade.uploadData(parentDataFileUrl.getFile(), null);
+        Data parentData = dataFacade.uploadData(parentDataFileUrl.getFile(), null);
 
         String format = "file:text/csv";
         String label = "Research papers";
@@ -72,7 +71,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setType(dataType);
         dataProperties.setParent(parentData.getId());
         dataProperties.setOtherProperties(Collections.singletonList(customProperty));
-        Data data = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data data = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
 
         assertNotNull(data);
         assertNotNull(data.getId());
@@ -103,12 +102,12 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     public void removeData() {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
-        Data data = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data data = dataFacade.uploadData(dataFileUrl.getFile(), null);
 
-        assertTrue(cishellCIBridgeDataFacade.removeData(data.getId()));
+        assertTrue(dataFacade.removeData(data.getId()));
         assertEquals(0, getDataManagerService().getAllData().length);
 
-        assertFalse(cishellCIBridgeDataFacade.removeData("SomeNonExistentId"));
+        assertFalse(dataFacade.removeData("SomeNonExistentId"));
     }
 
     @Test
@@ -116,11 +115,11 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
 
         URL parentDataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(parentDataFileUrl);
-        Data parentData = cishellCIBridgeDataFacade.uploadData(parentDataFileUrl.getFile(), null);
+        Data parentData = dataFacade.uploadData(parentDataFileUrl.getFile(), null);
 
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
-        Data data = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data data = dataFacade.uploadData(dataFileUrl.getFile(), null);
 
         String label = "Research papers";
         String name = "Research papers by Laszlo Barabasi";
@@ -133,7 +132,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setType(dataType);
         dataProperties.setParent(parentData.getId());
         dataProperties.setOtherProperties(Collections.singletonList(customProperty));
-        assertTrue(cishellCIBridgeDataFacade.updateData(data.getId(), dataProperties));
+        assertTrue(dataFacade.updateData(data.getId(), dataProperties));
 
         assertEquals(label, data.getLabel());
         assertEquals(name, data.getName());
@@ -160,7 +159,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         DataProperties newDataProperties = new DataProperties();
         newDataProperties.setOtherProperties(Collections.singletonList(sameCustomPropertyWithDiffValue));
 
-        assertTrue(cishellCIBridgeDataFacade.updateData(data.getId(), newDataProperties));
+        assertTrue(dataFacade.updateData(data.getId(), newDataProperties));
         assertEquals(1, data.getOtherProperties().size());
         assertEquals(sameCustomPropertyWithDiffValue.getKey(), data.getOtherProperties().get(0).getKey());
         assertEquals(sameCustomPropertyWithDiffValue.getValue(), data.getOtherProperties().get(0).getValue());
@@ -168,20 +167,20 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
 
     @Test(expected = IllegalArgumentException.class)
     public void updateNonExistentData() {
-        cishellCIBridgeDataFacade.updateData("someRandomID", new DataProperties());
+        dataFacade.updateData("someRandomID", new DataProperties());
     }
 
     @Test
     public void downloadFile() throws IOException {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
-        Data data = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        assertEquals(new File(dataFileUrl.getFile()).getCanonicalPath(), cishellCIBridgeDataFacade.downloadData(data.getId()));
+        Data data = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        assertEquals(new File(dataFileUrl.getFile()).getCanonicalPath(), dataFacade.downloadData(data.getId()));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void downloadNonExistentData() {
-        cishellCIBridgeDataFacade.downloadData("someRandomID");
+        dataFacade.downloadData("someRandomID");
     }
 
     @Test
@@ -189,19 +188,19 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         DataQueryResults queryResults;
 
         //test with empty filter and no data
-        queryResults = cishellCIBridgeDataFacade.getData(new DataFilter());
+        queryResults = dataFacade.getData(new DataFilter());
         assertFalse(queryResults.getPageInfo().hasNextPage());
         assertFalse(queryResults.getPageInfo().hasPreviousPage());
         assertEquals(0, queryResults.getResults().size());
 
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
-        cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
+        dataFacade.uploadData(dataFileUrl.getFile(), null);
+        dataFacade.uploadData(dataFileUrl.getFile(), null);
+        dataFacade.uploadData(dataFileUrl.getFile(), null);
 
         //test with empty filter
-        queryResults = cishellCIBridgeDataFacade.getData(new DataFilter());
+        queryResults = dataFacade.getData(new DataFilter());
         assertFalse(queryResults.getPageInfo().hasNextPage());
         assertFalse(queryResults.getPageInfo().hasPreviousPage());
         assertEquals(3, queryResults.getResults().size());
@@ -221,26 +220,26 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties2.setFormat(format2);
 
         //upload 2 data object with different format
-        Data txtData1 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
-        Data txtData2 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
+        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
+        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
 
         DataFilter filter = new DataFilter();
         DataQueryResults queryResults;
 
         //querying on first format should return only 1 result
         filter.setFormats(Collections.singletonList(format1));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(1, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
 
         //querying on both the formats should return both data
         filter.setFormats(Arrays.asList(format1, format2));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
 
         //querying on any other format should return nothing
         filter.setFormats(Collections.singletonList("SomeNonExistentDataFormat"));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
 
     }
@@ -256,26 +255,26 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         DataProperties dataProperties2 = new DataProperties();
         dataProperties2.setType(DataType.NETWORK);
 
-        Data txtData1 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
-        Data txtData2 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
+        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
+        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
 
         DataFilter filter = new DataFilter();
         DataQueryResults queryResults;
 
         //query for the one data type should return one result
         filter.setTypes(Collections.singletonList(DataType.TEXT));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(1, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
 
         //query for either of the two data type should return both results
         filter.setTypes(Arrays.asList(DataType.TEXT, DataType.NETWORK));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
 
         //query for any other data type should return nothing
         filter.setTypes(Collections.singletonList(DataType.PLOT));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
     }
 
@@ -284,23 +283,23 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
 
-        Data txtData1 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData2 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData3 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData3 = dataFacade.uploadData(dataFileUrl.getFile(), null);
 
         DataFilter filter = new DataFilter();
         DataQueryResults queryResults;
 
         //querying for either of two data id should return two results
         filter.setDataIds(Arrays.asList(txtData1.getId(), txtData3.getId()));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
         assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
 
         //querying for non-existent data id should not return anything
         filter.setDataIds(Collections.singletonList("someNonExistentID"));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
     }
 
@@ -309,10 +308,10 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
 
-        Data txtData1 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData2 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData3 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData4 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData3 = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        Data txtData4 = dataFacade.uploadData(dataFileUrl.getFile(), null);
 
         txtData2.setModified(false);
         txtData4.setModified(false);
@@ -321,13 +320,13 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         DataQueryResults queryResults;
 
         filter.setModified(true);
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
         assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
 
         filter.setModified(false);
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData2.getId(), queryResults.getResults().get(0).getId());
         assertEquals(txtData4.getId(), queryResults.getResults().get(1).getId());
@@ -349,46 +348,46 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         DataProperties dataProperties3 = new DataProperties();
         dataProperties3.setOtherProperties(Collections.singletonList(propertyInput3));
 
-        Data txtData1 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
-        Data txtData2 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
-        Data txtData3 = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties3);
+        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
+        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
+        Data txtData3 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties3);
 
         DataFilter filter = new DataFilter();
         DataQueryResults queryResults;
 
         //query to match first property should return both results
         filter.setProperties(Collections.singletonList(propertyInput));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData1.getId(), queryResults.getResults().get(0).getId());
         assertEquals(txtData2.getId(), queryResults.getResults().get(1).getId());
 
         //query to match both properties should return second result
         filter.setProperties(Arrays.asList(propertyInput, propertyInput2));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(1, queryResults.getResults().size());
         assertEquals(txtData2.getId(), queryResults.getResults().get(0).getId());
 
         //query to match either of the the value for a property should return required result
         filter.setProperties(Arrays.asList(propertyInput2, propertyInput3));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(2, queryResults.getResults().size());
         assertEquals(txtData2.getId(), queryResults.getResults().get(0).getId());
         assertEquals(txtData3.getId(), queryResults.getResults().get(1).getId());
 
         //query to check if the data has multiple properties when they have at least one of those
         filter.setProperties(Arrays.asList(propertyInput, propertyInput3));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
 
         //if matched on non-existent property key, should not return anything
         filter.setProperties(Collections.singletonList(new PropertyInput("someNonExistentPropertyKey", "Its Value")));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
 
         //if matched on non-existent property value, should not return anything
         filter.setProperties(Collections.singletonList(new PropertyInput("CustomKey", "someNonExistentPropertyValue")));
-        queryResults = cishellCIBridgeDataFacade.getData(filter);
+        queryResults = dataFacade.getData(filter);
         assertEquals(0, queryResults.getResults().size());
     }
 
@@ -401,7 +400,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     public void dataAddedSubscriptionTests() {
         //Setting up a mock Subscriber
         TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
-        cishellCIBridgeDataFacade.dataAdded().subscribe(testSubscriber);
+        dataFacade.dataAdded().subscribe(testSubscriber);
 
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
@@ -416,7 +415,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setType(dataType);
         dataProperties.setOtherProperties(Collections.singletonList(customProperty));
 
-        Data expectedData = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data expectedData = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
 
         // Wait till the subscriber collects 1 onNext values
         testSubscriber.awaitCount(1);
@@ -443,7 +442,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
     public void dataRemovedSubscriptionTests() {
         //Setting up a mock Subscriber
         TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
-        cishellCIBridgeDataFacade.dataRemoved().subscribe(testSubscriber);
+        dataFacade.dataRemoved().subscribe(testSubscriber);
 
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
@@ -458,10 +457,10 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setType(dataType);
         dataProperties.setOtherProperties(Collections.singletonList(customProperty));
 
-        Data uploadedData = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data uploadedData = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
 
         // Removing the data that is added
-        cishellCIBridgeDataFacade.removeData(uploadedData.getId());
+        dataFacade.removeData(uploadedData.getId());
 
         // Wait till the subscriber collects 1 onNext values
         testSubscriber.awaitCount(1);
@@ -488,7 +487,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
 
         //Setting up a mock Subscriber
         TestSubscriber<Data> testSubscriber = new TestSubscriber<>();
-        cishellCIBridgeDataFacade.dataUpdated().subscribe(testSubscriber);
+        dataFacade.dataUpdated().subscribe(testSubscriber);
 
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
@@ -503,14 +502,14 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         dataProperties.setType(dataType);
         dataProperties.setOtherProperties(Collections.singletonList(customProperty));
 
-        Data uploadedData = cishellCIBridgeDataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data uploadedData = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
 
         // Updating the data properties that is added
         dataProperties.setLabel("New Research Papers");
         dataProperties.setType(DataType.MODEL);
         dataProperties.setName("Aravind Bharatha");
 
-        Boolean statusOfUpdate = cishellCIBridgeDataFacade.updateData(uploadedData.getId(), dataProperties);
+        Boolean statusOfUpdate = dataFacade.updateData(uploadedData.getId(), dataProperties);
 
         assertTrue(statusOfUpdate);
 
@@ -544,7 +543,7 @@ public class CIShellCIBridgeDataFacadeIT extends IntegrationTestCase {
         }
 
         assertEquals(0, getDataManagerService().getAllData().length);
-        assertEquals(0, cishellCIBridgeDataFacade.getCIBridgeDataMap().size());
-        assertEquals(0, cishellCIBridgeDataFacade.getCIShellDataCIBridgeDataMap().size());
+        assertEquals(0, dataFacade.getCIBridgeDataMap().size());
+        assertEquals(0, dataFacade.getCIShellDataCIBridgeDataMap().size());
     }
 }

@@ -1,6 +1,5 @@
 package org.cishell.cibridge.cishell.impl;
 
-import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.junit.After;
@@ -13,7 +12,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class CIShellCIBridgeDataConversionIT extends IntegrationTestCase {
+public class CIShellCIBridgeDataConversionIT extends CIShellCIBridgeBaseIT {
 
     private CIShellCIBridgeDataFacade dataFacade = getCIShellCIBridge().cishellData;
     private CIShellCIBridgeAlgorithmFacade algorithmFacade = getCIShellCIBridge().cishellAlgorithm;

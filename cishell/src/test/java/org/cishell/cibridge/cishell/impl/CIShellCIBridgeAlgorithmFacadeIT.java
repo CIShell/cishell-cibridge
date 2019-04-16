@@ -1,12 +1,10 @@
 package org.cishell.cibridge.cishell.impl;
 
 import io.reactivex.subscribers.TestSubscriber;
-import org.cishell.cibridge.cishell.IntegrationTestCase;
 import org.cishell.cibridge.cishell.model.CIShellCIBridgeAlgorithmInstance;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.framework.algorithm.Algorithm;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URL;
@@ -15,31 +13,12 @@ import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
-public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
+public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
 
-    private CIShellCIBridgeAlgorithmFacade cishellCIBridgeAlgorithmFacade = getCIShellCIBridge().cishellAlgorithm;
-    private List<String> listOfIntegrationTestsAlgorithmsPIDs = Arrays.asList(
-            "org.cishell.tests.algorithm.StandardAlgorithm",
-            "org.cishell.tests.algorithm.LossyConverterAlgorithm",
-            "org.cishell.tests.algorithm.LosslessConverterAlgorithm",
-            "org.cishell.tests.algorithm.ValidatorAlgorithm",
-            "org.cishell.tests.algorithm.A2BConverterAlgorithm",
-            "org.cishell.tests.algorithm.B2CConverterAlgorithm",
-            "org.cishell.tests.algorithm.UserInputAlgorithm",
-            "org.cishell.tests.algorithm.ErringAlgorithm",
-            "org.cishell.tests.algorithm.QuickAlgorithm"
-    );
-
-    @Before
-    public void waitForAllAlgorithmDefinitionsToBeCached() {
-        for (String algorithmPID : listOfIntegrationTestsAlgorithmsPIDs) {
-            boolean success = waitTillSatisfied(algorithmPID, pid -> cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().containsKey(pid));
-            assertTrue("Algorithm factory for pid: '" + algorithmPID + "' was not cached", success);
-        }
-    }
+    private CIShellCIBridgeAlgorithmFacade algorithmFacade = getCIShellCIBridge().cishellAlgorithm;
 
     private AlgorithmDefinition getAlgorithmDefinition(String pid) {
-        return cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().get(pid);
+        return algorithmFacade.getAlgorithmDefinitionMap().get(pid);
     }
 
     @Test
@@ -141,11 +120,11 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     @Test
     public void getAlgorithmDefinitionsWithEmptyFilter() {
         //querying with empty filter should return everything including 4 dummy algorithms
-        QueryResults<AlgorithmDefinition> queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(new AlgorithmFilter());
+        QueryResults<AlgorithmDefinition> queryResults = algorithmFacade.getAlgorithmDefinitions(new AlgorithmFilter());
         assertNotNull(queryResults);
         assertFalse(queryResults.getPageInfo().hasNextPage());
         assertFalse(queryResults.getPageInfo().hasPreviousPage());
-        assertTrue(listOfIntegrationTestsAlgorithmsPIDs.size() <= queryResults.getResults().size());
+        assertTrue(LIST_OF_INTEGRATION_TESTS_ALGORITHMS_PIDS.size() <= queryResults.getResults().size());
     }
 
     @Test
@@ -158,20 +137,20 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
 
         //query for either of the two above pids should return 2 results
         filter.setAlgorithmDefinitionIds(Arrays.asList(pid1, pid2));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid1));
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid2));
 
         //query for just one should return 1 result
         filter.setAlgorithmDefinitionIds(Collections.singletonList(pid1));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(1, queryResults.getResults().size());
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid1));
 
         //query for non-existent pid should return nothing
         filter.setAlgorithmDefinitionIds(Collections.singletonList("someNonExistentID"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(0, queryResults.getResults().size());
 
     }
@@ -183,21 +162,21 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         String pid1 = "org.cishell.tests.algorithm.StandardAlgorithm";
         String pid2 = "org.cishell.tests.algorithm.ValidatorAlgorithm";
 
-        AlgorithmInstance algorithmInstance1 = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid1, null, null);
+        AlgorithmInstance algorithmInstance1 = algorithmFacade.createAlgorithm(pid1, null, null);
         filter.setAlgorithmInstanceIds(Collections.singletonList(algorithmInstance1.getId()));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(1, queryResults.getResults().size());
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid1));
 
-        AlgorithmInstance algorithmInstance2 = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid2, null, null);
+        AlgorithmInstance algorithmInstance2 = algorithmFacade.createAlgorithm(pid2, null, null);
         filter.setAlgorithmInstanceIds(Arrays.asList(algorithmInstance1.getId(), algorithmInstance2.getId()));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid1));
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid2));
 
         filter.setAlgorithmInstanceIds(Collections.singletonList("someNonExistentID"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(0, queryResults.getResults().size());
     }
 
@@ -208,22 +187,22 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
 
         //querying with empty list should not return anything
         filter.setInputFormats(new ArrayList<>());
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(0, queryResults.getResults().size());
 
         //querying with text csv format
         filter.setInputFormats(Collections.singletonList("file:text/csv"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
 
         //querying with either text/xml or text/csv format should return 3 results
         filter.setInputFormats(Arrays.asList("file:text/csv", "file:text/xml"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(3, queryResults.getResults().size());
 
         //querying with non-existent format should not return anything
         filter.setInputFormats(Collections.singletonList("someNonExistentDataFormat"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(0, queryResults.getResults().size());
     }
 
@@ -234,22 +213,22 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
 
         //querying with empty list should not return anything
         filter.setOutputFormats(new ArrayList<>());
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(0, queryResults.getResults().size());
 
         //querying with file:bin/graph format
         filter.setOutputFormats(Collections.singletonList("file:bin/graph"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
 
         //querying with either text/xml or file:bin/graph should return 3 results
         filter.setOutputFormats(Arrays.asList("file:bin/graph", "file:text/xml"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(3, queryResults.getResults().size());
 
         //querying with non-existent format should not return anything
         filter.setOutputFormats(Collections.singletonList("someNonExistentDataFormat"));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(0, queryResults.getResults().size());
     }
 
@@ -266,7 +245,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         QueryResults<AlgorithmDefinition> queryResults;
 
         filter.setInputDataIds(Collections.singletonList(data.getId()));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(1, queryResults.getResults().size());
         assertEquals("org.cishell.tests.algorithm.ValidatorAlgorithm", queryResults.getResults().get(0).getId());
     }
@@ -277,38 +256,33 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         AlgorithmFilter filter = new AlgorithmFilter();
 
         filter.setProperties(Collections.singletonList(new PropertyInput("some_property", "some_value")));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
 
         filter.setProperties(Arrays.asList(new PropertyInput("other_property", "its_value"), new PropertyInput("some_property", "some_value")));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(1, queryResults.getResults().size());
 
         filter.setProperties(Arrays.asList(new PropertyInput("other_property", "its_value"), new PropertyInput("other_property", "some_value")));
-        queryResults = cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitions(filter);
+        queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
     }
 
-    //TODO Complete pending tests
     @Test
     public void validateAlgorithmDefinitionAddedSubscription() {
         TestSubscriber<AlgorithmDefinition> testSubscriber = new TestSubscriber<>();
-        cishellCIBridgeAlgorithmFacade.algorithmDefinitionAdded().subscribe(testSubscriber);
+        algorithmFacade.algorithmDefinitionAdded().subscribe(testSubscriber);
 
-        String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
-        assertNotNull(getAlgorithmDefinition(pid));
-        AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
-        assertNotNull(algorithmInstance);
-        assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
+        String inputDataFormat = "file:text/A";
+        String outputDataFormat = "file:text/C";
+
+        List<AlgorithmDefinition> listOfConverterAlgorithms = getCIShellCIBridge().cishellData.findConvertersByFormat(inputDataFormat, outputDataFormat);
+        assertTrue(listOfConverterAlgorithms.size() > 0);
+        AlgorithmDefinition algorithmDefinition = listOfConverterAlgorithms.get(0);
 
         testSubscriber.awaitCount(1);
-        System.out.println(testSubscriber.values());
-    }
-
-    //TODO Complete pending tests
-    @Test
-    public void validateAlgorithmDefinitionRemovedSubscription() {
-
+        AlgorithmDefinition cachedAlgorithmDefintion = testSubscriber.values().get(0);
+        assertEquals(algorithmDefinition, cachedAlgorithmDefintion);
     }
 
     //todo write tests for filtering algorithm instances
@@ -321,20 +295,16 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
     public void createAlgorithm() {
         String pid = "org.cishell.tests.algorithm.StandardAlgorithm";
         assertNotNull(getAlgorithmDefinition(pid));
-        AlgorithmInstance algorithmInstance = cishellCIBridgeAlgorithmFacade.createAlgorithm(pid, null, null);
+        AlgorithmInstance algorithmInstance = algorithmFacade.createAlgorithm(pid, null, null);
         assertNotNull(algorithmInstance);
-        assertTrue(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
+        assertTrue(algorithmFacade.getAlgorithmInstanceMap().containsKey(algorithmInstance.getId()));
 
         if (algorithmInstance instanceof CIShellCIBridgeAlgorithmInstance) {
             Algorithm algorithm = ((CIShellCIBridgeAlgorithmInstance) algorithmInstance).getAlgorithm();
-            assertTrue(cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().containsKey(algorithm));
-            assertEquals(algorithmInstance, cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm));
+            assertTrue(algorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().containsKey(algorithm));
+            assertEquals(algorithmInstance, algorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().get(algorithm));
         }
     }
-
-    //todo write detailed integration test for creating algorithm eg with parameters
-
-    //todo write integration tests from metatype information
 
     @Test
     public void uncacheAlgorithmDefinition() {
@@ -352,14 +322,14 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends IntegrationTestCase {
         assertEquals(0, getCIShellCIBridge().cishellData.getCIBridgeDataMap().size());
         assertEquals(0, getCIShellCIBridge().cishellData.getCIShellDataCIBridgeDataMap().size());
 
-        List<String> algorithmInstanceIdList = new LinkedList<>(cishellCIBridgeAlgorithmFacade.getAlgorithmInstanceMap().keySet());
+        List<String> algorithmInstanceIdList = new LinkedList<>(algorithmFacade.getAlgorithmInstanceMap().keySet());
         for (String algorithmInstanceId : algorithmInstanceIdList) {
-            cishellCIBridgeAlgorithmFacade.getAlgorithmDefinitionMap().remove(algorithmInstanceId);
+            algorithmFacade.getAlgorithmDefinitionMap().remove(algorithmInstanceId);
         }
 
-        List<Algorithm> algorithmList = new LinkedList<>(cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().keySet());
+        List<Algorithm> algorithmList = new LinkedList<>(algorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().keySet());
         for (Algorithm algorithm : algorithmList) {
-            cishellCIBridgeAlgorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().remove(algorithm);
+            algorithmFacade.getCIShellAlgorithmCIBridgeAlgorithmMap().remove(algorithm);
         }
     }
 }
