@@ -6,6 +6,7 @@ Service-Component: \
     OSGI-INF/A2B-converter-algorithm.xml,\
     OSGI-INF/B2C-converter-algorithm.xml,\
     OSGI-INF/user-input-algorithm.xml,\
+    OSGI-INF/wait-for-user-input-algorithm.xml,\
     OSGI-INF/erring-algorithm.xml,\
     OSGI-INF/quick-algorithm.xml
 Bundle-SymbolicName:${project.artifactId}

@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <metatype:MetaData xmlns:metatype="http://www.osgi.org/xmlns/metatype/v1.0.0">
-    <OCD name="A Random Number" id="org.cishell.tests.algorithm.UserInputAlgorithm.OCD">
+    <OCD name="A Random Number" description="isn't name is enough???!!!" id="org.cishell.tests.algorithm.UserInputAlgorithm.OCD">
         <AD name="A Random Number" id="ARandomNumber" type="Integer" description="Enter any positive number you like" default="1" min="0"/>
     </OCD>
     <Designate pid="org.cishell.tests.algorithm.UserInputAlgorithm">
+        <Object ocdref="org.cishell.tests.algorithm.UserInputAlgorithm.OCD" />
+    </Designate>
+    <Designate pid="org.cishell.tests.algorithm.WaitForUserInputAlgorithm">
         <Object ocdref="org.cishell.tests.algorithm.UserInputAlgorithm.OCD" />
     </Designate>
 </metatype:MetaData>

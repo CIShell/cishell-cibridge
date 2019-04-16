@@ -7,27 +7,25 @@ import org.cishell.framework.algorithm.ProgressMonitor;
 import org.cishell.framework.algorithm.ProgressTrackable;
 import org.cishell.framework.data.BasicData;
 import org.cishell.framework.data.Data;
-import org.cishell.service.guibuilder.GUI;
 import org.cishell.service.guibuilder.GUIBuilderService;
-import org.cishell.service.guibuilder.SelectionListener;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
 
 import java.util.Dictionary;
 
-public class UserInputAlgorithmFactory implements AlgorithmFactory {
+public class WaitForUserInputAlgorithmFactory implements AlgorithmFactory {
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new UserInputAlgorithm(data, parameters, context);
+        return new WaitForUserInputAlgorithm(data, parameters, context);
     }
 
-    private class UserInputAlgorithm implements Algorithm, ProgressTrackable {
+    private class WaitForUserInputAlgorithm implements Algorithm, ProgressTrackable {
 
         private ProgressMonitor progressMonitor;
         private CIShellContext cishellContext;
 
-        private UserInputAlgorithm(Data[] data, Dictionary parameters, CIShellContext cishellContext) {
+        private WaitForUserInputAlgorithm(Data[] data, Dictionary parameters, CIShellContext cishellContext) {
             this.cishellContext = cishellContext;
         }
 
@@ -39,22 +37,9 @@ public class UserInputAlgorithmFactory implements AlgorithmFactory {
 
             MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation(FrameworkUtil.getBundle(this.getClass()));
 
-            GUI gui = guiBuilderService.createGUI("org.cishell.tests.algorithm.UserInputAlgorithm", metaTypeInformation);
-
-            gui.setSelectionListener(new SelectionListener() {
-                @Override
-                public void hitOk(Dictionary<String, Object> dictionary) {
-                    assert dictionary != null;
-                    assert dictionary.get("ARandomNumber").equals("4");
-                }
-
-                @Override
-                public void cancelled() {
-
-                }
-            });
-
-            gui.open();
+            Dictionary response = guiBuilderService.createGUIandWait("org.cishell.tests.algorithm.WaitForUserInputAlgorithm", metaTypeInformation);
+            assert response != null;
+            assert response.get("ARandomNumber").equals("16");
 
             return new BasicData[0];
         }
