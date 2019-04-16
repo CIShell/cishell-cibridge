@@ -49,7 +49,6 @@
 			<artifactId>graphql-java-tools</artifactId>
 			<version>5.2.3</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.graphql-java</groupId>
 			<artifactId>java-dataloader</artifactId>
@@ -284,6 +283,33 @@
 			<artifactId>commons-pool</artifactId>
 			<version>1.0.0</version>
 		</dependency>
+		<!-- todo to be removed later on -->
+		<dependency>
+			<groupId>org.cishell.cibridge</groupId>
+			<artifactId>integration-tests-algorithms</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
+		</dependency>
+		<!-- todo adding sci2 algorithms for demo remove later on -->
+		<dependency>
+			<groupId>org.cishell.plugins</groupId>
+			<artifactId>edu.iu.nwb.analysis.weakcomponentclustering</artifactId>
+			<version>2.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cishell.plugins</groupId>
+			<artifactId>edu.iu.nwb.analysis.extractcoauthorship</artifactId>
+			<version>2.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cishell.plugins</groupId>
+			<artifactId>edu.iu.nwb.analysis.extractnetfromtable</artifactId>
+			<version>2.1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cishell.plugins</groupId>
+			<artifactId>edu.iu.nwb.converter.tablegraph</artifactId>
+			<version>2.1.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -324,7 +350,7 @@
 							<outputDirectory>${project.build.directory}/</outputDirectory>
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteIfNewer>true</overWriteIfNewer>
-							<excludeTransitive>true</excludeTransitive>
+							<!--<excludeTransitive>true</excludeTransitive>-->
 						</configuration>
 					</execution>
 				</executions>
