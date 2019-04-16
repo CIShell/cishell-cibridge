@@ -41,14 +41,12 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
     @Override
     @OnWebSocketConnect
     public void onWebSocketConnect(Session session) {
-        System.out.println("session open");
         super.onWebSocketConnect(session);
 //		session.setIdleTimeout(10000);
     }
 
     @Override
     public void onWebSocketClose(int statusCode, String reason) {
-        System.out.println("Session closed");
         super.onWebSocketClose(statusCode, reason);
         Subscription subscription = subscriptionRef.get();
         if (subscription != null) {
@@ -58,7 +56,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
     @Override
     public void onWebSocketError(Throwable cause) {
-        System.out.println("Web Socket Error");
         String response = generateResponseString(GQL_ERROR, cause, null);
         if (response != null) {
             try {
@@ -234,7 +231,6 @@ public class CIBridgeWebSocket extends WebSocketAdapter {
 
                 @Override
                 public void onComplete() {
-                    System.out.println("On Complete called");
                     try {
                         String response = generateResponseString(GQL_COMPLETE, null, id);
                         if (response != null) {

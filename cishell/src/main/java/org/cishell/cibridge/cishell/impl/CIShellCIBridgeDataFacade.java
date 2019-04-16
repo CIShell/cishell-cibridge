@@ -94,6 +94,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         for (Converter converter : converters) {
             CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(converter);
             cibridge.cishellAlgorithm.getAlgorithmDefinitionMap().put(algorithmDefinition.getId(), algorithmDefinition);
+            cibridge.cishellAlgorithm.getAlgorithmDefinitionAddedObservableEmitter().onNext(algorithmDefinition);
             algorithmDefinitionList.add(algorithmDefinition);
         }
 
