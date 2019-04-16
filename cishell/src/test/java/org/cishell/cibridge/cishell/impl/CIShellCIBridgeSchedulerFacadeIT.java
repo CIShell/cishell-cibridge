@@ -57,6 +57,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         /* cancel running algorithm */
         AlgorithmInstance runningAI = getRunningAlgorithmInstance();
         assertSame(RUNNING, runningAI.getState());
+
         schedulerFacade.setAlgorithmCancelled(runningAI.getId(), true);
         Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
@@ -65,6 +66,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         /* cancel paused algorithm */
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
         assertSame(PAUSED, pausedAI.getState());
+
         schedulerFacade.setAlgorithmCancelled(pausedAI.getId(), true);
         Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
@@ -338,7 +340,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         //set algorithm running
         schedulerFacade.runAlgorithmNow(algorithmInstance.getId());
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == RUNNING));
-        assertSame(RUNNING, algorithmInstance.getState());
         return algorithmInstance;
     }
 
@@ -352,7 +353,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         Thread.sleep(5 * TIME_QUANTUM);
         assertSame(progressBefore, algorithmInstance.getProgress());
         //check proper state
-        assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == PAUSED));
         assertSame(PAUSED, algorithmInstance.getState());
         return algorithmInstance;
     }
@@ -361,7 +361,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         AlgorithmInstance algorithmInstance = getIdleAlgorithmInstance();
         schedulerFacade.scheduleAlgorithm(algorithmInstance.getId(), ZonedDateTime.now().plusDays(1));
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == SCHEDULED));
-        assertSame(SCHEDULED, algorithmInstance.getState());
         return algorithmInstance;
     }
 
@@ -371,7 +370,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         CIShellCIBridgeAlgorithmInstance algorithmInstance = (CIShellCIBridgeAlgorithmInstance) algorithmFacade.createAlgorithm(pid, null, null);
         schedulerFacade.runAlgorithmNow(algorithmInstance.getId());
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == FINISHED));
-        assertSame(FINISHED, algorithmInstance.getState());
         return algorithmInstance;
     }
 
@@ -379,7 +377,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
         schedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true);
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == CANCELLED));
-        assertSame(CANCELLED, algorithmInstance.getState());
         return algorithmInstance;
     }
 
@@ -391,5 +388,4 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == ERRORED));
         return algorithmInstance;
     }
-
 }
