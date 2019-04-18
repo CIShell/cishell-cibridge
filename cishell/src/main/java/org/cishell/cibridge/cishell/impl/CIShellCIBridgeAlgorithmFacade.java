@@ -262,25 +262,32 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
 
     private void uncacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
-        if (reference.getProperty(SERVICE_PID) != null) {
-            String pid = reference.getProperty(SERVICE_PID).toString();
+        try {
+            if (reference.getProperty(SERVICE_PID) != null) {
+                String pid = reference.getProperty(SERVICE_PID).toString();
 
-            if (pid != null) {
-                algorithmDefinitionMap.remove(pid);
-                algorithmDefinitionRemovedObservableEmitter.onNext(algorithmDefinitionMap.get(pid));
+                if (pid != null) {
+                    algorithmDefinitionMap.remove(pid);
+                    algorithmDefinitionRemovedObservableEmitter.onNext(algorithmDefinitionMap.get(pid));
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private void cacheAlgorithmDefinition(ServiceReference<AlgorithmFactory> reference) {
-        if (reference != null && reference.getProperty(SERVICE_PID) != null) {
-            String pid = reference.getProperty(SERVICE_PID).toString();
-            if (pid != null) {
-                CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(cibridge, reference);
-                algorithmDefinitionMap.put(pid, algorithmDefinition);
-                algorithmDefinitionAddedObservableEmitter.onNext(algorithmDefinition);
-
+        try {
+            if (reference != null && reference.getProperty(SERVICE_PID) != null) {
+                String pid = reference.getProperty(SERVICE_PID).toString();
+                if (pid != null) {
+                    CIShellCIBridgeAlgorithmDefinition algorithmDefinition = new CIShellCIBridgeAlgorithmDefinition(cibridge, reference);
+                    algorithmDefinitionMap.put(pid, algorithmDefinition);
+                    algorithmDefinitionAddedObservableEmitter.onNext(algorithmDefinition);
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -297,6 +304,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
                 }, "(" + OBJECTCLASS + "=" + AlgorithmFactory.class.getName() + ")");
             } catch (InvalidSyntaxException ignored) {
             }
+
             //cache all the algorithms already registered
             try {
                 Collection<ServiceReference<AlgorithmFactory>> references = cibridge.getBundleContext().getServiceReferences(AlgorithmFactory.class, null);

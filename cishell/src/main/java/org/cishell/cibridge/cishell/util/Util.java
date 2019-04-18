@@ -64,7 +64,9 @@ public class Util {
                 parameter.setDescription(ad.getDescription());
                 parameter.setType(Util.getAttributeTypeFromInteger(ad.getType()));
                 parameter.setCardinality(ad.getCardinality());
-                parameter.setDefaultValues(Arrays.asList(ad.getDefaultValue()));
+                if (ad.getDefaultValue() != null) {
+                    parameter.setDefaultValues(Arrays.asList(ad.getDefaultValue()));
+                }
                 parameter.setOptions(new ArrayList<>());
 
                 String[] optionLabels = ad.getOptionLabels();
