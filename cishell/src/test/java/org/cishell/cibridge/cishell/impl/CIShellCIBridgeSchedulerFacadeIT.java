@@ -373,9 +373,10 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         return algorithmInstance;
     }
 
-    private AlgorithmInstance getCancelledAlgorithmInstance() {
+    private AlgorithmInstance getCancelledAlgorithmInstance() throws InterruptedException {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
         schedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true);
+        Thread.sleep(5 * TIME_QUANTUM);
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == CANCELLED));
         return algorithmInstance;
     }

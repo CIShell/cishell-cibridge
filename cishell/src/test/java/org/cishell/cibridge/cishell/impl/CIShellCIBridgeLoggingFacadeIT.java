@@ -231,7 +231,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
 
         // Getting values from subscriber
         List<Log> resultLogs = testSubscriber.values();
-        assertTrue(resultLogs.size() == 4);
+        assertTrue(resultLogs.size() >= 4);
 
         // Assert the log messages with the expected results
         for (Log l : resultLogs) {
