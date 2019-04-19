@@ -1,17 +1,18 @@
 package org.cishell.cibridge.core.model;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AlgorithmInstance {
     private final String id;
-    private List<Data> inData;
+    private List<Data> inData = new ArrayList<>();
     private List<Property> parameters;
     private final AlgorithmDefinition algorithmDefinition;
     private AlgorithmState state = AlgorithmState.IDLE;
     private ZonedDateTime scheduledRunTime;
     private int progress = 0;
-    private List<Data> outData;
+    private List<Data> outData = new ArrayList<>();
 
     public AlgorithmInstance(String id, AlgorithmDefinition algorithmDefinition) {
         this.id = id;

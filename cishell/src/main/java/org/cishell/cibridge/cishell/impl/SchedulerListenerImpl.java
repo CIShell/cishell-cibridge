@@ -3,6 +3,7 @@ package org.cishell.cibridge.cishell.impl;
 import com.google.common.base.Preconditions;
 import org.cishell.app.service.scheduler.SchedulerListener;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
+import org.cishell.cibridge.cishell.model.CIShellCIBridgeData;
 import org.cishell.cibridge.core.model.AlgorithmInstance;
 import org.cishell.framework.algorithm.Algorithm;
 import org.cishell.framework.algorithm.ProgressTrackable;
@@ -68,6 +69,9 @@ public class SchedulerListenerImpl implements SchedulerListener {
             for (Data datum : data) {
                 //todo set some label here. Its not being set by cishell
                 cibridge.cishellData.getDataManagerListener().dataAdded(datum, null);
+                CIShellCIBridgeData cishellCIBridgeDatum = cibridge.cishellData.getCIShellDataCIBridgeDataMap().get(datum);
+                algorithmInstance.getOutData().add(cishellCIBridgeDatum);
+
             }
         }
     }
