@@ -263,9 +263,9 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         publisher = algorithmInstanceUpdatedObservable.toFlowable(BackpressureStrategy.BUFFER);
         if (filter != null) {
             publisher = publisher.filter(algorithmInstance -> {
-                return (filter.getAlgorithmInstanceIds()!=null && filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId()))
-                        || (filter.getAlgorithmDefinitionIds()!=null && filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition()))
-                                || (filter.getStates()!=null && filter.getStates().contains(algorithmInstance.getState()));
+                return (filter.getAlgorithmInstanceIds()==null || filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId()))
+                        && (filter.getAlgorithmDefinitionIds()==null || filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition()))
+                                && (filter.getStates()==null || filter.getStates().contains(algorithmInstance.getState()));
             });
         }
         return publisher;
