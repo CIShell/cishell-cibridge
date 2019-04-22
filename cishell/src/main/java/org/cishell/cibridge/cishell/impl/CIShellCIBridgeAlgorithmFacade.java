@@ -1,6 +1,8 @@
 package org.cishell.cibridge.cishell.impl;
 
 import com.google.common.base.Preconditions;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.observables.ConnectableObservable;
@@ -258,7 +260,16 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
     @Override
     public Publisher<AlgorithmInstance> algorithmInstanceUpdated(AlgorithmFilter filter) {
-        return Util.asPublisher(algorithmInstanceUpdatedObservable);
+        Flowable<AlgorithmInstance> publisher;
+        publisher = algorithmInstanceUpdatedObservable.toFlowable(BackpressureStrategy.BUFFER);
+        if (filter != null) {
+            publisher = publisher.filter(algorithmInstance -> {
+                return (filter.getAlgorithmInstanceIds()==null || filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId()))
+                        && (filter.getAlgorithmDefinitionIds()==null || filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition()))
+                                && (filter.getStates()==null || filter.getStates().contains(algorithmInstance.getState()));
+            });
+        }
+        return publisher;
     }
 
 
