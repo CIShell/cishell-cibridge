@@ -303,7 +303,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
     @Test
     public void validateAlgorithmInstanceUpdatedSubscription() {
         AlgorithmFilter algorithmFilter = new AlgorithmFilter();
-        algorithmFilter.setAlgorithmInstanceIds(Arrays.asList("org.cishell.tests.algorithm.StandardAlgorithm"));
+        algorithmFilter.setAlgorithmDefinitionIds(Arrays.asList("org.cishell.tests.algorithm.StandardAlgorithm"));
         TestSubscriber<AlgorithmInstance> testSubscriber = new TestSubscriber<>();
         algorithmFacade.algorithmInstanceUpdated(algorithmFilter).subscribe(testSubscriber);
 
