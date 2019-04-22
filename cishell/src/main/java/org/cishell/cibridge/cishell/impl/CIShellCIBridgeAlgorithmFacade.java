@@ -240,6 +240,7 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         //create cibridge's algorithm object(algorithmInstance) containing cishell's algorithm object
         CIShellCIBridgeAlgorithmInstance algorithmInstance = new CIShellCIBridgeAlgorithmInstance(algorithmDefinition, algorithm);
         algorithmInstance.setParameters(paramList);
+        algorithmInstance.setInData(dataList.stream().map(datum -> (Data) datum).collect(Collectors.toList()));
         algorithmInstanceMap.put(algorithmInstance.getId(), algorithmInstance);
         cishellAlgorithmCIBridgeAlgorithmMap.put(algorithm, algorithmInstance);
         return algorithmInstance;

@@ -11,6 +11,7 @@ import org.cishell.framework.data.Data;
 
 import java.time.ZoneId;
 import java.util.Calendar;
+import java.util.List;
 
 import static org.cishell.cibridge.core.model.AlgorithmState.*;
 
@@ -70,6 +71,10 @@ public class SchedulerListenerImpl implements SchedulerListener {
                 //todo set some label here. Its not being set by cishell
                 cibridge.cishellData.getDataManagerListener().dataAdded(datum, null);
                 CIShellCIBridgeData cishellCIBridgeDatum = cibridge.cishellData.getCIShellDataCIBridgeDataMap().get(datum);
+                List<org.cishell.cibridge.core.model.Data> inputData = algorithmInstance.getInData();
+                if (inputData != null && inputData.size() > 0) {
+                    cishellCIBridgeDatum.setParentDataId(algorithmInstance.getInData().get(0).getId());
+                }
                 algorithmInstance.getOutData().add(cishellCIBridgeDatum);
 
             }

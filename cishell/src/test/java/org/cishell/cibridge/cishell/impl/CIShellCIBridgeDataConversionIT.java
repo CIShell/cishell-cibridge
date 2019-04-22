@@ -43,8 +43,11 @@ public class CIShellCIBridgeDataConversionIT extends CIShellCIBridgeBaseIT {
         DataFilter dataFilter = new DataFilter();
         dataFilter.setFormats(Collections.singletonList("file:text/C"));
 
+        assertEquals(1, algorithmInstance.getInData().size());
+        assertEquals(data, algorithmInstance.getInData().get(0));
         assertEquals(1, algorithmInstance.getOutData().size());
         assertEquals("file:text/C", algorithmInstance.getOutData().get(0).getFormat());
+        assertEquals(data.getId(), algorithmInstance.getOutData().get(0).getParentDataId());
     }
 
     @Test
@@ -70,8 +73,11 @@ public class CIShellCIBridgeDataConversionIT extends CIShellCIBridgeBaseIT {
 
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == AlgorithmState.FINISHED));
 
+        assertEquals(1, algorithmInstance.getInData().size());
+        assertEquals(data, algorithmInstance.getInData().get(0));
         assertEquals(1, algorithmInstance.getOutData().size());
         assertEquals("file:text/C", algorithmInstance.getOutData().get(0).getFormat());
+        assertEquals(data.getId(), algorithmInstance.getOutData().get(0).getParentDataId());
     }
 
     @After
