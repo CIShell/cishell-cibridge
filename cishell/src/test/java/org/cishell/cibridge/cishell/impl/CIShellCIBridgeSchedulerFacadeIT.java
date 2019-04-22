@@ -343,16 +343,9 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         return algorithmInstance;
     }
 
-    private AlgorithmInstance getPausedAlgorithmInstance() throws InterruptedException {
+    private AlgorithmInstance getPausedAlgorithmInstance() {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
         schedulerFacade.setAlgorithmPaused(algorithmInstance.getId(), true);
-        //let algorithm pause in cishell
-        Thread.sleep(5 * TIME_QUANTUM);
-        //check the progress is halted
-        int progressBefore = algorithmInstance.getProgress();
-        Thread.sleep(5 * TIME_QUANTUM);
-        assertSame(progressBefore, algorithmInstance.getProgress());
-        //check proper state
         assertSame(PAUSED, algorithmInstance.getState());
         return algorithmInstance;
     }
