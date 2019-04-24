@@ -16,9 +16,6 @@ import static org.junit.Assert.*;
 
 public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
 
-    private CIShellCIBridgeSchedulerFacade schedulerFacade = getCIShellCIBridge().cishellScheduler;
-    private CIShellCIBridgeAlgorithmFacade algorithmFacade = getCIShellCIBridge().cishellAlgorithm;
-
     @Before
     public void setSchedulerRunning() {
         getCIShellCIBridge().getSchedulerService().setRunning(true);
@@ -59,7 +56,6 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         assertSame(RUNNING, runningAI.getState());
 
         schedulerFacade.setAlgorithmCancelled(runningAI.getId(), true);
-        Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
         assertSame(CANCELLED, runningAI.getState());
 
@@ -68,8 +64,8 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         assertSame(PAUSED, pausedAI.getState());
 
         schedulerFacade.setAlgorithmCancelled(pausedAI.getId(), true);
-        Thread.sleep(1000);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
+        Thread.sleep(1000);
         assertSame(CANCELLED, pausedAI.getState());
 
     }

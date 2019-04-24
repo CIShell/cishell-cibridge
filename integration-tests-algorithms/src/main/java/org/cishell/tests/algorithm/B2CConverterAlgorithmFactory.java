@@ -30,7 +30,7 @@ public class B2CConverterAlgorithmFactory implements AlgorithmFactory {
 
         public Data[] execute() {
             Data[] data = new Data[1];
-            data[0] = new BasicData(null, "some data in format C", "file:text/C");
+            data[0] = new BasicData( "some data in format C", "file:text/C");
             return data;
         }
     }

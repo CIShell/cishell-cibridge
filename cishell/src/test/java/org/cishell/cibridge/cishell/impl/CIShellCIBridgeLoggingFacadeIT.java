@@ -19,8 +19,6 @@ import static org.junit.Assert.*;
 
 public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
 
-    private CIShellCIBridgeLoggingFacade ciShellCIBridgeLoggingFacade = getCIShellCIBridge().cishellLogging;
-
     @Before
     public void creatingLogsToTest() {
         getLogService().log(1, "Error Log");
@@ -32,13 +30,13 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
     @Test(expected = NullPointerException.class)
     public void validateResultsWithNullFilter() {
         LogFilter filter = null;
-        ciShellCIBridgeLoggingFacade.getLogs(filter);
+        loggingFacade.getLogs(filter);
     }
 
     @Test
     public void validateResultsWithEmptyFilter() {
         LogFilter filter = new LogFilter();
-        LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        LogQueryResults logQueryResults = loggingFacade.getLogs(filter);
         assertNotNull(logQueryResults);
     }
 
@@ -52,7 +50,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
         filter.setLogLevel(logLevels);
 
         // Checking if Error level logs are only returned
-        LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        LogQueryResults logQueryResults = loggingFacade.getLogs(filter);
         assertNotNull(logQueryResults);
         assertTrue(logQueryResults.getResults().size() >= 1);
         assertEquals(LogLevel.ERROR, logQueryResults.getResults().get(0).getLogLevel());
@@ -67,7 +65,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
         // are returned
         logLevels.add(LogLevel.WARNING);
         filter.setLogLevel(logLevels);
-        logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        logQueryResults = loggingFacade.getLogs(filter);
         for (Log log : logQueryResults.getResults()) {
             set.add(log.getLogLevel());
         }
@@ -84,7 +82,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
         Instant i = Instant.now().minusSeconds(60);
         ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.systemDefault());
         filter.setLogsSince(z);
-        LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        LogQueryResults logQueryResults = loggingFacade.getLogs(filter);
         assertNotNull(logQueryResults);
         assertTrue(logQueryResults.getResults().size() >= 1);
         getLogService().log(1, "new log");
@@ -98,7 +96,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
         i = Instant.now().minusMillis(1000);
         z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
         filter.setLogsSince(z);
-        logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        logQueryResults = loggingFacade.getLogs(filter);
         assertNotNull(logQueryResults);
 //		assertTrue(logQueryResults.getResults().size() == 1);
 
@@ -113,7 +111,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
         ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
         filter.setLogsBefore(z);
 
-        LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        LogQueryResults logQueryResults = loggingFacade.getLogs(filter);
         assertNotNull(logQueryResults);
         assertTrue(logQueryResults.getResults().size() >= 1);
         assertTrue(z.isBefore(logQueryResults.getResults().get(0).getTimestamp()));
@@ -144,7 +142,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
         ZonedDateTime z = ZonedDateTime.ofInstant(i, ZoneOffset.UTC);
         filter.setLogsBefore(z);
 
-        LogQueryResults logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        LogQueryResults logQueryResults = loggingFacade.getLogs(filter);
 
         HashSet<LogLevel> set = new HashSet<LogLevel>();
         for (Log log : logQueryResults.getResults()) {
@@ -155,7 +153,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
 
         logLevels.add(LogLevel.WARNING);
         filter.setLogLevel(logLevels);
-        logQueryResults = ciShellCIBridgeLoggingFacade.getLogs(filter);
+        logQueryResults = loggingFacade.getLogs(filter);
         for (Log log : logQueryResults.getResults()) {
             set.add(log.getLogLevel());
         }
@@ -179,7 +177,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
 
         //Setting up a mock Subscriber
         TestSubscriber<Log> testSubscriber = new TestSubscriber<>();
-        ciShellCIBridgeLoggingFacade.logAdded(logLevelList).subscribe(testSubscriber);
+        loggingFacade.logAdded(logLevelList).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
 
         // Adding Logs for testing
@@ -211,7 +209,7 @@ public class CIShellCIBridgeLoggingFacadeIT extends CIShellCIBridgeBaseIT {
 
         //Setting up a mock Subscriber
         TestSubscriber<Log> testSubscriber = new TestSubscriber<>();
-        ciShellCIBridgeLoggingFacade.logAdded(null).subscribe(testSubscriber);
+        loggingFacade.logAdded(null).subscribe(testSubscriber);
         testSubscriber.assertNoErrors();
 
         // Adding Logs for testing

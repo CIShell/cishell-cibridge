@@ -18,8 +18,6 @@ import static org.junit.Assert.*;
 
 public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
 
-    private CIShellCIBridgeDataFacade dataFacade = getCIShellCIBridge().cishellData;
-
     @Test(expected = IllegalArgumentException.class)
     public void uploadNonExistentFile() {
         dataFacade.uploadData("SomeNonExistentFile.txt", null);
@@ -39,15 +37,13 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
         assertNotNull(data);
         assertNotNull(data.getId());
         assertNotNull(data.getFormat());
-        assertEquals("file-ext:txt", data.getFormat());
+        assertEquals("file:text/plain", data.getFormat());
 
         if (data instanceof CIShellCIBridgeData) {
             CIShellCIBridgeData ciShellCIBridgeData = (CIShellCIBridgeData) data;
             assertNotNull(ciShellCIBridgeData.getCIShellData());
-            assertEquals("file-ext:txt", ciShellCIBridgeData.getCIShellData().getFormat());
-            assertEquals(ciShellCIBridgeData.getCIShellData(), getDataManagerService().getAllData()[0]);
+            assertEquals("file:text/plain", ciShellCIBridgeData.getCIShellData().getFormat());
         }
-
     }
 
     @Test
@@ -56,7 +52,7 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
         assertNotNull(parentDataFileUrl);
         Data parentData = dataFacade.uploadData(parentDataFileUrl.getFile(), null);
 
-        String format = "file:text/csv";
+        String format = "file:text/plain";
         String label = "Research papers";
         String name = "Research papers by Laszlo Barabasi";
         DataType dataType = DataType.DATABASE;
@@ -105,7 +101,8 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
         Data data = dataFacade.uploadData(dataFileUrl.getFile(), null);
 
         assertTrue(dataFacade.removeData(data.getId()));
-        assertEquals(0, getDataManagerService().getAllData().length);
+        org.cishell.framework.data.Data[] allData = getDataManagerService().getAllData();
+        assertFalse(Arrays.asList(allData).contains(data));
 
         assertFalse(dataFacade.removeData("SomeNonExistentId"));
     }
@@ -186,6 +183,8 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
     @Test
     public void getDataWithEmptyFilter() {
         DataQueryResults queryResults;
+        DataProperties dataProperties = new DataProperties();
+        dataProperties.setFormat("file:text/plain");
 
         //test with empty filter and no data
         queryResults = dataFacade.getData(new DataFilter());
@@ -195,9 +194,9 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
 
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
-        dataFacade.uploadData(dataFileUrl.getFile(), null);
-        dataFacade.uploadData(dataFileUrl.getFile(), null);
-        dataFacade.uploadData(dataFileUrl.getFile(), null);
+        dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
 
         //test with empty filter
         queryResults = dataFacade.getData(new DataFilter());
@@ -251,9 +250,11 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
 
         DataProperties dataProperties1 = new DataProperties();
         dataProperties1.setType(DataType.TEXT);
+        dataProperties1.setFormat("file:text/plain");
 
         DataProperties dataProperties2 = new DataProperties();
         dataProperties2.setType(DataType.NETWORK);
+        dataProperties2.setFormat("file:text/plain");
 
         Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
         Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
@@ -308,10 +309,13 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
         URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
 
-        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData3 = dataFacade.uploadData(dataFileUrl.getFile(), null);
-        Data txtData4 = dataFacade.uploadData(dataFileUrl.getFile(), null);
+        DataProperties dataProperties = new DataProperties();
+        dataProperties.setFormat("file:text/plain");
+
+        Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data txtData3 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
+        Data txtData4 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties);
 
         txtData2.setModified(false);
         txtData4.setModified(false);
@@ -343,10 +347,13 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
 
         DataProperties dataProperties1 = new DataProperties();
         dataProperties1.setOtherProperties(Collections.singletonList(propertyInput));
+        dataProperties1.setFormat("file:text/plain");
         DataProperties dataProperties2 = new DataProperties();
         dataProperties2.setOtherProperties(Arrays.asList(propertyInput, propertyInput2));
+        dataProperties2.setFormat("file:text/plain");
         DataProperties dataProperties3 = new DataProperties();
         dataProperties3.setOtherProperties(Collections.singletonList(propertyInput3));
+        dataProperties3.setFormat("file:text/plain");
 
         Data txtData1 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties1);
         Data txtData2 = dataFacade.uploadData(dataFileUrl.getFile(), dataProperties2);
@@ -410,6 +417,7 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
         DataType dataType = DataType.DATABASE;
         PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
         DataProperties dataProperties = new DataProperties();
+        dataProperties.setFormat("file:text/plain");
         dataProperties.setLabel(label);
         dataProperties.setName(name);
         dataProperties.setType(dataType);

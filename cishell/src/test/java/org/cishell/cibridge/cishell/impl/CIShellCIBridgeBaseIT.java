@@ -22,6 +22,13 @@ public class CIShellCIBridgeBaseIT extends IntegrationTestCase {
             "org.cishell.tests.algorithm.QuickAlgorithm"
     );
 
+    protected CIShellCIBridgeAlgorithmFacade algorithmFacade = getCIShellCIBridge().cishellAlgorithm;
+    protected CIShellCIBridgeDataFacade dataFacade = getCIShellCIBridge().cishellData;
+    protected CIShellCIBridgeNotificationFacade notificationFacade = getCIShellCIBridge().cishellNotification;
+    protected CIBridgeGUIBuilderService guiBuilderService = (CIBridgeGUIBuilderService) getCIShellCIBridge().getGUIBuilderService();
+    protected CIShellCIBridgeSchedulerFacade schedulerFacade = getCIShellCIBridge().cishellScheduler;
+    protected CIShellCIBridgeLoggingFacade loggingFacade = getCIShellCIBridge().cishellLogging;
+
     @Before
     public void waitForAllAlgorithmDefinitionsToBeCached() {
         for (String algorithmPID : LIST_OF_INTEGRATION_TESTS_ALGORITHMS_PIDS) {
