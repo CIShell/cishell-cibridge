@@ -251,7 +251,6 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
         assertEquals(2, queryResults.getResults().size());
 
         List<String> algoList = queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toList());
-        System.out.println(algoList);
         assertTrue(algoList.contains("org.cishell.tests.algorithm.LosslessConverterAlgorithm") );
         assertTrue(algoList.contains("org.cishell.tests.algorithm.LossyConverterAlgorithm") );
     }
