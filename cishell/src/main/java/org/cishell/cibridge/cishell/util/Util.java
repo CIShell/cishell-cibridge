@@ -84,6 +84,29 @@ public class Util {
         return null;
     }
 
+    public static Object getParsedValue(String value, AttributeType attributeType) {
+        switch (attributeType) {
+            case BYTE:
+                return value.getBytes();
+            case LONG:
+                return Long.parseLong(value);
+            case FLOAT:
+                return Float.parseFloat(value);
+            case SHORT:
+                return Short.parseShort(value);
+            case DOUBLE:
+                return Double.parseDouble(value);
+            case BOOLEAN:
+                return Boolean.parseBoolean(value);
+            case INTEGER:
+                return Integer.parseInt(value);
+            case CHARACTER:
+                return value.toCharArray();
+            default:
+                return value;
+        }
+    }
+
     public static <T> Publisher<T> asPublisher(ConnectableObservable<T> updateObservable) {
         return updateObservable.toFlowable(BackpressureStrategy.BUFFER);
     }
