@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static org.cishell.cibridge.cishell.util.Util.getParsedValue;
 import static org.osgi.framework.Constants.OBJECTCLASS;
 import static org.osgi.framework.Constants.SERVICE_PID;
 
@@ -234,8 +235,8 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
         if (parameters != null && !parameters.isEmpty()) {
             paramTable = new Hashtable<>();
             for (PropertyInput property : parameters) {
-                paramList.add(new Property(property.getKey(), property.getValue()));
-                paramTable.put(property.getKey(), property.getValue());
+                paramList.add(new Property(property.getKey(), property.getValue(), property.getAttributeType()));
+                paramTable.put(property.getKey(), getParsedValue(property.getValue(), property.getAttributeType()));
             }
         }
         Algorithm algorithm = algorithmFactory.createAlgorithm(dataArray, paramTable, cibridge.getCIShellContext());
@@ -265,9 +266,9 @@ public class CIShellCIBridgeAlgorithmFacade implements CIBridge.AlgorithmFacade 
 
         if (filter != null) {
             publisher = publisher.filter(algorithmInstance -> {
-                return ((filter.getAlgorithmInstanceIds()==null || filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId()))
-                        && (filter.getAlgorithmDefinitionIds()==null || filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition().getId()))
-                                && (filter.getStates()==null || filter.getStates().contains(algorithmInstance.getState())));
+                return ((filter.getAlgorithmInstanceIds() == null || filter.getAlgorithmInstanceIds().contains(algorithmInstance.getId()))
+                        && (filter.getAlgorithmDefinitionIds() == null || filter.getAlgorithmDefinitionIds().contains(algorithmInstance.getAlgorithmDefinition().getId()))
+                        && (filter.getStates() == null || filter.getStates().contains(algorithmInstance.getState())));
             });
         }
         return publisher;
