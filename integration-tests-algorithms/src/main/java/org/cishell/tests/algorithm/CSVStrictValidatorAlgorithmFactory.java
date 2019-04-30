@@ -11,18 +11,18 @@ import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-public class ValidatorAlgorithmFactory implements AlgorithmFactory {
+public class CSVStrictValidatorAlgorithmFactory implements AlgorithmFactory {
 
     public Algorithm createAlgorithm(Data[] data, Dictionary parameters, CIShellContext context) {
-        return new ValidatorAlgorithm(data, parameters, context);
+        return new CSVStrictValidatorAlgorithm(data, parameters, context);
     }
 
-    private class ValidatorAlgorithm implements Algorithm {
+    private class CSVStrictValidatorAlgorithm implements Algorithm {
 
         private String filepath = null;
         private Dictionary<String, Object> metadata = null;
 
-        private ValidatorAlgorithm(Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
+        private CSVStrictValidatorAlgorithm(Data[] data, Dictionary parameters, CIShellContext ciShellContext) {
             assert data != null && data.length > 0;
             this.filepath = data[0].getData().toString();
             this.metadata = new Hashtable<>();
@@ -35,7 +35,7 @@ public class ValidatorAlgorithmFactory implements AlgorithmFactory {
         }
 
         public Data[] execute() {
-            return new Data[]{new BasicData(metadata, new File(filepath), "file:text/plain")};
+            return new Data[]{new BasicData(metadata, new File(filepath), "file:text/csv")};
         }
     }
 
