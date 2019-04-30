@@ -15,6 +15,8 @@ import static org.junit.Assert.*;
 
 public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
 
+    private CIShellCIBridgeAlgorithmFacade algorithmFacade = getCIShellCIBridge().cishellAlgorithm;
+
     private AlgorithmDefinition getAlgorithmDefinition(String pid) {
         return algorithmFacade.getAlgorithmDefinitionMap().get(pid);
     }
@@ -67,11 +69,11 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
 
         assertNotNull(algorithmDefinition);
         assertEquals(2, algorithmDefinition.getInData().size());
-        assertEquals("file:text/A", algorithmDefinition.getInData().get(0));
-        assertEquals("file:text/B", algorithmDefinition.getInData().get(1));
+        assertEquals("text/A", algorithmDefinition.getInData().get(0));
+        assertEquals("text/B", algorithmDefinition.getInData().get(1));
         assertEquals(2, algorithmDefinition.getOutData().size());
-        assertEquals("file:text/C", algorithmDefinition.getOutData().get(0));
-        assertEquals("file:text/D", algorithmDefinition.getOutData().get(1));
+        assertEquals("text/C", algorithmDefinition.getOutData().get(0));
+        assertEquals("text/D", algorithmDefinition.getOutData().get(1));
     }
 
     @Test
@@ -166,11 +168,7 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
         assertEquals(1, queryResults.getResults().size());
         assertTrue(queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toSet()).contains(pid1));
 
-        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
-        assertNotNull(dataFileUrl);
-        Data data = dataFacade.uploadData(dataFileUrl.getFile(), null);
-
-        AlgorithmInstance algorithmInstance2 = algorithmFacade.createAlgorithm(pid2, Collections.singletonList(data.getId()), null);
+        AlgorithmInstance algorithmInstance2 = algorithmFacade.createAlgorithm(pid2, null, null);
         filter.setAlgorithmInstanceIds(Arrays.asList(algorithmInstance1.getId(), algorithmInstance2.getId()));
         queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
@@ -197,8 +195,8 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
         queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
 
-        //querying with either file-ext:txt or text/csv format should return 3 results
-        filter.setInputFormats(Arrays.asList("file:text/csv", "file-ext:txt"));
+        //querying with either text/xml or text/csv format should return 3 results
+        filter.setInputFormats(Arrays.asList("file:text/csv", "file:text/xml"));
         queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(3, queryResults.getResults().size());
 
@@ -223,8 +221,8 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
         queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(2, queryResults.getResults().size());
 
-        //querying with either file:text/plain or file:bin/graph should return 3 results
-        filter.setOutputFormats(Arrays.asList("file:bin/graph", "file:text/plain"));
+        //querying with either text/xml or file:bin/graph should return 3 results
+        filter.setOutputFormats(Arrays.asList("file:bin/graph", "file:text/xml"));
         queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
         assertEquals(3, queryResults.getResults().size());
 
@@ -237,9 +235,9 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
     @Test
     public void getAlgorithmDefinitionsForInputDataIDs() {
         DataProperties dataProperties = new DataProperties();
-        dataProperties.setFormat("file:text/csv");
+        dataProperties.setFormat("file:text/xml");
 
-        URL dataFileUrl = getClass().getClassLoader().getResource("LaszloBarabasi.csv");
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
         Data data = getCIShellCIBridge().cishellData.uploadData(dataFileUrl.getFile(), dataProperties);
 
@@ -248,11 +246,8 @@ public class CIShellCIBridgeAlgorithmFacadeIT extends CIShellCIBridgeBaseIT {
 
         filter.setInputDataIds(Collections.singletonList(data.getId()));
         queryResults = algorithmFacade.getAlgorithmDefinitions(filter);
-        assertEquals(2, queryResults.getResults().size());
-
-        List<String> algoList = queryResults.getResults().stream().map(AlgorithmDefinition::getId).collect(Collectors.toList());
-        assertTrue(algoList.contains("org.cishell.tests.algorithm.LosslessConverterAlgorithm") );
-        assertTrue(algoList.contains("org.cishell.tests.algorithm.LossyConverterAlgorithm") );
+        assertEquals(1, queryResults.getResults().size());
+        assertEquals("org.cishell.tests.algorithm.ValidatorAlgorithm", queryResults.getResults().get(0).getId());
     }
 
     @Test

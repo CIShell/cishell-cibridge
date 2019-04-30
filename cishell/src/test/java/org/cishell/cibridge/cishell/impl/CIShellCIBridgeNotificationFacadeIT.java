@@ -14,6 +14,9 @@ import static org.junit.Assert.*;
 
 public class CIShellCIBridgeNotificationFacadeIT extends CIShellCIBridgeBaseIT {
 
+    private CIShellCIBridgeNotificationFacade notificationFacade = getCIShellCIBridge().cishellNotification;
+    private CIBridgeGUIBuilderService guiBuilderService = (CIBridgeGUIBuilderService) getCIShellCIBridge().getGUIBuilderService();
+
     @Test
     public void validateGetNotificationsWithOutFilter() {
 

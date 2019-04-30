@@ -14,6 +14,10 @@ import static org.junit.Assert.*;
 
 public class CIShellCIBridgeDataConversionIT extends CIShellCIBridgeBaseIT {
 
+    private CIShellCIBridgeDataFacade dataFacade = getCIShellCIBridge().cishellData;
+    private CIShellCIBridgeAlgorithmFacade algorithmFacade = getCIShellCIBridge().cishellAlgorithm;
+    private CIShellCIBridgeSchedulerFacade schedulerFacade = getCIShellCIBridge().cishellScheduler;
+
     @Test
     public void findConvertersByData() {
         DataProperties properties = new DataProperties();
