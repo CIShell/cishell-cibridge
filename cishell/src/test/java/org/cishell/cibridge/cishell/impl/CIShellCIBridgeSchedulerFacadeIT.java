@@ -318,8 +318,8 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
     @After
     public void tearDown() {
         for (CIShellCIBridgeAlgorithmInstance algorithmInstance : algorithmFacade.getAlgorithmInstanceMap().values()) {
-            if (algorithmInstance.getState() == RUNNING) {
-                //cancel running algorithm instances after use to save CPU resources
+            if (algorithmInstance.getState() == RUNNING || algorithmInstance.getState() == PAUSED) {
+                //cancel running and paused algorithm instances after use to save CPU resources
                 schedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true);
             }
         }
