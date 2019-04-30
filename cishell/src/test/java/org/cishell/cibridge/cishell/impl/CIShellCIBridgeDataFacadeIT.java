@@ -58,7 +58,7 @@ public class CIShellCIBridgeDataFacadeIT extends CIShellCIBridgeBaseIT {
         DataType dataType = DataType.DATABASE;
         PropertyInput customProperty = new PropertyInput("CustomProperty", "SomeValue");
 
-        URL dataFileUrl = getClass().getClassLoader().getResource("LaszloBarabasi.csv");
+        URL dataFileUrl = getClass().getClassLoader().getResource("sample.txt");
         assertNotNull(dataFileUrl);
         DataProperties dataProperties = new DataProperties();
         dataProperties.setFormat(format);

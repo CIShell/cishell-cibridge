@@ -205,24 +205,16 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
 
         Preconditions.checkArgument(validatorAlgorithms.size() > 0, "No validator algorithm found for the data");
         if (validatorAlgorithms.size() > 1) {
+            /*
             GUIBuilderService guiBuilderService = cibridge.getGUIBuilderService();
             String pid = "";
 
-            MetaTypeProvider metaTypeProvider = new MetaTypeProvider() {
-                @Override
-                public ObjectClassDefinition getObjectClassDefinition(String s, String s1) {
-                    return new SelectValidatorAlgorithmOCD();
-                }
-
-                @Override
-                public String[] getLocales() {
-                    return new String[0];
-                }
-            };
+            MetaTypeProvider metaTypeProvider = new SelectValidatorAlgorithmMetaTypeProvider(validatorAlgorithms);
 
             Dictionary userEnteredParameters = guiBuilderService.createGUIandWait(pid, metaTypeProvider);
-            String validatorAlgorithmPid = userEnteredParameters.get("userEnteredValidatorAlgorithm").toString();
+            String validatorAlgorithmPid = userEnteredParameters.get("userSelectedValidatorAlgorithm").toString();
             validatorAlgorithm = cibridge.cishellAlgorithm.getAlgorithmDefinitionMap().get(validatorAlgorithmPid);
+             */
         } else {
             validatorAlgorithm = validatorAlgorithms.get(0);
         }
@@ -256,31 +248,49 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         return null;
     }
 
-    private class SelectValidatorAlgorithmOCD implements ObjectClassDefinition {
+    private class SelectValidatorAlgorithmMetaTypeProvider implements MetaTypeProvider {
 
-        @Override
-        public String getName() {
-            return null;
+        private ObjectClassDefinition selectValidatorAlgorithmOCD;
+
+        public SelectValidatorAlgorithmMetaTypeProvider(List<AlgorithmDefinition> validatorAlgorithms) {
+
+            selectValidatorAlgorithmOCD = new ObjectClassDefinition() {
+
+                @Override
+                public String getName() {
+                    return "name";
+                }
+
+                @Override
+                public String getID() {
+                    return "id";
+                }
+
+                @Override
+                public String getDescription() {
+                    return "desc";
+                }
+
+                @Override
+                public AttributeDefinition[] getAttributeDefinitions(int i) {
+                    return new AttributeDefinition[]{};
+                }
+
+                @Override
+                public InputStream getIcon(int i) throws IOException {
+                    return null;
+                }
+            };
         }
 
         @Override
-        public String getID() {
-            return null;
+        public ObjectClassDefinition getObjectClassDefinition(String s, String s1) {
+            return selectValidatorAlgorithmOCD;
         }
 
         @Override
-        public String getDescription() {
-            return null;
-        }
-
-        @Override
-        public AttributeDefinition[] getAttributeDefinitions(int i) {
-            return new AttributeDefinition[0];
-        }
-
-        @Override
-        public InputStream getIcon(int i) throws IOException {
-            return null;
+        public String[] getLocales() {
+            return new String[0];
         }
     }
 
