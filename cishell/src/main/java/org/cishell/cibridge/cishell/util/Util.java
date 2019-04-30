@@ -85,6 +85,11 @@ public class Util {
     }
 
     public static Object getParsedValue(String value, AttributeType attributeType) {
+
+        if(attributeType == null){
+            return value;
+        }
+
         switch (attributeType) {
             case BYTE:
                 return value.getBytes();
