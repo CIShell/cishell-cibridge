@@ -59,19 +59,16 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
         assertSame(RUNNING, runningAI.getState());
 
         schedulerFacade.setAlgorithmCancelled(runningAI.getId(), true);
-        Thread.sleep(1000);
+        Thread.sleep(5 * TIME_QUANTUM);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
-        assertSame(CANCELLED, runningAI.getState());
 
         /* cancel paused algorithm */
         AlgorithmInstance pausedAI = getPausedAlgorithmInstance();
         assertSame(PAUSED, pausedAI.getState());
 
         schedulerFacade.setAlgorithmCancelled(pausedAI.getId(), true);
-        Thread.sleep(1000);
+        Thread.sleep(5 * TIME_QUANTUM);
         assertTrue(waitTillSatisfied(runningAI, ai -> ai.getState() == CANCELLED));
-        assertSame(CANCELLED, pausedAI.getState());
-
     }
 
     @Test
@@ -345,7 +342,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
 
     private AlgorithmInstance getPausedAlgorithmInstance() {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
-        schedulerFacade.setAlgorithmPaused(algorithmInstance.getId(), true);
+        assertTrue(schedulerFacade.setAlgorithmPaused(algorithmInstance.getId(), true));
         assertSame(PAUSED, algorithmInstance.getState());
         return algorithmInstance;
     }
@@ -368,7 +365,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
 
     private AlgorithmInstance getCancelledAlgorithmInstance() throws InterruptedException {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
-        schedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true);
+        assertTrue(schedulerFacade.setAlgorithmCancelled(algorithmInstance.getId(), true));
         Thread.sleep(5 * TIME_QUANTUM);
         assertTrue(waitTillSatisfied(algorithmInstance, ai -> ai.getState() == CANCELLED));
         return algorithmInstance;
