@@ -31,7 +31,7 @@ public class A2BConverterAlgorithmFactory implements AlgorithmFactory {
 
         public Data[] execute() throws AlgorithmExecutionException {
             Data[] data = new Data[1];
-            data[0] = new BasicData("some data in format B", "file:text/B");
+            data[0] = new BasicData(null, "some data in format B", "file:text/B");
             return data;
         }
     }

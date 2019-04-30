@@ -3,7 +3,6 @@ package org.cishell.cibridge.cishell.impl;
 import com.google.common.base.Preconditions;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
-import io.reactivex.internal.subscribers.BlockingBaseSubscriber;
 import io.reactivex.observables.ConnectableObservable;
 import org.apache.commons.io.FilenameUtils;
 import org.cishell.cibridge.cishell.CIShellCIBridge;
@@ -15,15 +14,9 @@ import org.cishell.cibridge.cishell.util.Util;
 import org.cishell.cibridge.core.CIBridge;
 import org.cishell.cibridge.core.model.*;
 import org.cishell.service.conversion.Converter;
-import org.cishell.service.guibuilder.GUIBuilderService;
-import org.osgi.service.metatype.AttributeDefinition;
-import org.osgi.service.metatype.MetaTypeProvider;
-import org.osgi.service.metatype.ObjectClassDefinition;
 import org.reactivestreams.Publisher;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -181,7 +174,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         File file = new File(filePath);
         Preconditions.checkArgument(file.exists(), "'%s' doesn't exist", filePath);
         Preconditions.checkArgument(file.isFile(), "'%s' is not a file", filePath);
-
         //if format is specified in properties then set it else parse it from the arguments
         String format;
         if (properties != null && properties.getFormat() != null) {
@@ -189,136 +181,8 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         } else {
             format = "file-ext:" + FilenameUtils.getExtension(filePath);
         }
-
-        if (format.startsWith("file-ext:")) {
-            return validateAndLoadData(filePath, format, properties);
-        } else {
-            return loadData(file, format, properties);
-        }
-    }
-
-    private Data validateAndLoadData(String filePath, String format, DataProperties properties) {
-
-        List<AlgorithmDefinition> validatorAlgorithms = getValidatorAlgorithms(format);
-
-        AlgorithmDefinition validatorAlgorithm = null;
-
-        Preconditions.checkArgument(validatorAlgorithms.size() > 0, "No validator algorithm found for the data");
-        if (validatorAlgorithms.size() > 1) {
-            /*
-            GUIBuilderService guiBuilderService = cibridge.getGUIBuilderService();
-            String pid = "";
-
-            MetaTypeProvider metaTypeProvider = new SelectValidatorAlgorithmMetaTypeProvider(validatorAlgorithms);
-
-            Dictionary userEnteredParameters = guiBuilderService.createGUIandWait(pid, metaTypeProvider);
-            String validatorAlgorithmPid = userEnteredParameters.get("userSelectedValidatorAlgorithm").toString();
-            validatorAlgorithm = cibridge.cishellAlgorithm.getAlgorithmDefinitionMap().get(validatorAlgorithmPid);
-             */
-        } else {
-            validatorAlgorithm = validatorAlgorithms.get(0);
-        }
-
-        //upload unvalidated data
-        Data unvalidatedData = loadData(filePath, format, properties);
-
-        AlgorithmInstance algorithmInstance = cibridge.cishellAlgorithm.createAlgorithm(validatorAlgorithm.getId(), Collections.singletonList(unvalidatedData.getId()), null);
-
-        AlgorithmFilter algorithmFilter = new AlgorithmFilter();
-        algorithmFilter.setAlgorithmInstanceIds(Collections.singletonList(algorithmInstance.getId()));
-        algorithmFilter.setStates(Collections.singletonList(AlgorithmState.FINISHED));
-
-        final Object algorithmMonitor = new Object();
-        cibridge.cishellAlgorithm.algorithmInstanceUpdated(algorithmFilter).subscribe(new AlgorithmSubscriber(algorithmMonitor));
-
-        cibridge.cishellScheduler.runAlgorithmNow(algorithmInstance.getId());
-
-        try {
-            synchronized (algorithmMonitor) {
-                algorithmMonitor.wait(20000);
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        if (algorithmInstance.getOutData() != null && algorithmInstance.getOutData().size() > 0) {
-            return algorithmInstance.getOutData().get(0);
-        }
-
-        return null;
-    }
-
-    private class SelectValidatorAlgorithmMetaTypeProvider implements MetaTypeProvider {
-
-        private ObjectClassDefinition selectValidatorAlgorithmOCD;
-
-        public SelectValidatorAlgorithmMetaTypeProvider(List<AlgorithmDefinition> validatorAlgorithms) {
-
-            selectValidatorAlgorithmOCD = new ObjectClassDefinition() {
-
-                @Override
-                public String getName() {
-                    return "name";
-                }
-
-                @Override
-                public String getID() {
-                    return "id";
-                }
-
-                @Override
-                public String getDescription() {
-                    return "desc";
-                }
-
-                @Override
-                public AttributeDefinition[] getAttributeDefinitions(int i) {
-                    return new AttributeDefinition[]{};
-                }
-
-                @Override
-                public InputStream getIcon(int i) throws IOException {
-                    return null;
-                }
-            };
-        }
-
-        @Override
-        public ObjectClassDefinition getObjectClassDefinition(String s, String s1) {
-            return selectValidatorAlgorithmOCD;
-        }
-
-        @Override
-        public String[] getLocales() {
-            return new String[0];
-        }
-    }
-
-    private class AlgorithmSubscriber extends BlockingBaseSubscriber<AlgorithmInstance> {
-
-        private final Object algorithmMonitor;
-
-        private AlgorithmSubscriber(Object algorithmMonitor) {
-            this.algorithmMonitor = algorithmMonitor;
-        }
-
-        @Override
-        public void onNext(AlgorithmInstance algorithmInstance) {
-            synchronized (algorithmMonitor) {
-                //algorithm finished
-                algorithmMonitor.notify();
-            }
-        }
-
-        @Override
-        public void onError(Throwable t) {
-
-        }
-    }
-
-    private Data loadData(Object data, String format, DataProperties properties) {
         //create CIShellData object which is an implementation of CIShell frameworks's Data interface
-        CIShellData cishellData = new CIShellData(data, format);
+        CIShellData cishellData = new CIShellData(file, format);
 
         if (properties != null) {
             updateCIShellDataProperties(cishellData, properties);
@@ -326,21 +190,6 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         //add the CIShellData object wrapped inside CIShellCIBridgeData to data manager service
         cibridge.getDataManagerService().addData(cishellData);
         return cishellDataCIBridgeDataMap.get(cishellData);
-    }
-
-    private List<AlgorithmDefinition> getValidatorAlgorithms(String format) {
-        List<AlgorithmDefinition> validatorAlgorithms = new ArrayList<>();
-        for (AlgorithmDefinition algorithmDefinition : cibridge.cishellAlgorithm.getAlgorithmDefinitionMap().values()) {
-            if (algorithmDefinition.getType().equals(AlgorithmType.VALIDATOR)) {
-                if (algorithmDefinition.getInData().size() > 0) {
-                    String indataFormat = algorithmDefinition.getInData().get(0);
-                    if (indataFormat.equals(format)) {
-                        validatorAlgorithms.add(algorithmDefinition);
-                    }
-                }
-            }
-        }
-        return validatorAlgorithms;
     }
 
     @Override
@@ -367,7 +216,7 @@ public class CIShellCIBridgeDataFacade implements CIBridge.DataFacade {
         return true;
     }
 
-    private void updateCIShellCIBridgeDataProperties(Data data, DataProperties properties) {
+    private void updateCIShellCIBridgeDataProperties(CIShellCIBridgeData data, DataProperties properties) {
         if (properties.getName() != null) {
             data.setName(properties.getName());
         }

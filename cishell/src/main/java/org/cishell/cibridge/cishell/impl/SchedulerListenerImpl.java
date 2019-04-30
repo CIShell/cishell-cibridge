@@ -57,28 +57,28 @@ public class SchedulerListenerImpl implements SchedulerListener {
         if (algorithmInstance.getState() == ERRORED) {
             return;
         }
-
         if (algorithm instanceof ProgressTrackable) {
             if (((ProgressTrackable) algorithm).getProgressMonitor().isCanceled()) {
                 getAlgorithmInstance(algorithm).setState(CANCELLED);
                 return;
             }
         }
+        getAlgorithmInstance(algorithm).setState(FINISHED);
+        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
 
         if (data != null) {
             for (Data datum : data) {
-                cibridge.getDataManagerService().addData(datum);
+                //todo set some label here. Its not being set by cishell
+                cibridge.cishellData.getDataManagerListener().dataAdded(datum, null);
                 CIShellCIBridgeData cishellCIBridgeDatum = cibridge.cishellData.getCIShellDataCIBridgeDataMap().get(datum);
                 List<org.cishell.cibridge.core.model.Data> inputData = algorithmInstance.getInData();
                 if (inputData != null && inputData.size() > 0) {
                     cishellCIBridgeDatum.setParentDataId(algorithmInstance.getInData().get(0).getId());
                 }
                 algorithmInstance.getOutData().add(cishellCIBridgeDatum);
+
             }
         }
-
-        getAlgorithmInstance(algorithm).setState(FINISHED);
-        cibridge.cishellAlgorithm.getAlgorithmInstanceUpdatedObservableEmitter().onNext(getAlgorithmInstance(algorithm));
     }
 
     @Override
