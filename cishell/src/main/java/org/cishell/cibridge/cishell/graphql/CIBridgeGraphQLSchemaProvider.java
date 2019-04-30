@@ -15,7 +15,11 @@ import org.cishell.cibridge.graphql.schema.CIBridgeSchema;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.websocket.server.HandshakeRequest;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, GraphQLErrorHandler {
@@ -87,14 +91,21 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
 
     @Override
     public List<GraphQLError> processErrors(List<GraphQLError> errors) {
-        // TODO Uncomment this section if stacktrace has to hidden in production
-        // have debug mode. show stack trace in debug mode. in production show a simple message
-//		return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))
-//				.map(e -> e instanceof ExceptionWhileDataFetching ? new CustomGraphQLError(e) : e)
-//				.collect(Collectors.toList());
-        return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))
-                .map(e -> e instanceof ExceptionWhileDataFetching ? e : e).collect(Collectors.toList());
+        Properties prop = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            prop.load(input);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        if (Boolean.parseBoolean(prop.getProperty("debug", "false"))) {
+            return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))
+                    .map(e -> e instanceof ExceptionWhileDataFetching ? e : e).collect(Collectors.toList());
 
+        } else {
+            return errors.stream().filter(e -> e instanceof ExceptionWhileDataFetching || isClientError(e))
+                    .map(e -> e instanceof ExceptionWhileDataFetching ? new CustomGraphQLError(e) : e)
+                    .collect(Collectors.toList());
+        }
     }
 
     public boolean isClientError(GraphQLError error) {
