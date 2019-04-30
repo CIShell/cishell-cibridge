@@ -89,10 +89,11 @@ public class CIBridgeGraphQLSchemaProvider implements GraphQLSchemaProvider, Gra
         return readOnlySchema;
     }
 
+    //TODO needs refactoring the property has to be picked from an environment variable on the fly.
     @Override
     public List<GraphQLError> processErrors(List<GraphQLError> errors) {
         Properties prop = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("config.properties")) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("cibridge-config.properties")) {
             prop.load(input);
         } catch (IOException ex) {
             ex.printStackTrace();
