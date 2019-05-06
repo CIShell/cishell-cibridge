@@ -6,28 +6,28 @@
 	<parent>
 		<groupId>org.cishell.cibridge</groupId>
 		<artifactId>root-module</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	<groupId>org.cishell.cibridge</groupId>
 	<artifactId>org.cishell.cibridge.container.sci2</artifactId>
 	<name>sci2-container</name>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<packaging>pom</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
 			<artifactId>org.cishell.cibridge.core</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
 			<artifactId>org.cishell.cibridge.cishell</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.cishell.cibridge</groupId>
 			<artifactId>org.cishell.cibridge.graphql</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>1.0.0</version>
 		</dependency>
 
 		<dependency>
