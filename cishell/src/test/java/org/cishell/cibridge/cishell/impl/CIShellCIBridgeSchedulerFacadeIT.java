@@ -342,6 +342,7 @@ public class CIShellCIBridgeSchedulerFacadeIT extends CIShellCIBridgeBaseIT {
 
     private AlgorithmInstance getPausedAlgorithmInstance() {
         AlgorithmInstance algorithmInstance = getRunningAlgorithmInstance();
+        assertSame(algorithmInstance.getState(), RUNNING);
         assertTrue(schedulerFacade.setAlgorithmPaused(algorithmInstance.getId(), true));
         assertSame(PAUSED, algorithmInstance.getState());
         return algorithmInstance;
